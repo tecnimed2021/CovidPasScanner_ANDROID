@@ -1,0 +1,30 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    ext {
+        dokka_version = "1.5.0"
+        realm_version = "10.9.0"
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:7.0.4"
+
+        classpath Deps.tools_kotlin
+        classpath Deps.androidx_navigation
+        classpath Deps.hilt_plugin
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${Versions.kotlin}"
+        classpath "org.jetbrains.dokka:dokka-gradle-plugin:$dokka_version"
+        classpath "io.realm:realm-gradle-plugin:$realm_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}

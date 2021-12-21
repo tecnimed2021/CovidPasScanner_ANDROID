@@ -1,0 +1,1 @@
+# CovidPasScanner_ANDROID

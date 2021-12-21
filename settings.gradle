@@ -1,0 +1,15 @@
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // Warning: this repository is going to shut down soon
+    }
+}
+rootProject.name = "CovidPasScanner"
+include ':app'
+//include ':dgc-sdk'
+include ':decoder'
+rootProject.name = "CovidPasScanner"
+//project(':dgc-sdk').projectDir = new File("./it-dgc-verificac19-sdk-android/sdk")
+project(':decoder').projectDir = new File("./dgca-app-core-android-main/decoder")
