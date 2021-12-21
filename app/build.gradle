@@ -94,7 +94,7 @@ android {
         minSdkVersion Config.minSdk
         targetSdkVersion Config.targetSdk
         versionCode 1
-        versionName "1.10.10"
+        versionName "1.20.10"
 
         testInstrumentationRunner Config.androidTestInstrumentation
     }
@@ -186,6 +186,7 @@ dependencies {
     implementation Deps.hilt
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.31"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     kapt Deps.hilt_compiler
     implementation Deps.hilt_viewmodel
