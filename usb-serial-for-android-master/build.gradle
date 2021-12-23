@@ -1,0 +1,17 @@
+// Top-level gradle script.
+
+buildscript {
+    repositories {
+        mavenCentral()
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.3.2'
+    }
+}
+
+allprojects {
+    repositories {
+        mavenCentral()
+    }
+}
