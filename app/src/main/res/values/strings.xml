@@ -80,5 +80,7 @@
     <string name="exit_download">Esci</string>
     <string name="after_download">Più tardi</string>
     <string name="resume_download">Riprendi</string>
+    <string name="label_return_home">Torna all\'inizio</string>
+
 
 </resources>

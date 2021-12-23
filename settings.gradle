@@ -8,8 +8,8 @@ dependencyResolutionManagement {
 }
 rootProject.name = "CovidPasScanner"
 include ':app'
-//include ':dgc-sdk'
 include ':decoder'
+include ':usbSerialForAndroid'
 rootProject.name = "CovidPasScanner"
-//project(':dgc-sdk').projectDir = new File("./it-dgc-verificac19-sdk-android/sdk")
 project(':decoder').projectDir = new File("./dgca-app-core-android-main/decoder")
+project(':usbSerialForAndroid').projectDir = new File('usb-serial-for-android-master/usbSerialForAndroid')
