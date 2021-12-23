@@ -49,9 +49,11 @@ import androidx.core.text.bold
 import androidx.core.view.isVisible
 import androidx.lifecycle.observe
 import android.view.View.*
+import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.Activity.MainActivity
 import it.tecnimed.covidpasscanner.BuildConfig
+import it.tecnimed.covidpasscanner.Fragment.CodeReaderFragment
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.VerificaApplication
 import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
@@ -65,6 +67,7 @@ import java.util.*
 
 @AndroidEntryPoint
 class FirstActivity : AppCompatActivity(), View.OnClickListener,
+    CodeReaderFragment.OnFragmentInteractionListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var binding: ActivityFirstBinding
@@ -74,12 +77,20 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private val verificaApplication = VerificaApplication()
 
+    private val mContext: Context? = this
+    private val mSerilaDrv: UARTDriver? = UARTDriver.create(mContext)
+
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 openQrCodeReader()
             }
         }
+
+    override fun onFragmentInteraction(qrcodeText: String) {
+        var ss: String
+        ss = qrcodeText
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -385,18 +396,18 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun openQrCodeReader() {
-        val intent = Intent(this, MainActivity::class.java)
-        startActivity(intent)
+//        val intent = Intent(this, MainActivity::class.java)
+//        startActivity(intent)
+        var crf : Fragment = CodeReaderFragment()
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+        tr.add(R.id.frag_anch_point, crf)
+        tr.commitAllowingStateLoss()
+//        curFragment = fragment
     }
 
     override fun onClick(v: View?) {
         if (v?.id == R.id.qrButton) {
-//            viewModel.setScanModeFlag(true)
-//            viewModel.setScanMode("2G")
-
-            ////// Per test
-            openQrCodeReader()
-
             /*
             viewModel.getDateLastSync().let {
                 if (!viewModel.getScanModeFlag() && v.id != R.id.scan_mode_button) {
