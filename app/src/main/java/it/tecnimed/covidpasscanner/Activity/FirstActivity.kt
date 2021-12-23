@@ -59,6 +59,7 @@ import it.tecnimed.covidpasscanner.VerificaApplication
 import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
 import it.tecnimed.covidpasscanner.data.local.PrefKeys
 import it.tecnimed.covidpasscanner.model.FirstViewModel
+import it.tecnimed.covidpasscanner.uart.UARTDriver
 import it.tecnimed.covidpasscanner.util.ConversionUtility
 import it.tecnimed.covidpasscanner.util.FORMATTED_DATE_LAST_SYNC
 import it.tecnimed.covidpasscanner.util.TimeUtility.parseTo
@@ -218,6 +219,28 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                 startSyncData()
             } else {
                 createCheckConnectionAlertDialog()
+            }
+        }
+
+        binding.uartButton.setOnClickListener{
+
+
+            binding.uartTest.text = "Open OK";
+            if(mSerilaDrv?.init() == false)
+            {
+                binding.uartTest.text = "Init Fail";
+            }
+            else {
+                if (mSerilaDrv?.openPort(
+                        UARTDriver.UARTDRIVER_PORT_MODE_NOEVENT,
+                        0,
+                        38400,
+                        UARTDriver.UARTDRIVER_STOPBIT_2,
+                        UARTDriver.UARTDRIVER_PARITY_NONE
+                    ) == false
+                ) {
+                    binding.uartTest.text = "Open Fail";
+                }
             }
         }
     }
