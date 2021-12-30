@@ -65,7 +65,7 @@ class CodeReaderFragment : Fragment(),
     }
 
     override fun onAttach(activity: Activity) {
-        super.onAttach(activity!!)
+        super.onAttach(requireActivity())
         mListener = try {
             activity as OnFragmentInteractionListener
         } catch (e: ClassCastException) {
