@@ -93,8 +93,8 @@ android {
         applicationId "it.tecnimed.covidpasscanner"
         minSdkVersion Config.minSdk
         targetSdkVersion Config.targetSdk
-        versionCode 1
-        versionName "1.20.20"
+        versionCode Config.versionCode
+        versionName Config.versionName
 
         testInstrumentationRunner Config.androidTestInstrumentation
     }
