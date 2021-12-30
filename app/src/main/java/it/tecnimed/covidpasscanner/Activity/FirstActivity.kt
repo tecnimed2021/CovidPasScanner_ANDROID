@@ -54,10 +54,13 @@ import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.Activity.MainActivity
 import it.tecnimed.covidpasscanner.BuildConfig
 import it.tecnimed.covidpasscanner.Fragment.CodeReaderFragment
+import it.tecnimed.covidpasscanner.Fragment.CodeVerificationFragment
+import it.tecnimed.covidpasscanner.Fragment.CodeVerificationFragment_GeneratedInjector
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.VerificaApplication
 import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
 import it.tecnimed.covidpasscanner.data.local.PrefKeys
+import it.tecnimed.covidpasscanner.model.CertificateSimple
 import it.tecnimed.covidpasscanner.model.FirstViewModel
 import it.tecnimed.covidpasscanner.uart.UARTDriver
 import it.tecnimed.covidpasscanner.util.ConversionUtility
@@ -69,6 +72,7 @@ import java.util.*
 @AndroidEntryPoint
 class FirstActivity : AppCompatActivity(), View.OnClickListener,
     CodeReaderFragment.OnFragmentInteractionListener,
+    CodeVerificationFragment.OnFragmentInteractionListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var binding: ActivityFirstBinding
@@ -81,6 +85,9 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private val mContext: Context? = this
     private val mSerilaDrv: UARTDriver? = UARTDriver.create(mContext)
 
+    private lateinit var mCodeReaderFrag: Fragment;
+    private lateinit var mCodeVerificationFrag: Fragment;
+
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -89,8 +96,21 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
 
     override fun onFragmentInteraction(qrcodeText: String) {
-        var ss: String
-        ss = qrcodeText
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+//        tr.remove(mCodeReaderFrag)
+        var crf : Fragment = CodeVerificationFragment.newInstance(qrcodeText)
+        tr.replace(R.id.frag_anch_point, crf)
+        mCodeVerificationFrag = crf
+        tr.commitAllowingStateLoss()
+    }
+
+    override fun onFragmentInteraction(certSimple: CertificateSimple) {
+        var cert : CertificateSimple
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+        tr.remove(mCodeVerificationFrag)
+        tr.commitAllowingStateLoss()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -223,8 +243,6 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
 
         binding.uartButton.setOnClickListener{
-
-
             binding.uartTest.text = "Open OK";
             if(mSerilaDrv?.init() == false)
             {
@@ -426,7 +444,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val tr = fm.beginTransaction()
         tr.add(R.id.frag_anch_point, crf)
         tr.commitAllowingStateLoss()
-//        curFragment = fragment
+        mCodeReaderFrag = crf
     }
 
     override fun onClick(v: View?) {
