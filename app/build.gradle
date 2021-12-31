@@ -46,6 +46,10 @@ def androidExclusion = [
         '**/Key*.*'
 ]
 
+jacoco {
+    toolVersion = '0.8.7'
+}
+
 task codeCoverageDebugReport(type: JacocoReport, dependsOn: 'testDebugUnitTest') {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
@@ -186,7 +190,7 @@ dependencies {
     implementation Deps.hilt
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.31"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:${Versions.kotlin}"
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     kapt Deps.hilt_compiler
     implementation Deps.hilt_viewmodel
