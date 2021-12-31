@@ -206,6 +206,18 @@ dependencies {
     dokkaHtmlPlugin("org.jetbrains.dokka:kotlin-as-java-plugin:$dokka_version")
 
     implementation project(':usbSerialForAndroid')
+
+    // CameraX core library using the camera2 implementation
+    // The following line is optional, as the core library is included indirectly by camera-camera2
+    implementation("androidx.camera:camera-core:1.1.0-alpha11")
+    implementation("androidx.camera:camera-camera2:1.1.0-alpha11")
+    // If you want to additionally use the CameraX Lifecycle library
+    implementation("androidx.camera:camera-lifecycle:1.1.0-alpha11")
+    // If you want to additionally use the CameraX View class
+    implementation("androidx.camera:camera-view:1.0.0-alpha31")
+    // If you want to additionally use the CameraX Extensions library
+    implementation("androidx.camera:camera-extensions:1.0.0-alpha31")
+    implementation 'com.google.guava:guava:27.0.1-android'
 }
 
 dokkaHtml.configure {
