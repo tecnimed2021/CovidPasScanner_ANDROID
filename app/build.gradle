@@ -81,7 +81,7 @@ task codeCoverageReleaseReport(type: JacocoReport, dependsOn: 'testReleaseUnitTe
             dir: 'build/tmp/kotlin-classes/release',
             excludes: androidExclusion
     ))
-    getSourceDirectories().setFrom(files('src/main/java/it/ministerodellasalute/verificaC19'))
+    getSourceDirectories().setFrom(files('src/main/java/it/tecnimed/covidpasscanner'))
     getExecutionData().setFrom(files('build/jacoco/testReleaseUnitTest.exec'))
 }
 
