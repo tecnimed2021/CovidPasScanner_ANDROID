@@ -11,7 +11,9 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.13269927536231885" />
         <entry key="app/src/main/res/layout/fragment_code_reader.xml" value="0.18958333333333333" />
         <entry key="app/src/main/res/layout/fragment_code_verification.xml" value="0.246875" />
+        <entry key="app/src/main/res/layout/fragment_userdata_reader.xml" value="0.18958333333333333" />
         <entry key="app/src/main/res/layout/fragment_verification.xml" value="0.15896739130434784" />
+        <entry key="app/src/main/res/layout/user_data_reader_fragment.xml" value="0.18958333333333333" />
       </map>
     </option>
   </component>
