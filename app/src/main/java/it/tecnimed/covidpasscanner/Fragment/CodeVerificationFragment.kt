@@ -127,7 +127,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener {
                     binding.TVGreenPassValidity.text = "NON EU DCC"
                     binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ff0000"))
                 }
-                Log.d("Timestamp", it.timeStamp?.parseTo(FORMATTED_VALIDATION_DATE));
+//                Log.d("Timestamp", it.timeStamp?.parseTo(FORMATTED_VALIDATION_DATE));
                 if (
                     viewModel.getTotemMode() &&
                     (certificate.certificateStatus == CertificateStatus.VALID)

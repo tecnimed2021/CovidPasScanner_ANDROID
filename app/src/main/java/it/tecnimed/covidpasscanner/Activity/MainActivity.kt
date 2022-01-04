@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
                                         Log.d("Cert Status", "NOT VALID YET");
                                 else if(certificate.certificateStatus == CertificateStatus.NOT_EU_DCC)
                                         Log.d("Cert Status", "NOT EU DCC");
-                                Log.d("Timestamp", it.timeStamp?.parseTo(FORMATTED_VALIDATION_DATE));
+//                                Log.d("Timestamp", it.timeStamp?.parseTo(FORMATTED_VALIDATION_DATE));
                                 if (
                                         viewModel.getTotemMode() &&
                                         (certificate.certificateStatus == CertificateStatus.VALID)
