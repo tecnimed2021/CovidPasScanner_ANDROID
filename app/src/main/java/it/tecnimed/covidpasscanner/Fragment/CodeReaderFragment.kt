@@ -191,8 +191,16 @@ class CodeReaderFragment : Fragment(),
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.back_image -> requireActivity().finish()
-            R.id.back_text -> requireActivity().finish()
+            R.id.back_image -> {
+                if (mListener != null) {
+                    mListener!!.onFragmentInteraction("")
+                }
+            }
+            R.id.back_text -> {
+                if (mListener != null) {
+                    mListener!!.onFragmentInteraction("")
+                }
+            }
             R.id.flip_camera -> {
                 binding.barcodeScanner.pause()
                 binding.barcodeScanner.cameraSettings.requestedCameraId *= -1

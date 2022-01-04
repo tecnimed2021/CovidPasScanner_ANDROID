@@ -98,11 +98,16 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     override fun onFragmentInteraction(qrcodeText: String) {
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-//        tr.remove(mCodeReaderFrag)
-        var crf : Fragment = CodeVerificationFragment.newInstance(qrcodeText)
-        tr.replace(R.id.frag_anch_point, crf)
-        mCodeVerificationFrag = crf
-        tr.commitAllowingStateLoss()
+        if(qrcodeText != ""){
+            var crf : Fragment = CodeVerificationFragment.newInstance(qrcodeText)
+            tr.replace(R.id.frag_anch_point, crf)
+            mCodeVerificationFrag = crf
+            tr.commitAllowingStateLoss()
+        }
+        else{
+            tr.remove(mCodeReaderFrag)
+            tr.commitAllowingStateLoss()
+        }
     }
 
     override fun onFragmentInteraction(certSimple: CertificateSimple) {
