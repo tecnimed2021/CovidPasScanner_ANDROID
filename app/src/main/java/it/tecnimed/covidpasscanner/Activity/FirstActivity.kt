@@ -56,6 +56,7 @@ import it.tecnimed.covidpasscanner.BuildConfig
 import it.tecnimed.covidpasscanner.Fragment.CodeReaderFragment
 import it.tecnimed.covidpasscanner.Fragment.CodeVerificationFragment
 import it.tecnimed.covidpasscanner.Fragment.CodeVerificationFragment_GeneratedInjector
+import it.tecnimed.covidpasscanner.Fragment.UserDataReaderFragment
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.VerificaApplication
 import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
@@ -73,6 +74,7 @@ import java.util.*
 class FirstActivity : AppCompatActivity(), View.OnClickListener,
     CodeReaderFragment.OnFragmentInteractionListener,
     CodeVerificationFragment.OnFragmentInteractionListener,
+    UserDataReaderFragment.OnFragmentInteractionListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var binding: ActivityFirstBinding
@@ -87,11 +89,18 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private lateinit var mCodeReaderFrag: Fragment;
     private lateinit var mCodeVerificationFrag: Fragment;
+    private lateinit var mUserDataReaderFrag: Fragment;
 
-    private val requestPermissionLauncher =
+    private val requestPermissionLauncherQr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
                 openQrCodeReader()
+            }
+        }
+    private val requestPermissionLauncherOcr =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+            if (isGranted) {
+                openOcrReader()
             }
         }
 
@@ -115,6 +124,13 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
         tr.remove(mCodeVerificationFrag)
+        tr.commitAllowingStateLoss()
+    }
+
+    override fun onFragmentInteraction() {
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+        tr.remove(mUserDataReaderFrag)
         tr.commitAllowingStateLoss()
     }
 
@@ -171,6 +187,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         viewModel.fetchStatus.observe(this) {
             if (it) {
                 binding.qrButton.background.alpha = 128
+                binding.ocrButton.background.alpha = 128
             } else {
                 if (!viewModel.getIsPendingDownload() && viewModel.maxRetryReached.value == false) {
                     viewModel.getDateLastSync().let { date ->
@@ -182,6 +199,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                         )
                     }
                     binding.qrButton.background.alpha = 255
+                    binding.ocrButton.background.alpha = 255
                     hideDownloadProgressViews()
                 }
             }
@@ -204,6 +222,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             if (it != -1L) {
                 if (it == 0.toLong() || viewModel.getIsPendingDownload()) {
                     binding.qrButton.background.alpha = 128
+                    binding.ocrButton.background.alpha = 128
                     binding.resumeDownload.visibility = VISIBLE
                     binding.dateLastSyncText.text = getString(R.string.incompleteDownload)
                     binding.chunkCount.visibility = VISIBLE
@@ -227,6 +246,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private fun setOnClickListeners() {
         binding.qrButton.setOnClickListener(this)
+        binding.ocrButton.setOnClickListener(this)
         binding.scanModeButton.setOnClickListener(this)
         binding.initDownload.setOnClickListener {
             if (Utility.isOnline(this)) {
@@ -309,32 +329,61 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
 
-    private fun checkCameraPermission() {
+    private fun checkCameraPermissionQr() {
         if (ContextCompat.checkSelfPermission(
                 this,
                 Manifest.permission.CAMERA
             ) == PackageManager.PERMISSION_DENIED
         ) {
-            createPermissionAlert()
+            createPermissionAlertQr()
         } else {
             openQrCodeReader()
         }
     }
 
-    private fun createPermissionAlert() {
+    private fun checkCameraPermissionOcr() {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.CAMERA
+            ) == PackageManager.PERMISSION_DENIED
+        ) {
+            createPermissionAlertOcr()
+        } else {
+            openOcrReader()
+        }
+    }
+
+    private fun createPermissionAlertQr() {
         try {
             val builder = AlertDialog.Builder(this)
             builder.setTitle(getString(R.string.privacyTitle))
             builder.setMessage(getString(R.string.privacy))
             builder.setPositiveButton(getString(R.string.next)) { _, _ ->
-                requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+                requestPermissionLauncherQr.launch(Manifest.permission.CAMERA)
             }
             builder.setNegativeButton(getString(R.string.back)) { _, _ ->
             }
             val dialog = builder.create()
             dialog.show()
         } catch (e: Exception) {
-            requestPermissionLauncher.launch(Manifest.permission.CAMERA)
+            requestPermissionLauncherQr.launch(Manifest.permission.CAMERA)
+        }
+    }
+
+    private fun createPermissionAlertOcr() {
+        try {
+            val builder = AlertDialog.Builder(this)
+            builder.setTitle(getString(R.string.privacyTitle))
+            builder.setMessage(getString(R.string.privacy))
+            builder.setPositiveButton(getString(R.string.next)) { _, _ ->
+                requestPermissionLauncherOcr.launch(Manifest.permission.CAMERA)
+            }
+            builder.setNegativeButton(getString(R.string.back)) { _, _ ->
+            }
+            val dialog = builder.create()
+            dialog.show()
+        } catch (e: Exception) {
+            requestPermissionLauncherOcr.launch(Manifest.permission.CAMERA)
         }
     }
 
@@ -389,6 +438,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         binding.resumeDownload.visibility = INVISIBLE
         binding.initDownload.visibility = VISIBLE
         binding.qrButton.background.alpha = 128
+        binding.ocrButton.background.alpha = 128
         hideDownloadProgressViews()
         binding.dateLastSyncText.text = when (viewModel.getTotalSizeInByte()) {
             0L -> {
@@ -442,8 +492,6 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun openQrCodeReader() {
-//        val intent = Intent(this, MainActivity::class.java)
-//        startActivity(intent)
         var crf : Fragment = CodeReaderFragment()
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
@@ -452,22 +500,31 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         mCodeReaderFrag = crf
     }
 
+    private fun openOcrReader() {
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+        var crf : Fragment = UserDataReaderFragment.newInstance("", "")
+        tr.add(R.id.frag_anch_point, crf)
+        tr.commitAllowingStateLoss()
+        mUserDataReaderFrag = crf
+    }
+
     override fun onClick(v: View?) {
         if (v?.id == R.id.qrButton) {
-            /*
-            viewModel.getDateLastSync().let {
-                if (!viewModel.getScanModeFlag() && v.id != R.id.scan_mode_button) {
-                    createNoScanModeChosenAlert()
+            viewModel.getDrlDateLastSync().let {
+                if (binding.resumeDownload.isVisible) {
+                    createNoSyncAlertDialog(getString(R.string.label_drl_download_in_progress))
                     return
-                } else if (it == -1L) {
-                    createNoSyncAlertDialog(getString(R.string.noKeyAlertMessage))
+                }
+                if ((viewModel.getIsDrlSyncActive() && System.currentTimeMillis() >= it + 24 * 60 * 60 * 1000) ||
+                    (viewModel.getIsDrlSyncActive() && it == -1L)
+                ) {
+                    createNoSyncAlertDialog(getString(R.string.noKeyAlertMessageForDrl))
                     return
                 }
             }
-            */
         }
-
-        if (v?.id == R.id.qrButton) {
+        if (v?.id == R.id.ocrButton) {
             viewModel.getDrlDateLastSync().let {
                 if (binding.resumeDownload.isVisible) {
                     createNoSyncAlertDialog(getString(R.string.label_drl_download_in_progress))
@@ -483,7 +540,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
 
         when (v?.id) {
-            R.id.qrButton -> checkCameraPermission()
+            R.id.qrButton -> checkCameraPermissionQr()
+            R.id.ocrButton -> checkCameraPermissionOcr()
             R.id.scan_mode_button -> showScanModeChoiceAlertDialog()
         }
     }
@@ -602,6 +660,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                     if (viewModel.getResumeAvailable() == 0L) {
                         binding.resumeDownload.visibility = VISIBLE
                         binding.qrButton.background.alpha = 128
+                        binding.ocrButton.background.alpha = 128
                     }
                 }
                 PrefKeys.KEY_DRL_DATE_LAST_FETCH -> {
