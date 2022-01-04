@@ -82,6 +82,8 @@
                 android:id="@+id/qrButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="80dp"
                 android:drawableTint="@color/white"
                 android:text="QR CODE"
                 android:textAlignment="textStart"
@@ -89,14 +91,28 @@
                 android:textSize="15sp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <Button
+                android:id="@+id/ocrButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="28dp"
+                android:layout_marginBottom="80dp"
+                android:drawableTint="@color/white"
+                android:text="OCR"
+                android:textAlignment="textStart"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/qrButton" />
 
             <Button
                 android:id="@+id/uartButton"
-                android:layout_width="128dp"
+                android:layout_width="wrap_content"
                 android:layout_height="55dp"
-                android:layout_marginBottom="68dp"
+                android:layout_marginBottom="57dp"
                 android:drawableTint="@color/white"
                 android:text="Test Uart"
                 android:textAlignment="textStart"
@@ -105,16 +121,17 @@
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/scan_mode_button"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.091"
+                app:layout_constraintHorizontal_bias="0.083"
                 app:layout_constraintStart_toStartOf="parent" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/uartTest"
-                android:layout_width="203dp"
-                android:layout_height="24dp"
-                android:layout_marginBottom="92dp"
+                android:layout_width="238dp"
+                android:layout_height="43dp"
+                android:layout_marginBottom="66dp"
                 android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@id/scan_mode_button"
+                app:layout_constraintLeft_toRightOf="@id/uartButton"
                 app:layout_constraintRight_toRightOf="parent"
                 tools:text="Idle" />
 
@@ -123,7 +140,7 @@
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
+                android:layout_marginBottom="76dp"
                 android:backgroundTint="@android:color/transparent"
                 android:insetBottom="0dp"
                 android:text="@string/label_choose_scan_mode"
@@ -132,6 +149,7 @@
 
                 app:layout_constraintBottom_toTopOf="@id/qrButton"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
                 app:strokeWidth="1dp" />
 
