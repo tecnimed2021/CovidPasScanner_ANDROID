@@ -85,7 +85,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private val verificaApplication = VerificaApplication()
 
     private val mContext: Context? = this
-    private val mSerilaDrv: UARTDriver? = UARTDriver.create(mContext)
+    private lateinit  var mSerialDrv: UARTDriver
 
     private lateinit var mCodeReaderFrag: Fragment;
     private lateinit var mCodeVerificationFrag: Fragment;
@@ -143,6 +143,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         setOnClickListeners()
         setupUI()
         observeLiveData()
+        mSerialDrv = UARTDriver.create(mContext)
     }
 
     private fun observeLiveData() {
@@ -269,12 +270,12 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
         binding.uartButton.setOnClickListener{
             binding.uartTest.text = "Open OK";
-            if(mSerilaDrv?.init() == false)
+            if(mSerialDrv?.init() == false)
             {
                 binding.uartTest.text = "Init Fail";
             }
             else {
-                if (mSerilaDrv?.openPort(
+                if (mSerialDrv?.openPort(
                         UARTDriver.UARTDRIVER_PORT_MODE_NOEVENT,
                         0,
                         38400,
