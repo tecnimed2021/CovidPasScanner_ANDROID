@@ -134,6 +134,9 @@ class CodeReaderFragment : Fragment(),
         binding.barcodeScanner.barcodeView.decoderFactory = DefaultDecoderFactory(formats, hintsMap, null, 0)
         binding.barcodeScanner.cameraSettings.isAutoFocusEnabled = true
 
+        // Force Front Camera
+        viewModel.setFrontCameraStatus(true)
+
         if (viewModel.getFrontCameraStatus()) {
             binding.barcodeScanner.barcodeView.cameraSettings.focusMode =
                 CameraSettings.FocusMode.INFINITY
@@ -148,6 +151,8 @@ class CodeReaderFragment : Fragment(),
 
         if (viewModel.getFrontCameraStatus()) {
             binding.torchButton.visibility = View.INVISIBLE
+        } else {
+            binding.torchButton.visibility = View.VISIBLE
         }
 
         if (!hasFlash()) {
@@ -216,6 +221,12 @@ class CodeReaderFragment : Fragment(),
                     binding.torchButton.visibility = View.INVISIBLE
                 } else {
                     binding.torchButton.visibility = View.VISIBLE
+                }
+                if (!hasFlash()) {
+                    binding.torchButton.visibility = View.GONE
+                } else {
+                    binding.torchButton.setOnClickListener(this)
+                    binding.barcodeScanner.setTorchListener(this)
                 }
             }
             R.id.torch_button -> {

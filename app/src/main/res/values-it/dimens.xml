@@ -1,0 +1,28 @@
+<resources>
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="activity_horizontal_margin">0dp</dimen>
+    <dimen name="activity_vertical_margin">0dp</dimen>
+
+    <!-- Testi -->
+    <dimen name="testo_titolo">20dp</dimen>
+    <dimen name="testo_valori">20dp</dimen>
+    <dimen name="testo_valori_piccolo">16dp</dimen>
+
+    <!-- Pagina Intro -->
+    <dimen name="intro_ivlogo_sizex">100dp</dimen>
+    <dimen name="intro_ivlogo_sizey">100dp</dimen>
+
+    <!-- Pagina Connect -->
+    <dimen name="connect_listaimpianti_y">160dp</dimen>
+
+    <!-- Fragment List -->
+    <!-- Item DatiRaccordo -->
+    <dimen name="item_datiraccordo_tv1">216dp</dimen>
+    <dimen name="item_datiraccordo_tv2">100dp</dimen>
+    <!-- Item SaldaturaDetails -->
+    <dimen name="item_saldaturadetails_tv1">180dp</dimen>
+    <dimen name="item_saldaturadetails_tv2">180dp</dimen>
+
+    <!-- Pagina Guida -->
+    <integer name="webiview_scala_default">180</integer>
+</resources>

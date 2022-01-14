@@ -61,9 +61,14 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
 
     private var mFirstName : String? = ""
     private var mLastName : String? = ""
+    private var mFirstNameFounded: Boolean? = false
+    private var mLastNameFounded: Boolean? = false
+
 
     private lateinit var cameraExecutor: ExecutorService
     private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+
+    private var mFoundUserData: Boolean? = null
 
     val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
@@ -74,7 +79,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
      * within the fragment.
      */
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction()
+        fun onFragmentInteraction(UserDataFound: Boolean)
     }
 
     override fun onAttach(activity: Activity) {
@@ -122,7 +127,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.BBack -> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteraction()
+                    mListener!!.onFragmentInteraction(false)
                 }
             }
         }
@@ -199,13 +204,21 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
                                                 val elementCornerPoints = element.cornerPoints
                                                 val elementFrame = element.boundingBox
                                                 mytext = mytext.plus(" ").plus(elementText)
-                                                binding?.TVResult.text =  mytext
+                                                if(elementText.contains(mFirstName.toString()))
+                                                    mFirstNameFounded = true;
+                                                if(elementText.contains(mLastName.toString()))
+                                                    mLastNameFounded = true;
+                                                binding?.TVResult.text = mytext
                                             }
                                         }
                                     }
                                     // after done, release the ImageProxy object
                                     imageProxy.close()
                                     // ...
+                                    if(mFirstNameFounded == true && mLastNameFounded == true)
+                                    {
+                                        binding?.TVResult.text = "Trovato"
+                                    }
                                 }
                                 .addOnFailureListener { e ->
                                     // Task failed with an exception

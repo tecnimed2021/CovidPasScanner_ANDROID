@@ -1,0 +1,92 @@
+<resources>
+    <string name="app_name">CovidPasScanner</string>
+
+    <!-- Generiche -->
+    <string name="vuoto"></string>
+    <string name="strint">%1$d</string>
+    <string name="strstr">%1$s</string>
+    <string name="str2str">%1$s:%2$s</string>
+    <string name="strf21">%1$2.1f</string>
+    <string name="strf41">%1$4.1f</string>
+    <string name="strf42">%1$4.2f</string>
+    <string name="strf55">%1$5.5f</string>
+    <string name="strf61">%1$6.1f</string>
+    <string name="strf62">%1$6.2f</string>
+    <string name="strf1010">%1$10.10f</string>
+    <string name="strc3">%1$d%2$d%3$d</string>
+    <string name="strc5">%1$d%2$d%3$d%4$d%5$d</string>
+    <string name="strdata">%1$02d/%2$02d/%3$02d</string>
+    <string name="strora">%1$02d:%2$02d</string>
+    <string name="sqldateformat">yyyy-MM-dd HH:mm:ss</string>
+    <string name="userdateformat">dd-MM-yyyy HH:mm:ss</string>
+    <string name="invia">Invia</string>
+    <string name="ok">OK</string>
+    <string name="annulla">Annulla</string>
+    <string name="esci">Esci</string>
+    <string name="nonsalvare">Non Salvare</string>
+    <string name="next">Avanti</string>
+    <string name="back">Indietro</string>
+
+    <!-- ActionBar Menu -->
+    <string name="action_appver">Rev. 1.00.00</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_home">Home</string>
+    <string name="action_info">Info</string>
+    <string name="action_setup">Setup</string>
+    <string name="action_mail">Mail</string>
+
+    <!-- Activity Intro -->
+    <string name="title_activity_intro">CovidPasScanner</string>
+
+    <!-- Activity First -->
+    <string name="version"><u><b>Rev. %1$s</b></u></string>
+    <string name="privacyTitle"></string>
+    <string name="privacy">CovidPasScanner scansiona il QRcode presente sulla certificazione tramite la fotocamera del dispositivo. Nessun dato letto dalla Certificazione viene memorizzato sul dispositivo con cui si effettua la verifica.
+\n\nPer utilizzare l\'app è necessario fornire il consenso all\'uso della fotocamera.</string>
+    <string name="lastSyncDate">Ultimo aggiornamento dati e regole:\n%1$s</string>
+    <string name="notAvailable">N/A</string>
+    <string name="label_scan_mode">Tipologia verifica</string>
+    <string name="label_choose_scan_mode">Scegli tipologia di verifica</string>
+    <string name="label_no_scan_mode_chosen">Per procedere alla scansione selezionare una delle due tipologie di verifica della Certificazione verde Covid-19: BASE o RAFFORZATA.
+\nTipologia BASE: la app considera valide le certificazioni verdi generate da vaccinazione, da guarigione, da tampone. Viene utilizzata per l\'accesso ai luoghi di lavoro, mezzi di trasporto pubblico o privato di linea, impianti sciistici chiusi, strutture ricettive, strutture sanitarie, attività sportive e culturali al chiuso, sagre e fiere, ecc .\n
+\nTipologia RAFFORZATA: la app considera valide solo le certificazioni verdi generate da vaccinazione o da guarigione. Viene utilizzata per accedere a spettacoli, eventi sportivi, ristorazione al chiuso, feste e discoteche, cerimonie pubbliche, ecc. \n
+\nIndicazioni di dettaglio sulle attività consentite senza/con green pass BASE e RAFFORZATO (link https://www.governo.it/sites/governo.it/files/documenti/documenti/Notizie-allegati/tabella_attivita_consentite.pdf)\n
+\nIl dettaglio dell\'uso è nella tabella della PCM al seguente link https://www.governo.it/sites/governo.it/files/documenti/documenti/Notizie-allegati/tabella_attivita_consentite.pdf</string>
+    <string name="scan_mode_3G_header">Verifica Base</string>
+    <string name="scan_mode_2G_header">Verifica Rafforzata</string>
+    <string name="scan_mode_3G">Vaccinazione/Guarigione/Tampone</string>
+    <string name="scan_mode_2G">Vaccinazione/Guarigione</string>
+    <string name="loading">Ultimo aggiornamento dati e regole:\nAggiornamento in corso...</string>
+    <string name="incompleteDownload">L\'aggiornamento della lista delle Certificazione verdi COVID-19 revocate è incompleto. Assicurati di essere connesso a Internet e clicca per continuare.</string>
+    <string name="updatingRevokedPass">È in corso l\'aggiornamento della lista delle Certificazioni verdi COVID-19 revocate.</string>
+    <string name="titleDownloadAlert">Aggiornamento lista Certificazioni revocate da %1$.2fMb.</string>
+    <string name="label_download_alert_complete">È necessario aggiornare la lista delle Certificazione verdi COVID-19 revocate per un totale di %1$.2fMB.</string>
+    <string name="label_download_alert_simple">È necessario aggiornare la lista delle Certificazione verdi COVID-19 revocate.</string>
+    <string name="label_drl_download_in_progress">L\'aggiornamento della lista delle Certificazione verdi COVID-19 revocate è incompleto. Assicurati di essere connesso a Internet e clicca per continuare.</string>
+    <string name="label_alert_dialog_option">%1$s (%2$s)</string>
+    <string name="noKeyAlertTitle">Impossibile scansionare</string>
+    <string name="noKeyAlertMessage">L\'applicazione deve connettersi alla rete almeno una volta per essere utilizzata.</string>
+    <string name="noKeyAlertMessageForDrl">Per utilizzare l\'applicazione è necessario aggiornare la lista delle Certificazione verdi COVID-19 revocate.</string>
+    <string name="messageDownloadAlert">È necessario aggiornare la lista delle Certificazione verdi COVID-19 revocate, per un totale di %1$.2fMB. Controlla il tuo piano dati oppure connettiti a una rete wi-fi prima di procedere. Il tempo di aggiornamento dipende dalla velocità di connessione e dal tipo di device in uso.La lista verrà aggiornata ogni 24 ore.</string>
+    <string name="messageDownloadStarted">È in corso l\'aggiornamento della lista delle Certificazioni verdi COVID-19 revocate. Attendere la fine del download per procedere con le scansioni.</string>
+    <string name="chunk_count">Pacchetto %1$d su %2$d</string>
+    <string name="chunk_size">%1$.2f Mb su %2$.2f Mb</string>
+    <string name="updateTitle">Aggiornamento richiesto</string>
+    <string name="updateMessage">Per continuare ad utilizzare l\'applicazione, scarica la nuova versione dallo store.</string>
+    <string name="updateLabel">Aggiorna</string>
+    <string name="no_internet_title">Connessione internet assente</string>
+    <string name="no_internet_message">Connessione internet assente. Assicurati di essere connesso alla rete e riprova.</string>
+    <string name="label_download">Scarica Ora</string>
+    <string name="exit_download">Esci</string>
+    <string name="after_download">Più tardi</string>
+    <string name="resume_download">Riprendi</string>
+    <string name="label_return_home">Torna all\'inizio</string>
+
+    <string name="label_start_verify">START VERIFY</string>
+    <string name="label_position_greenpass">PLACE THE GREEN PASS</string>
+    <string name="label_position_iddoc">PLACE THE IDENTIFICATION DOCUMENT</string>
+
+    <string name="label_gp_valid">VALIDO</string>
+    <string name="label_gp_notvalid">NON VALIDO</string>
+
+</resources>

@@ -87,9 +87,13 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private val mContext: Context? = this
     private lateinit  var mSerialDrv: UARTDriver
 
+    private val DebugActive: Boolean = false
+
     private lateinit var mCodeReaderFrag: Fragment;
     private lateinit var mCodeVerificationFrag: Fragment;
     private lateinit var mUserDataReaderFrag: Fragment;
+
+    private lateinit var mCertSimple: CertificateSimple
 
     private val requestPermissionLauncherQr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -110,8 +114,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         if(qrcodeText != ""){
             var crf : Fragment = CodeVerificationFragment.newInstance(qrcodeText)
             tr.replace(R.id.frag_anch_point, crf)
-            mCodeVerificationFrag = crf
             tr.commitAllowingStateLoss()
+            mCodeVerificationFrag = crf
         }
         else{
             tr.remove(mCodeReaderFrag)
@@ -120,14 +124,19 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     override fun onFragmentInteraction(certSimple: CertificateSimple) {
-        var cert : CertificateSimple
+        // CodeVerificationFragment
+        mCertSimple = certSimple
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-        tr.remove(mCodeVerificationFrag)
+//        tr.remove(mCodeVerificationFrag)
+        var crf : Fragment = UserDataReaderFragment.newInstance("", "")
+        tr.replace(R.id.frag_anch_point, crf)
         tr.commitAllowingStateLoss()
+        mUserDataReaderFrag = crf
     }
 
-    override fun onFragmentInteraction() {
+    override fun onFragmentInteraction(UserDataFound: Boolean) {
+        // UserDataReadFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
         tr.remove(mUserDataReaderFrag)
@@ -188,7 +197,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         viewModel.fetchStatus.observe(this) {
             if (it) {
                 binding.qrButton.background.alpha = 128
-                binding.ocrButton.background.alpha = 128
+                if(DebugActive)
+                    binding.ocrButton.background.alpha = 128
             } else {
                 if (!viewModel.getIsPendingDownload() && viewModel.maxRetryReached.value == false) {
                     viewModel.getDateLastSync().let { date ->
@@ -200,7 +210,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                         )
                     }
                     binding.qrButton.background.alpha = 255
-                    binding.ocrButton.background.alpha = 255
+                    if(DebugActive)
+                        binding.ocrButton.background.alpha = 255
                     hideDownloadProgressViews()
                 }
             }
@@ -223,7 +234,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             if (it != -1L) {
                 if (it == 0.toLong() || viewModel.getIsPendingDownload()) {
                     binding.qrButton.background.alpha = 128
-                    binding.ocrButton.background.alpha = 128
+                    if(DebugActive)
+                        binding.ocrButton.background.alpha = 128
                     binding.resumeDownload.visibility = VISIBLE
                     binding.dateLastSyncText.text = getString(R.string.incompleteDownload)
                     binding.chunkCount.visibility = VISIBLE
@@ -233,6 +245,12 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                     binding.resumeDownload.visibility = INVISIBLE
                 }
             }
+        }
+        if(DebugActive == false)
+        {
+            binding.ocrButton.visibility = INVISIBLE
+            binding.uartButton.visibility = INVISIBLE
+            binding.uartTest.visibility = INVISIBLE
         }
     }
 
@@ -247,7 +265,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private fun setOnClickListeners() {
         binding.qrButton.setOnClickListener(this)
-        binding.ocrButton.setOnClickListener(this)
+        if(DebugActive)
+            binding.ocrButton.setOnClickListener(this)
         binding.scanModeButton.setOnClickListener(this)
         binding.initDownload.setOnClickListener {
             if (Utility.isOnline(this)) {
@@ -439,7 +458,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         binding.resumeDownload.visibility = INVISIBLE
         binding.initDownload.visibility = VISIBLE
         binding.qrButton.background.alpha = 128
-        binding.ocrButton.background.alpha = 128
+        if(DebugActive)
+            binding.ocrButton.background.alpha = 128
         hideDownloadProgressViews()
         binding.dateLastSyncText.text = when (viewModel.getTotalSizeInByte()) {
             0L -> {
@@ -525,17 +545,19 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                 }
             }
         }
-        if (v?.id == R.id.ocrButton) {
-            viewModel.getDrlDateLastSync().let {
-                if (binding.resumeDownload.isVisible) {
-                    createNoSyncAlertDialog(getString(R.string.label_drl_download_in_progress))
-                    return
-                }
-                if ((viewModel.getIsDrlSyncActive() && System.currentTimeMillis() >= it + 24 * 60 * 60 * 1000) ||
-                    (viewModel.getIsDrlSyncActive() && it == -1L)
-                ) {
-                    createNoSyncAlertDialog(getString(R.string.noKeyAlertMessageForDrl))
-                    return
+        if(DebugActive) {
+            if (v?.id == R.id.ocrButton) {
+                viewModel.getDrlDateLastSync().let {
+                    if (binding.resumeDownload.isVisible) {
+                        createNoSyncAlertDialog(getString(R.string.label_drl_download_in_progress))
+                        return
+                    }
+                    if ((viewModel.getIsDrlSyncActive() && System.currentTimeMillis() >= it + 24 * 60 * 60 * 1000) ||
+                        (viewModel.getIsDrlSyncActive() && it == -1L)
+                    ) {
+                        createNoSyncAlertDialog(getString(R.string.noKeyAlertMessageForDrl))
+                        return
+                    }
                 }
             }
         }
@@ -661,7 +683,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                     if (viewModel.getResumeAvailable() == 0L) {
                         binding.resumeDownload.visibility = VISIBLE
                         binding.qrButton.background.alpha = 128
-                        binding.ocrButton.background.alpha = 128
+                        if(DebugActive)
+                            binding.ocrButton.background.alpha = 128
                     }
                 }
                 PrefKeys.KEY_DRL_DATE_LAST_FETCH -> {

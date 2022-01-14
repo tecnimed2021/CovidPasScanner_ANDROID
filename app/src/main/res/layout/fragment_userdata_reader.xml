@@ -21,7 +21,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/cardview_dark_background"
+    android:background="@android:color/white"
     android:textAlignment="inherit">
 
     <Button
@@ -37,14 +37,28 @@
     <TextView
         android:id="@+id/TVResult"
         android:layout_width="0dp"
-        android:layout_height="133dp"
+        android:layout_height="40dp"
         android:layout_marginTop="40dp"
         android:text="TextView"
-        android:textColor="@color/white"
+        android:textColor="@color/covidpasscanner_brown"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toRightOf="@id/BBack"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/TVUserVerifyTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="@string/label_position_iddoc"
+        android:textAlignment="center"
+        android:textColor="@color/covidpasscanner_brown"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/BBack" />
 
     <FrameLayout
         android:id="@+id/LyCamera"
@@ -53,7 +67,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/BBack">
+        app:layout_constraintTop_toBottomOf="@id/TVUserVerifyTitle">
 
         <androidx.camera.view.PreviewView
             android:id="@+id/previewView"

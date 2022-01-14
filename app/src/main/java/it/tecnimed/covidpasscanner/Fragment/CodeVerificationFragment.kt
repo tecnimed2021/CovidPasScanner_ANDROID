@@ -27,11 +27,14 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.*
+import it.tecnimed.covidpasscanner.VL.VLTimer
+import it.tecnimed.covidpasscanner.VL.VLTimer.OnTimeElapsedListener
 import it.tecnimed.covidpasscanner.databinding.FragmentCodeVerificationBinding
 import it.tecnimed.covidpasscanner.model.CertificateSimple
 import it.tecnimed.covidpasscanner.model.CertificateStatus
@@ -45,7 +48,7 @@ import java.util.*
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
-class CodeVerificationFragment : Fragment(), View.OnClickListener {
+class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsedListener {
 
 //    private val args by navArgs<VerificationFragmentArgs>()
     private val viewModel by viewModels<VerificationViewModel>()
@@ -55,6 +58,8 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener {
     private lateinit var certificateModel: CertificateSimple
 
     private var qrcodestr : String? = ""
+
+    private lateinit var mTimeVar: VLTimer
 
     private var mListener: OnFragmentInteractionListener? = null
     /**
@@ -112,11 +117,11 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener {
                 binding.TVNome.text = it.person?.givenName
                 binding.TVDataNascita.text = it.dateOfBirth?.formatDateOfBirth() ?: ""
                 if(certificate.certificateStatus == CertificateStatus.VALID) {
-                    binding.TVGreenPassValidity.text = "VALIDO"
+                    binding.TVGreenPassValidity.text = getString(R.string.label_gp_valid)
                     binding.TVGreenPassValidity.setTextColor(Color.parseColor("#00ff00"))
                 }
                 else if(certificate.certificateStatus == CertificateStatus.NOT_VALID) {
-                    binding.TVGreenPassValidity.text = "NON VALIDO"
+                    binding.TVGreenPassValidity.text = getString(R.string.label_gp_notvalid)
                     binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ff0000"))
                 }
                 else if(certificate.certificateStatus == CertificateStatus.NOT_VALID_YET) {
@@ -127,12 +132,10 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener {
                     binding.TVGreenPassValidity.text = "NON EU DCC"
                     binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ff0000"))
                 }
-//                Log.d("Timestamp", it.timeStamp?.parseTo(FORMATTED_VALIDATION_DATE));
-                if (
-                    viewModel.getTotemMode() &&
-                    (certificate.certificateStatus == CertificateStatus.VALID)
-                ) {
-                    Log.d("Validita", "Valido");
+                if (certificate.certificateStatus == CertificateStatus.VALID) {
+                    mTimeVar = VLTimer.create(this)
+                    mTimeVar.startSingle(1000)
+                    Log.d("Validita", getString(R.string.label_gp_valid));
                 }
             }
         }
@@ -166,6 +169,15 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener {
         super.onDestroyView()
         _binding = null
     }
+
+    override fun VLTimerTimeElapsed(timer: VLTimer) {
+        if (timer === mTimeVar) {
+            if (mListener != null) {
+                mListener!!.onFragmentInteraction(certificateModel)
+            }
+        }
+    }
+
 
     companion object {
         /**
