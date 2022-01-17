@@ -89,4 +89,7 @@
     <string name="label_gp_valid">VALIDO</string>
     <string name="label_gp_notvalid">NON VALIDO</string>
 
+    <string name="label_ud_valid">B E N V E N U T O</string>
+    <string name="label_ud_notvalid">ACCESSO NEGATO</string>
+
 </resources>

@@ -91,5 +91,8 @@ It is used to access shows, sporting events, indoor dining, parties and discos, 
     <string name="label_gp_valid">VALID</string>
     <string name="label_gp_notvalid">NOT VALID</string>
 
+    <string name="label_ud_valid">W E L C O M E</string>
+    <string name="label_ud_notvalid">ACCESS DENIED</string>
+
 
 </resources>

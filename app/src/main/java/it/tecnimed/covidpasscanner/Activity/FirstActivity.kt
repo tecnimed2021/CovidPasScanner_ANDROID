@@ -53,10 +53,7 @@ import androidx.fragment.app.Fragment
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.Activity.MainActivity
 import it.tecnimed.covidpasscanner.BuildConfig
-import it.tecnimed.covidpasscanner.Fragment.CodeReaderFragment
-import it.tecnimed.covidpasscanner.Fragment.CodeVerificationFragment
-import it.tecnimed.covidpasscanner.Fragment.CodeVerificationFragment_GeneratedInjector
-import it.tecnimed.covidpasscanner.Fragment.UserDataReaderFragment
+import it.tecnimed.covidpasscanner.Fragment.*
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.VerificaApplication
 import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
@@ -75,6 +72,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     CodeReaderFragment.OnFragmentInteractionListener,
     CodeVerificationFragment.OnFragmentInteractionListener,
     UserDataReaderFragment.OnFragmentInteractionListener,
+    UserDataVerificationFragment.OnFragmentInteractionListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var binding: ActivityFirstBinding
@@ -92,6 +90,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private lateinit var mCodeReaderFrag: Fragment;
     private lateinit var mCodeVerificationFrag: Fragment;
     private lateinit var mUserDataReaderFrag: Fragment;
+    private lateinit var mUserDataVerificationFrag: Fragment;
 
     private lateinit var mCertSimple: CertificateSimple
 
@@ -129,7 +128,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
 //        tr.remove(mCodeVerificationFrag)
-        var crf : Fragment = UserDataReaderFragment.newInstance("", "")
+        var crf : Fragment = UserDataReaderFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
         tr.replace(R.id.frag_anch_point, crf)
         tr.commitAllowingStateLoss()
         mUserDataReaderFrag = crf
@@ -137,6 +136,21 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     override fun onFragmentInteraction(UserDataFound: Boolean) {
         // UserDataReadFragment
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+//        tr.remove(mUserDataReaderFrag)
+        var crf : Fragment
+        if(UserDataFound == false)
+            crf = UserDataVerificationFragment.newInstance("", "")
+        else
+            crf = UserDataVerificationFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
+        tr.replace(R.id.frag_anch_point, crf)
+        tr.commitAllowingStateLoss()
+        mUserDataVerificationFrag = crf
+    }
+
+    override fun onFragmentInteraction() {
+        // UserDataVerificationFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
         tr.remove(mUserDataReaderFrag)
