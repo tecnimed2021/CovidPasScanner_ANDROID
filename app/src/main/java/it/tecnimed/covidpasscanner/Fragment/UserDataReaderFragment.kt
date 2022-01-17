@@ -33,6 +33,7 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -40,6 +41,7 @@ import androidx.lifecycle.observe
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.*
 import it.tecnimed.covidpasscanner.databinding.FragmentUserdataReaderBinding
@@ -64,6 +66,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
     private var mFirstNameFounded: Boolean? = false
     private var mLastNameFounded: Boolean? = false
 
+    private lateinit var beepManager: BeepManager
 
     private lateinit var cameraExecutor: ExecutorService
     private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
@@ -120,6 +123,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        beepManager = BeepManager(requireActivity())
         startCamera()
     }
 
@@ -135,8 +139,8 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null
         cameraExecutor.shutdown()
+        _binding = null
     }
 
     companion object {
@@ -169,6 +173,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
             val preview = Preview.Builder()
                 .build()
                 .also {
+                    binding.previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
 
@@ -217,7 +222,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
                                     // ...
                                     if(mFirstNameFounded == true && mLastNameFounded == true)
                                     {
-                                        binding?.TVResult.text = "Trovato"
+                                        mListener!!.onFragmentInteraction(true)
                                     }
                                 }
                                 .addOnFailureListener { e ->
