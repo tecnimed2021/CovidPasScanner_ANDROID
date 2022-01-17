@@ -21,8 +21,6 @@
 package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
-import android.graphics.Color
-import android.media.Image
 import android.os.Bundle
 import android.util.Log
 import android.util.Size
@@ -37,7 +35,6 @@ import androidx.camera.view.PreviewView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
@@ -45,7 +42,6 @@ import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.*
 import it.tecnimed.covidpasscanner.databinding.FragmentUserdataReaderBinding
-import it.tecnimed.covidpasscanner.model.CertificateSimple
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import java.lang.ClassCastException
 import java.util.*
@@ -69,6 +65,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
     private lateinit var beepManager: BeepManager
 
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var cameraProvider: ProcessCameraProvider
     private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
     private var mFoundUserData: Boolean? = null
@@ -116,7 +113,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
     ): View {
         _binding = FragmentUserdataReaderBinding.inflate(inflater, container, false)
 
-        binding.BBack.setOnClickListener(this)
+        binding.BBackUserDataReader.setOnClickListener(this)
 
         return binding.root
     }
@@ -129,7 +126,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.BBack -> {
+            R.id.BBackUserDataReader -> {
                 if (mListener != null) {
                     mListener!!.onFragmentInteraction(false)
                 }
@@ -140,6 +137,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
     override fun onDestroyView() {
         super.onDestroyView()
         cameraExecutor.shutdown()
+        cameraProvider.unbindAll()
         _binding = null
     }
 
@@ -167,7 +165,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
 
         cameraProviderFuture.addListener(Runnable {
             // Used to bind the lifecycle of cameras to the lifecycle owner
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+            cameraProvider = cameraProviderFuture.get()
 
             // Preview
             val preview = Preview.Builder()
@@ -213,7 +211,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
                                                     mFirstNameFounded = true;
                                                 if(elementText.contains(mLastName.toString()))
                                                     mLastNameFounded = true;
-                                                binding?.TVResult.text = mytext
+ //                                               binding?.TVResult.text = mytext
                                             }
                                         }
                                     }
@@ -222,7 +220,11 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
                                     // ...
                                     if(mFirstNameFounded == true && mLastNameFounded == true)
                                     {
-                                        mListener!!.onFragmentInteraction(true)
+                                        if (mListener != null) {
+                                            mListener!!.onFragmentInteraction(true)
+                                        }
+                                        mFirstNameFounded = false;
+                                        mLastNameFounded = false;
                                     }
                                 }
                                 .addOnFailureListener { e ->
