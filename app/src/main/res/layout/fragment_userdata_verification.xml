@@ -25,7 +25,7 @@
     android:textAlignment="inherit">
 
     <Button
-        android:id="@+id/BBack"
+        android:id="@+id/BBackUserDataVerification"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="16dp"

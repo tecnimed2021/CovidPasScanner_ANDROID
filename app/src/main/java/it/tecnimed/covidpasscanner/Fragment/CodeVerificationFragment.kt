@@ -27,7 +27,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -38,11 +37,9 @@ import it.tecnimed.covidpasscanner.VL.VLTimer.OnTimeElapsedListener
 import it.tecnimed.covidpasscanner.databinding.FragmentCodeVerificationBinding
 import it.tecnimed.covidpasscanner.model.CertificateSimple
 import it.tecnimed.covidpasscanner.model.CertificateStatus
-import it.tecnimed.covidpasscanner.model.SimplePersonModel
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import it.tecnimed.covidpasscanner.util.*
 import it.tecnimed.covidpasscanner.util.TimeUtility.formatDateOfBirth
-import it.tecnimed.covidpasscanner.util.TimeUtility.parseTo
 import java.lang.ClassCastException
 import java.util.*
 
@@ -100,7 +97,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
     ): View {
         _binding = FragmentCodeVerificationBinding.inflate(inflater, container, false)
 
-        binding.BBack.setOnClickListener(this)
+        binding.BBackCodeVerification.setOnClickListener(this)
 
         return binding.root
     }
@@ -157,7 +154,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.BBack -> {
+            R.id.BBackCodeVerification-> {
                 if (mListener != null) {
                     mListener!!.onFragmentInteraction(certificateModel)
                 }

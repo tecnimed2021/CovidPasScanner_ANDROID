@@ -21,29 +21,19 @@
 package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
-import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.*
 import it.tecnimed.covidpasscanner.VL.VLTimer
 import it.tecnimed.covidpasscanner.VL.VLTimer.OnTimeElapsedListener
-import it.tecnimed.covidpasscanner.databinding.FragmentCodeVerificationBinding
 import it.tecnimed.covidpasscanner.databinding.FragmentUserdataVerificationBinding
-import it.tecnimed.covidpasscanner.model.CertificateSimple
-import it.tecnimed.covidpasscanner.model.CertificateStatus
-import it.tecnimed.covidpasscanner.model.SimplePersonModel
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import it.tecnimed.covidpasscanner.util.*
-import it.tecnimed.covidpasscanner.util.TimeUtility.formatDateOfBirth
-import it.tecnimed.covidpasscanner.util.TimeUtility.parseTo
 import java.lang.ClassCastException
 import java.util.*
 
@@ -56,7 +46,6 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
 
     private var _binding: FragmentUserdataVerificationBinding? = null
     private val binding get() = _binding!!
-    private lateinit var certificateModel: CertificateSimple
 
     private var mFirstName : String? = ""
     private var mLastName : String? = ""
@@ -103,7 +92,7 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
     ): View {
         _binding = FragmentUserdataVerificationBinding.inflate(inflater, container, false)
 
-        binding.BBack.setOnClickListener(this)
+        binding.BBackUserDataVerification.setOnClickListener(this)
 
         return binding.root
     }
@@ -127,7 +116,7 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.BBack -> {
+            R.id.BBackUserDataVerification -> {
                 if (mListener != null) {
                     mListener!!.onFragmentInteraction()
                 }
