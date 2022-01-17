@@ -127,9 +127,9 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         mCertSimple = certSimple
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-//        tr.remove(mCodeVerificationFrag)
+        tr.remove(mCodeVerificationFrag)
         var crf : Fragment = UserDataReaderFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
-        tr.replace(R.id.frag_anch_point, crf)
+        tr.add(R.id.frag_anch_point, crf)
         tr.commitAllowingStateLoss()
         mUserDataReaderFrag = crf
     }
@@ -138,13 +138,13 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         // UserDataReadFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-//        tr.remove(mUserDataReaderFrag)
+        tr.remove(mUserDataReaderFrag)
         var crf : Fragment
         if(UserDataFound == false)
             crf = UserDataVerificationFragment.newInstance("", "")
         else
             crf = UserDataVerificationFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
-        tr.replace(R.id.frag_anch_point, crf)
+        tr.add(R.id.frag_anch_point, crf)
         tr.commitAllowingStateLoss()
         mUserDataVerificationFrag = crf
     }
@@ -153,7 +153,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         // UserDataVerificationFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-        tr.remove(mUserDataReaderFrag)
+        tr.remove(mUserDataVerificationFrag)
         tr.commitAllowingStateLoss()
     }
 
