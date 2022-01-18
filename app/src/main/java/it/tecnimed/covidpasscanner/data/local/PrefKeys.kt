@@ -17,7 +17,6 @@
  *  limitations under the License.
  *  ---license-end
  *
- *  Created by lucarinzivillo on 06/11/21, 19:31
  */
 
 package it.tecnimed.covidpasscanner.data.local

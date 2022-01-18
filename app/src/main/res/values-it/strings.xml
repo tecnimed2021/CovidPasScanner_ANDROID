@@ -54,8 +54,10 @@
 \nIl dettaglio dell\'uso è nella tabella della PCM al seguente link https://www.governo.it/sites/governo.it/files/documenti/documenti/Notizie-allegati/tabella_attivita_consentite.pdf</string>
     <string name="scan_mode_3G_header">Verifica Base</string>
     <string name="scan_mode_2G_header">Verifica Rafforzata</string>
+    <string name="scan_mode_BOOST_header">Verifica Booster</string>
     <string name="scan_mode_3G">Vaccinazione/Guarigione/Tampone</string>
     <string name="scan_mode_2G">Vaccinazione/Guarigione</string>
+    <string name="scan_mode_BOOST">Richiamo/ciclo completo+tampone/guarigione+tampone</string>
     <string name="loading">Ultimo aggiornamento dati e regole:\nAggiornamento in corso...</string>
     <string name="incompleteDownload">L\'aggiornamento della lista delle Certificazione verdi COVID-19 revocate è incompleto. Assicurati di essere connesso a Internet e clicca per continuare.</string>
     <string name="updatingRevokedPass">È in corso l\'aggiornamento della lista delle Certificazioni verdi COVID-19 revocate.</string>

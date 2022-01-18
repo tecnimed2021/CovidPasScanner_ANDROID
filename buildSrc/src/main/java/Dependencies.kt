@@ -29,6 +29,7 @@ object Deps {
     const val kotlin_stdlib = "org.jetbrains.kotlin:kotlin-stdlib:${Versions.kotlin}"
     const val kotlinx_coroutines = "org.jetbrains.kotlinx:kotlinx-coroutines-android:${Versions.kotlinx_coroutines}"
     const val androidx_core = "androidx.core:core-ktx:${Versions.androidx_core}"
+    const val androidx_startup = "androidx.startup:startup-runtime:${Versions.androidx_startup}"
     const val androidx_appcompat = "androidx.appcompat:appcompat:${Versions.androidx_appcompat}"
     const val androidx_material = "com.google.android.material:material:${Versions.androidx_material}"
     const val androidx_constraint = "androidx.constraintlayout:constraintlayout:${Versions.androidx_constraint}"

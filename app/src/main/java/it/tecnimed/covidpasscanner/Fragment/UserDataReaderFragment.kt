@@ -68,8 +68,6 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
     private lateinit var cameraProvider: ProcessCameraProvider
     private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
-    private var mFoundUserData: Boolean? = null
-
     val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
     private var mListener: OnFragmentInteractionListener? = null

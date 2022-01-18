@@ -37,6 +37,7 @@ import it.tecnimed.covidpasscanner.VL.VLTimer.OnTimeElapsedListener
 import it.tecnimed.covidpasscanner.databinding.FragmentCodeVerificationBinding
 import it.tecnimed.covidpasscanner.model.CertificateSimple
 import it.tecnimed.covidpasscanner.model.CertificateStatus
+import it.tecnimed.covidpasscanner.model.CertificateViewBean
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import it.tecnimed.covidpasscanner.util.*
 import it.tecnimed.covidpasscanner.util.TimeUtility.formatDateOfBirth
@@ -52,7 +53,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
 
     private var _binding: FragmentCodeVerificationBinding? = null
     private val binding get() = _binding!!
-    private lateinit var certificateModel: CertificateSimple
+    private lateinit var certificateModel: CertificateViewBean
 
     private var qrcodestr : String? = ""
 
@@ -65,7 +66,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
      * within the fragment.
      */
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(certSimple: CertificateSimple)
+        fun onFragmentInteraction(certSimple: CertificateViewBean)
     }
 
     override fun onAttach(activity: Activity) {

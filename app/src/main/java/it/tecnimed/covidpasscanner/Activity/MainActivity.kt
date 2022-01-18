@@ -28,6 +28,7 @@ import it.tecnimed.covidpasscanner.BuildConfig;
 import it.tecnimed.covidpasscanner.R;
 import it.tecnimed.covidpasscanner.VL.VLTimer
 import it.tecnimed.covidpasscanner.databinding.ActivityMainBinding
+import it.tecnimed.covidpasscanner.model.CertificateViewBean
 import it.tecnimed.covidpasscanner.util.FORMATTED_VALIDATION_DATE
 import it.tecnimed.covidpasscanner.util.TimeUtility.formatDateOfBirth
 import kotlin.ExperimentalUnsignedTypes;
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener,
         private lateinit var shared: SharedPreferences
 
         private val viewModel by viewModels<VerificationViewModel>()
-        private lateinit var certificateModel: CertificateSimple
+        private lateinit var certificateModel: CertificateViewBean
 
         override fun onCreate(savedInstanceState: Bundle?) {
                 super.onCreate(savedInstanceState)

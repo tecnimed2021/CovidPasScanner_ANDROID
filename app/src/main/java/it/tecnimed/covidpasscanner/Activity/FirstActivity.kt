@@ -58,7 +58,9 @@ import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.VerificaApplication
 import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
 import it.tecnimed.covidpasscanner.data.local.PrefKeys
+import it.tecnimed.covidpasscanner.data.local.ScanMode
 import it.tecnimed.covidpasscanner.model.CertificateSimple
+import it.tecnimed.covidpasscanner.model.CertificateViewBean
 import it.tecnimed.covidpasscanner.model.FirstViewModel
 import it.tecnimed.covidpasscanner.uart.UARTDriver
 import it.tecnimed.covidpasscanner.util.ConversionUtility
@@ -92,7 +94,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private lateinit var mUserDataReaderFrag: Fragment;
     private lateinit var mUserDataVerificationFrag: Fragment;
 
-    private lateinit var mCertSimple: CertificateSimple
+    private lateinit var mCertSimple: CertificateViewBean
 
     private val requestPermissionLauncherQr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -122,7 +124,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
     }
 
-    override fun onFragmentInteraction(certSimple: CertificateSimple) {
+    override fun onFragmentInteraction(certSimple: CertificateViewBean) {
         // CodeVerificationFragment
         mCertSimple = certSimple
         val fm = supportFragmentManager
