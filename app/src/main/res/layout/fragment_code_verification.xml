@@ -37,7 +37,7 @@
     <TextView
         android:id="@+id/TVGreenPassValidity"
         android:layout_width="wrap_content"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="188dp"
         android:text="Prova"
         android:textAlignment="center"
@@ -56,7 +56,7 @@
         android:layout_marginTop="96dp"
         android:text="TextView"
         android:textAlignment="viewStart"
-        android:textColor="@color/covidpasscanner_brown"
+        android:textColor="@color/covidpasscanner_green"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/TVGreenPassValidity" />
@@ -69,7 +69,7 @@
         android:layout_marginTop="16dp"
         android:text="TextView"
         android:textAlignment="viewStart"
-        android:textColor="@color/covidpasscanner_brown"
+        android:textColor="@color/covidpasscanner_green"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/TVNome" />
@@ -82,7 +82,7 @@
         android:layout_marginTop="16dp"
         android:text="TextView"
         android:textAlignment="viewStart"
-        android:textColor="@color/covidpasscanner_brown"
+        android:textColor="@color/covidpasscanner_green"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toBottomOf="@id/TVCognome" />

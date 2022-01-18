@@ -92,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
             android:text="@string/label_position_greenpass"
-            android:textColor="@color/covidpasscanner_brown"
+            android:textColor="@color/covidpasscanner_green"
             android:textSize="20sp"
             android:textStyle="bold|italic"
             app:layout_constraintLeft_toLeftOf="parent"
