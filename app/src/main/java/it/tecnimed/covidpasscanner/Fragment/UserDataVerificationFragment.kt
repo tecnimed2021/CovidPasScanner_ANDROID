@@ -111,7 +111,7 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
             binding.TVNome.text = mLastName
         }
         mTimeVar = VLTimer.create(this)
-        mTimeVar.startSingle(2000)
+        mTimeVar.startSingle(4000)
     }
 
     override fun onClick(v: View?) {
