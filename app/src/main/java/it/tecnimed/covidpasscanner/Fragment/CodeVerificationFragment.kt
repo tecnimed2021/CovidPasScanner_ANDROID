@@ -66,7 +66,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
      * within the fragment.
      */
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(certSimple: CertificateViewBean)
+        fun onFragmentInteraction(certSimple: CertificateViewBean?)
     }
 
     override fun onAttach(activity: Activity) {
@@ -123,18 +123,22 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
                     binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ff0000"))
                 }
                 else if(certificate.certificateStatus == CertificateStatus.NOT_VALID_YET) {
-                    binding.TVGreenPassValidity.text = "NON ANCORA VALIDO"
+                    binding.TVGreenPassValidity.text = getString(R.string.label_gp_notyetvalid)
                     binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ffff00"))
                 }
                 else if(certificate.certificateStatus == CertificateStatus.NOT_EU_DCC) {
-                    binding.TVGreenPassValidity.text = "NON EU DCC"
+                    binding.TVGreenPassValidity.text = getString(R.string.label_gp_noteudcc)
                     binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ff0000"))
                 }
-                if (certificate.certificateStatus == CertificateStatus.VALID) {
-                    mTimeVar = VLTimer.create(this)
-                    mTimeVar.startSingle(1000)
-                    Log.d("Validita", getString(R.string.label_gp_valid));
+                else if(certificate.certificateStatus == CertificateStatus.TEST_NEEDED) {
+                    binding.TVGreenPassValidity.text = getString(R.string.label_gp_testneeded)
+                    binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ffff00"))
                 }
+//                if (certificate.certificateStatus == CertificateStatus.VALID) {
+                    mTimeVar = VLTimer.create(this)
+                    mTimeVar.startSingle(2000)
+//                    Log.d("Validita", getString(R.string.label_gp_valid));
+//                }
             }
         }
 
@@ -157,7 +161,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
         when (v?.id) {
             R.id.BBackCodeVerification-> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteraction(certificateModel)
+                    mListener!!.onFragmentInteraction(null)
                 }
             }
         }

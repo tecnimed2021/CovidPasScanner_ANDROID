@@ -90,6 +90,9 @@
 
     <string name="label_gp_valid">VALIDO</string>
     <string name="label_gp_notvalid">NON VALIDO</string>
+    <string name="label_gp_notyetvalid">NON ANCORA VALIDO</string>
+    <string name="label_gp_noteudcc">NOT EU DCC</string>
+    <string name="label_gp_testneeded">TEST NECESSARIO</string>
 
     <string name="label_ud_valid">B E N V E N U T O</string>
     <string name="label_ud_notvalid">ACCESSO NEGATO</string>
