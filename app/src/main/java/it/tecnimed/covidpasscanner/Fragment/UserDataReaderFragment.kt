@@ -182,7 +182,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
             val preview = Preview.Builder()
                 .build()
                 .also {
-                    binding.previewView.implementationMode = PreviewView.ImplementationMode.COMPATIBLE
+                    binding.previewView.implementationMode = PreviewView.ImplementationMode.PERFORMANCE
                     it.setSurfaceProvider(binding.previewView.surfaceProvider)
                 }
 

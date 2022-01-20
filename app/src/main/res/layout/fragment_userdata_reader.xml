@@ -74,7 +74,6 @@
             android:id="@+id/previewView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleX="-1.0" />
     </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
