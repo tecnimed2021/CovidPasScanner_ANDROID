@@ -159,6 +159,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val tr = fm.beginTransaction()
         tr.remove(mUserDataVerificationFrag)
         tr.commitAllowingStateLoss()
+        openQrCodeReader()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
