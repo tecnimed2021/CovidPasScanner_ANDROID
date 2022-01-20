@@ -41,6 +41,7 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.*
+import it.tecnimed.covidpasscanner.VL.VLTimer
 import it.tecnimed.covidpasscanner.databinding.FragmentUserdataReaderBinding
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import java.lang.ClassCastException
@@ -50,7 +51,7 @@ import java.util.concurrent.Executors
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
-class UserDataReaderFragment : Fragment(), View.OnClickListener {
+class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeElapsedListener {
 
     private val viewModel by viewModels<VerificationViewModel>()
 
@@ -69,6 +70,8 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
     private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
     val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
+
+    private lateinit var mTimeVar: VLTimer
 
     private var mListener: OnFragmentInteractionListener? = null
     /**
@@ -103,6 +106,8 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
             mLastName = it.getString("LASTNAMESTR")
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
+        mTimeVar = VLTimer.create(this)
+        mTimeVar.startSingle(10000)
     }
 
     override fun onCreateView(
@@ -137,6 +142,14 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener {
         cameraExecutor.shutdown()
         cameraProvider.unbindAll()
         _binding = null
+    }
+
+    override fun VLTimerTimeElapsed(timer: VLTimer) {
+        if (timer === mTimeVar) {
+            if (mListener != null) {
+                mListener!!.onFragmentInteraction(false)
+            }
+        }
     }
 
     companion object {
