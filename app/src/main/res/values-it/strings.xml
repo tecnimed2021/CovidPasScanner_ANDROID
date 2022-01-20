@@ -52,6 +52,9 @@
 \nTipologia RAFFORZATA: la app considera valide solo le certificazioni verdi generate da vaccinazione o da guarigione. Viene utilizzata per accedere a spettacoli, eventi sportivi, ristorazione al chiuso, feste e discoteche, cerimonie pubbliche, ecc. \n
 \nIndicazioni di dettaglio sulle attività consentite senza/con green pass BASE e RAFFORZATO (link https://www.governo.it/sites/governo.it/files/documenti/documenti/Notizie-allegati/tabella_attivita_consentite.pdf)\n
 \nIl dettaglio dell\'uso è nella tabella della PCM al seguente link https://www.governo.it/sites/governo.it/files/documenti/documenti/Notizie-allegati/tabella_attivita_consentite.pdf</string>
+    <string name="scan_mode_3G_header_type">Base</string>
+    <string name="scan_mode_2G_header_type">Rafforzata</string>
+    <string name="scan_mode_BOOST_header_type">Booster</string>
     <string name="scan_mode_3G_header">Verifica Base</string>
     <string name="scan_mode_2G_header">Verifica Rafforzata</string>
     <string name="scan_mode_BOOST_header">Verifica Booster</string>

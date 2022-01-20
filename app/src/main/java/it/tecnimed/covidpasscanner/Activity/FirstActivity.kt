@@ -620,25 +620,19 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val scanModeChoices = arrayOf(
             getString(
                 R.string.label_alert_dialog_option,
-                getString(R.string.scan_mode_3G_header).substringAfter(' ').uppercase(
-                    Locale.ROOT
-                ),
-                getString(R.string.scan_mode_3G)
+                getString(R.string.scan_mode_3G_header_type).uppercase(Locale.ROOT),
+                getString(R.string.scan_mode_3G),
 
             ),
             getString(
                 R.string.label_alert_dialog_option,
-                getString(R.string.scan_mode_2G_header).substringAfter(
-                    ' '
-                ).uppercase(Locale.ROOT),
+                getString(R.string.scan_mode_2G_header_type).uppercase(Locale.ROOT),
                 getString(R.string.scan_mode_2G)
 
             ),
             getString(
                 R.string.label_alert_dialog_option,
-                getString(R.string.scan_mode_BOOST_header).substringAfter(' ').uppercase(
-                    Locale.ROOT
-                ),
+                getString(R.string.scan_mode_BOOST_header_type).uppercase(Locale.ROOT),
                 getString(R.string.scan_mode_BOOST)
 
             )
