@@ -100,6 +100,7 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.TVCognome.visibility = View.INVISIBLE
         if(mFirstName == "" && mLastName == "") {
             binding.TVUserDataValidity.text = getString(R.string.label_ud_notvalid)
             binding.TVCognome.text = ""

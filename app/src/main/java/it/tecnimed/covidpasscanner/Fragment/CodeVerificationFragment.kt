@@ -106,6 +106,8 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.TVCognome.visibility = View.INVISIBLE
+        binding.TVDataNascita.visibility = View.INVISIBLE
         viewModel.certificate.observe(viewLifecycleOwner) { certificate ->
             certificate?.let {
                 certificateModel = it
