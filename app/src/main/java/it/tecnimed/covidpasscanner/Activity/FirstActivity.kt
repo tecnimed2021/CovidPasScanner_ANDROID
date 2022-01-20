@@ -22,6 +22,7 @@
 package it.tecnimed.covidpasscanner.Activity;
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
@@ -30,6 +31,8 @@ import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.os.PowerManager
+import android.os.PowerManager.*
 import android.text.SpannableString
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
@@ -95,6 +98,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private lateinit var mUserDataVerificationFrag: Fragment;
 
     private lateinit var mCertSimple: CertificateViewBean
+
+    private lateinit var mWakeLock: PowerManager.WakeLock
 
     private val requestPermissionLauncherQr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -162,6 +167,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         openQrCodeReader()
     }
 
+    @SuppressLint("InvalidWakeLockTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityFirstBinding.inflate(layoutInflater)
@@ -172,6 +178,12 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         setupUI()
         observeLiveData()
         mSerialDrv = UARTDriver.create(mContext)
+
+        mWakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
+                newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag").apply {
+                    acquire()
+                }
+            }
     }
 
     private fun observeLiveData() {
@@ -765,6 +777,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     override fun onDestroy() {
         super.onDestroy()
         shared.unregisterOnSharedPreferenceChangeListener(this)
+        mWakeLock.release()
     }
 
     private fun updateDownloadedPackagesCount() {

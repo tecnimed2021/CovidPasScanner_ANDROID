@@ -22,7 +22,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:textAlignment="inherit">
+    android:textAlignment="inherit"
+    android:keepScreenOn="true">
 
     <Button
         android:id="@+id/BBackCodeVerification"
@@ -52,13 +53,13 @@
         android:id="@+id/TVNome"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="48dp"
         android:layout_marginTop="96dp"
         android:text="TextView"
         android:textAlignment="viewStart"
         android:textColor="@color/covidpasscanner_green"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/TVGreenPassValidity" />
 
     <TextView
@@ -72,7 +73,8 @@
         android:textColor="@color/covidpasscanner_green"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVNome" />
+        app:layout_constraintTop_toBottomOf="@id/TVNome"
+        tools:visibility="invisible" />
 
     <TextView
         android:id="@+id/TVDataNascita"
@@ -85,5 +87,6 @@
         android:textColor="@color/covidpasscanner_green"
         android:textSize="18sp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVCognome" />
+        app:layout_constraintTop_toBottomOf="@id/TVCognome"
+        tools:visibility="invisible" />
 </androidx.constraintlayout.widget.ConstraintLayout>
