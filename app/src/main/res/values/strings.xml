@@ -57,9 +57,9 @@ It is used to access shows, sporting events, indoor dining, parties and discos, 
     <string name="scan_mode_3G_header">Basic Verification</string>
     <string name="scan_mode_2G_header">Enhanced Verification</string>
     <string name="scan_mode_BOOST_header">Booster Verification</string>
-    <string name="scan_mode_3G">Vaccination/Healing/Swab</string>
-    <string name="scan_mode_2G">Vaccination/Healing</string>
-    <string name="scan_mode_BOOST">Booster/full cycle + tampon/healing + tampon</string>
+    <string name="scan_mode_3G">Vaccination /Healing / Swab</string>
+    <string name="scan_mode_2G">Vaccination / Healing</string>
+    <string name="scan_mode_BOOST">Booster / full cycle+swab / healing+swab</string>
     <string name="loading">Last updated data and rules:\nUpdate in progress...</string>
     <string name="incompleteDownload">The update to the list of revoked COVID-19 GreenPass Certifications is incomplete. Please make sure you are connected to the Internet and click to continue.</string>
     <string name="updatingRevokedPass">The list of revoked COVID-19 GreenPass Certifications is currently being updated.</string>
