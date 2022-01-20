@@ -21,6 +21,7 @@
 package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -92,8 +93,6 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
     ): View {
         _binding = FragmentUserdataVerificationBinding.inflate(inflater, container, false)
 
-        binding.BBackUserDataVerification.setOnClickListener(this)
-
         return binding.root
     }
 
@@ -103,11 +102,13 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
         binding.TVCognome.visibility = View.INVISIBLE
         if(mFirstName == "" && mLastName == "") {
             binding.TVUserDataValidity.text = getString(R.string.label_ud_notvalid)
+            binding.TVUserDataValidity.setTextColor(Color.parseColor("#ff0000"))
             binding.TVCognome.text = ""
             binding.TVNome.text = ""
         }
         else {
             binding.TVUserDataValidity.text = getString(R.string.label_ud_valid)
+            binding.TVUserDataValidity.setTextColor(Color.parseColor("#00ff00"))
             binding.TVCognome.text = mFirstName
             binding.TVNome.text = mLastName
         }
@@ -117,11 +118,6 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.BBackUserDataVerification -> {
-                if (mListener != null) {
-                    mListener!!.onFragmentInteraction()
-                }
-            }
         }
     }
 

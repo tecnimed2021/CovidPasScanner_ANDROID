@@ -116,7 +116,10 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
     ): View {
         _binding = FragmentUserdataReaderBinding.inflate(inflater, container, false)
 
-        binding.BBackUserDataReader.setOnClickListener(this)
+//        binding.backImage2.setOnClickListener(this)
+//        binding.backText2.setOnClickListener(this)
+        binding.backImage2.visibility = View.INVISIBLE;
+        binding.backText2.visibility = View.INVISIBLE;
 
         return binding.root
     }
@@ -129,7 +132,12 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
 
     override fun onClick(v: View?) {
         when (v?.id) {
-            R.id.BBackUserDataReader -> {
+            R.id.back_image2 -> {
+                if (mListener != null) {
+                    mListener!!.onFragmentInteraction(false)
+                }
+            }
+            R.id.back_text2 -> {
                 if (mListener != null) {
                     mListener!!.onFragmentInteraction(false)
                 }
@@ -204,7 +212,6 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
                                 .addOnSuccessListener { visionText ->
                                     // Task completed successfully
                                     val resultText = visionText.text
-                                    var mytext = ""
                                     for (block in visionText.textBlocks) {
                                         val blockText = block.text
                                         val blockCornerPoints = block.cornerPoints
@@ -217,12 +224,10 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
                                                 val elementText = element.text
                                                 val elementCornerPoints = element.cornerPoints
                                                 val elementFrame = element.boundingBox
-                                                mytext = mytext.plus(" ").plus(elementText)
                                                 if(elementText.contains(mFirstName.toString()))
                                                     mFirstNameFounded = true;
                                                 if(elementText.contains(mLastName.toString()))
                                                     mLastNameFounded = true;
- //                                               binding?.TVResult.text = mytext
                                             }
                                         }
                                     }

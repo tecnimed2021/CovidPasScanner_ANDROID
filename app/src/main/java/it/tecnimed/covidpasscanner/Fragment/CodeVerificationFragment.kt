@@ -98,8 +98,6 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
     ): View {
         _binding = FragmentCodeVerificationBinding.inflate(inflater, container, false)
 
-        binding.BBackCodeVerification.setOnClickListener(this)
-
         return binding.root
     }
 
@@ -160,13 +158,6 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
     }
 
     override fun onClick(v: View?) {
-        when (v?.id) {
-            R.id.BBackCodeVerification-> {
-                if (mListener != null) {
-                    mListener!!.onFragmentInteraction(null)
-                }
-            }
-        }
     }
 
     override fun onDestroyView() {

@@ -168,9 +168,13 @@ class CodeReaderFragment : Fragment(),
         binding.barcodeScanner.statusView.text = ""
         beepManager = BeepManager(requireActivity())
 
-        binding.backImage.setOnClickListener(this)
-        binding.backText.setOnClickListener(this)
-        binding.flipCamera.setOnClickListener(this)
+//        binding.backImage.setOnClickListener(this)
+//        binding.backText.setOnClickListener(this)
+//        binding.flipCamera.setOnClickListener(this)
+
+        binding.backImage.visibility = View.INVISIBLE;
+        binding.backText.visibility = View.INVISIBLE;
+        binding.flipCamera.visibility = View.INVISIBLE;
     }
 
     override fun onDestroyView() {
