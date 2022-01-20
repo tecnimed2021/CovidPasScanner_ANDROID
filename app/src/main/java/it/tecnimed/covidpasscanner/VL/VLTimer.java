@@ -56,7 +56,10 @@ public class VLTimer
         {
             // Sleep for requested time
             try {
-                sleep(mTime);
+                while(mTime > 0) {
+                    sleep(1);
+                    mTime--;
+                }
             } catch (InterruptedException e){}
 
             // Create a message in child thread.
@@ -90,6 +93,11 @@ public class VLTimer
         mMode = false;
         mTime = time;
         mThread.start();
+    }
+
+    public void retriggerSingle(long time)
+    {
+        mTime = time;
     }
 
     public void startRepeating(long time)
