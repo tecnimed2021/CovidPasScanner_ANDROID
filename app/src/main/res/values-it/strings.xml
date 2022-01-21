@@ -87,9 +87,9 @@
     <string name="resume_download">Riprendi</string>
     <string name="label_return_home">Torna all\'inizio</string>
 
-    <string name="label_start_verify">START VERIFY</string>
-    <string name="label_position_greenpass">PLACE THE GREEN PASS</string>
-    <string name="label_position_iddoc">PLACE THE IDENTIFICATION DOCUMENT</string>
+    <string name="label_start_verify">INIZIO VERIFICA</string>
+    <string name="label_position_greenpass">PREGO MOSTRA IL TUO GREEN PASS</string>
+    <string name="label_position_iddoc">PREGO MOSTRA IL TUO DOCUMENTO DI IDENTITA\'</string>
 
     <string name="label_gp_valid">VALIDO</string>
     <string name="label_gp_notvalid">NON VALIDO</string>
