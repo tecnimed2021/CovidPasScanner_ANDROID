@@ -101,6 +101,7 @@ It is used to access shows, sporting events, indoor dining, parties and discos, 
 
 
     <string name="label_ud_valid">W E L C O M E</string>
+    <string name="label_ud_go">YOU CAN PROCEED\nHAVE A NICE DAY</string>
     <string name="label_ud_notvalid">ACCESS DENIED</string>
 
 

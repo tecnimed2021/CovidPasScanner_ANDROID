@@ -98,6 +98,7 @@
     <string name="label_gp_testneeded">TEST NECESSARIO</string>
 
     <string name="label_ud_valid">B E N V E N U T O</string>
+    <string name="label_ud_go">PUOI PROCEDERE\nBUONA GIORNATA</string>
     <string name="label_ud_notvalid">ACCESSO NEGATO</string>
 
 </resources>
