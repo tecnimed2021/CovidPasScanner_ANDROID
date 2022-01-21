@@ -141,6 +141,11 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             tr.commitAllowingStateLoss()
             mUserDataReaderFrag = crf
         }
+        else
+        {
+            tr.commitAllowingStateLoss()
+            openQrCodeReader()
+        }
     }
 
     override fun onFragmentInteraction(UserDataFound: Boolean) {
