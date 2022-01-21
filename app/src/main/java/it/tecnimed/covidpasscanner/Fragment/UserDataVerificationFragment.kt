@@ -28,6 +28,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.*
 import it.tecnimed.covidpasscanner.VL.VLTimer
@@ -37,6 +38,12 @@ import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import it.tecnimed.covidpasscanner.util.*
 import java.lang.ClassCastException
 import java.util.*
+import android.media.ToneGenerator
+
+import android.media.AudioManager
+import android.os.Handler
+import android.os.Looper
+
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint
@@ -52,6 +59,9 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
     private var mLastName : String? = ""
 
     private lateinit var mTimeVar: VLTimer
+
+    private lateinit var beepManager: BeepManager
+    private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 500)
 
     private var mListener: OnFragmentInteractionListener? = null
     /**
@@ -105,15 +115,29 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
             binding.TVUserDataValidity.setTextColor(Color.parseColor("#ff0000"))
             binding.TVCognome.text = ""
             binding.TVNome.text = ""
+            binding.TVUserDataGo.text = ""
+            toneG.startTone(ToneGenerator.TONE_SUP_PIP, 2000)
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                toneG.release()
+            }, (2000 + 50).toLong())
         }
         else {
             binding.TVUserDataValidity.text = getString(R.string.label_ud_valid)
             binding.TVUserDataValidity.setTextColor(Color.parseColor("#00ff00"))
             binding.TVCognome.text = mFirstName
             binding.TVNome.text = mLastName
+            binding.TVUserDataGo.text = getString(R.string.label_ud_go)
+            binding.TVUserDataGo.setTextColor(Color.parseColor("#00ff00"))
+            toneG.startTone(ToneGenerator.TONE_DTMF_5, 2000)
+            val handler = Handler(Looper.getMainLooper())
+            handler.postDelayed({
+                toneG.release()
+            }, (2000 + 50).toLong())
         }
         mTimeVar = VLTimer.create(this)
         mTimeVar.startSingle(4000)
+        beepManager = BeepManager(requireActivity())
     }
 
     override fun onClick(v: View?) {

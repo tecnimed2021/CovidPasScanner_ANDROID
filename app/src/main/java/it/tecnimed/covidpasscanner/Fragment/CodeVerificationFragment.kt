@@ -22,7 +22,11 @@ package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
 import android.graphics.Color
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -58,6 +62,8 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
     private var qrcodestr : String? = ""
 
     private lateinit var mTimeVar: VLTimer
+
+    private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 500)
 
     private var mListener: OnFragmentInteractionListener? = null
     /**
@@ -124,7 +130,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
                 }
                 else if(certificate.certificateStatus == CertificateStatus.NOT_VALID_YET) {
                     binding.TVGreenPassValidity.text = getString(R.string.label_gp_notyetvalid)
-                    binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ffff00"))
+                    binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ffA500"))
                 }
                 else if(certificate.certificateStatus == CertificateStatus.NOT_EU_DCC) {
                     binding.TVGreenPassValidity.text = getString(R.string.label_gp_noteudcc)
@@ -132,11 +138,11 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
                 }
                 else if(certificate.certificateStatus == CertificateStatus.TEST_NEEDED) {
                     binding.TVGreenPassValidity.text = getString(R.string.label_gp_testneeded)
-                    binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ffff00"))
+                    binding.TVGreenPassValidity.setTextColor(Color.parseColor("#ffA500"))
                 }
 //                if (certificate.certificateStatus == CertificateStatus.VALID) {
                     mTimeVar = VLTimer.create(this)
-                    mTimeVar.startSingle(2000)
+                    mTimeVar.startSingle(3000)
 //                    Log.d("Validita", getString(R.string.label_gp_valid));
 //                }
             }
@@ -168,7 +174,16 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
     override fun VLTimerTimeElapsed(timer: VLTimer) {
         if (timer === mTimeVar) {
             if (mListener != null) {
-                mListener!!.onFragmentInteraction(certificateModel)
+                if(certificateModel.certificateStatus == CertificateStatus.VALID)
+                    mListener!!.onFragmentInteraction(certificateModel)
+                else {
+                    toneG.startTone(ToneGenerator.TONE_SUP_PIP, 2000)
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.postDelayed({
+                        toneG.release()
+                    }, (2000 + 50).toLong())
+                    mListener!!.onFragmentInteraction(null)
+                }
             }
         }
     }
