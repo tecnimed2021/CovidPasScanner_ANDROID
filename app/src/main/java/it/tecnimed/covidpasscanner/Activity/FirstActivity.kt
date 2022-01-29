@@ -23,14 +23,13 @@ package it.tecnimed.covidpasscanner.Activity;
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ActivityNotFoundException
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Typeface
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.PowerManager
 import android.os.PowerManager.*
 import android.text.SpannableString
@@ -41,6 +40,7 @@ import android.text.style.UnderlineSpan
 import android.text.util.Linkify
 import android.util.Log
 import android.view.View
+import android.view.View.*
 import android.view.WindowManager
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
@@ -50,19 +50,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.text.bold
 import androidx.core.view.isVisible
-import androidx.lifecycle.observe
-import android.view.View.*
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
-import it.tecnimed.covidpasscanner.Activity.MainActivity
 import it.tecnimed.covidpasscanner.BuildConfig
 import it.tecnimed.covidpasscanner.Fragment.*
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.VerificaApplication
-import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
 import it.tecnimed.covidpasscanner.data.local.PrefKeys
 import it.tecnimed.covidpasscanner.data.local.ScanMode
-import it.tecnimed.covidpasscanner.model.CertificateSimple
+import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
 import it.tecnimed.covidpasscanner.model.CertificateViewBean
 import it.tecnimed.covidpasscanner.model.FirstViewModel
 import it.tecnimed.covidpasscanner.uart.UARTDriver
@@ -286,8 +283,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         if(DebugActive == false)
         {
             binding.ocrButton.visibility = INVISIBLE
-            binding.uartButton.visibility = INVISIBLE
-            binding.uartTest.visibility = INVISIBLE
+            binding.uartButton.visibility = VISIBLE
+            binding.uartTest.visibility = VISIBLE
         }
     }
 
@@ -325,22 +322,47 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
 
         binding.uartButton.setOnClickListener{
+            var serialOk : Boolean = true;
             binding.uartTest.text = "Open OK";
             if(mSerialDrv?.init() == false)
             {
+                serialOk = false;
                 binding.uartTest.text = "Init Fail";
             }
             else {
                 if (mSerialDrv?.openPort(
                         UARTDriver.UARTDRIVER_PORT_MODE_NOEVENT,
                         0,
-                        38400,
-                        UARTDriver.UARTDRIVER_STOPBIT_2,
-                        UARTDriver.UARTDRIVER_PARITY_NONE
+                        115200,
+                         UARTDriver.UARTDRIVER_STOPBIT_1,
+                         UARTDriver.UARTDRIVER_PARITY_NONE
                     ) == false
                 ) {
+                    serialOk = false;
                     binding.uartTest.text = "Open Fail";
                 }
+            }
+            if(serialOk == true){
+                val mainHandler = Handler(Looper.getMainLooper())
+                mainHandler.post {
+                    val b = ByteArray(16)
+                    b[0] = 'C'.code.toByte()
+                    b[1] = 'I'.code.toByte()
+                    b[2] = 'A'.code.toByte()
+                    b[3] = 'O'.code.toByte()
+                    mSerialDrv.write(b, 4)
+                    var n : Int = 0
+                    while(n == 0)
+                    {
+                        var br = ByteArray(16)
+                        n = mSerialDrv.read(br, 1000)
+                        if(n > 0)
+                        {
+                            binding.uartTest.text = br.decodeToString()
+                        }
+                    }
+                }
+
             }
         }
     }
