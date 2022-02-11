@@ -71,6 +71,7 @@ import java.util.*
 
 @AndroidEntryPoint
 class FirstActivity : AppCompatActivity(), View.OnClickListener,
+    TempReaderFragment.OnFragmentInteractionListener,
     CodeReaderFragment.OnFragmentInteractionListener,
     CodeVerificationFragment.OnFragmentInteractionListener,
     UserDataReaderFragment.OnFragmentInteractionListener,
@@ -89,6 +90,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private val DebugActive: Boolean = false
 
+    private lateinit var mTempReaderFrag: Fragment;
     private lateinit var mCodeReaderFrag: Fragment;
     private lateinit var mCodeVerificationFrag: Fragment;
     private lateinit var mUserDataReaderFrag: Fragment;
@@ -101,7 +103,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private val requestPermissionLauncherQr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                openQrCodeReader()
+//                openQrCodeReader()
+                openTempReader()
             }
         }
     private val requestPermissionLauncherOcr =
@@ -111,7 +114,22 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             }
         }
 
-    override fun onFragmentInteraction(qrcodeText: String) {
+    override fun onFragmentInteractionTempReader(temp: String) {
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+        if(temp != ""){
+            var crf : Fragment = CodeReaderFragment()
+            tr.replace(R.id.frag_anch_point, crf)
+            tr.commitAllowingStateLoss()
+            mCodeReaderFrag = crf
+        }
+        else{
+            tr.remove(mTempReaderFrag)
+            tr.commitAllowingStateLoss()
+        }
+    }
+
+    override fun onFragmentInteractionCodeReader(qrcodeText: String) {
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
         if(qrcodeText != ""){
@@ -141,7 +159,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         else
         {
             tr.commitAllowingStateLoss()
-            openQrCodeReader()
+//                openQrCodeReader()
+            openTempReader()
         }
     }
 
@@ -166,7 +185,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val tr = fm.beginTransaction()
         tr.remove(mUserDataVerificationFrag)
         tr.commitAllowingStateLoss()
-        openQrCodeReader()
+//                openQrCodeReader()
+        openTempReader()
     }
 
     @SuppressLint("InvalidWakeLockTag")
@@ -446,7 +466,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         ) {
             createPermissionAlertQr()
         } else {
-            openQrCodeReader()
+//                openQrCodeReader()
+            openTempReader()
         }
     }
 
@@ -577,6 +598,15 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                 createForceUpdateDialog()
             }
         }
+    }
+
+    private fun openTempReader() {
+        var crf : Fragment = TempReaderFragment()
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+        tr.add(R.id.frag_anch_point, crf)
+        tr.commitAllowingStateLoss()
+        mTempReaderFrag = crf
     }
 
     private fun openQrCodeReader() {

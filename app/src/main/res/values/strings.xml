@@ -90,6 +90,7 @@ It is used to access shows, sporting events, indoor dining, parties and discos, 
     <string name="label_return_home">Return Home</string>
 
     <string name="label_start_verify">START VERIFY</string>
+    <string name="label_position_temp">PLEASE TAKE YOUR TEMPERATURE</string>
     <string name="label_position_greenpass">PLEASE SHOW YOUR GREEN PASS</string>
     <string name="label_position_iddoc">PLEASE SHOW YOUR IDENTIFICATION DOCUMENT</string>
 
