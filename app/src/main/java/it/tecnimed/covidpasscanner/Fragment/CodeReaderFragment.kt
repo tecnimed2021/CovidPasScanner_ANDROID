@@ -61,7 +61,7 @@ class CodeReaderFragment : Fragment(),
      * within the fragment.
      */
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(qrcodeText: String)
+        fun onFragmentInteractionCodeReader(qrcodeText: String)
     }
 
     override fun onAttach(activity: Activity) {
@@ -194,7 +194,7 @@ class CodeReaderFragment : Fragment(),
 
     private fun navigateToVerificationPage(text: String) {
         if (mListener != null) {
-            mListener!!.onFragmentInteraction(text)
+            mListener!!.onFragmentInteractionCodeReader(text)
         }
     }
 
@@ -202,12 +202,12 @@ class CodeReaderFragment : Fragment(),
         when (v?.id) {
             R.id.back_image -> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteraction("")
+                    mListener!!.onFragmentInteractionCodeReader("")
                 }
             }
             R.id.back_text -> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteraction("")
+                    mListener!!.onFragmentInteractionCodeReader("")
                 }
             }
             R.id.flip_camera -> {
