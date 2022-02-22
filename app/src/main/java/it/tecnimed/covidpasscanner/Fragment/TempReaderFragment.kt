@@ -22,20 +22,24 @@
 package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
+import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
-import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
-import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
-import kotlin.system.measureTimeMillis
 import it.tecnimed.covidpasscanner.R
+import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
+import it.tecnimed.covidpasscanner.uart.UARTDriver
+import java.nio.ByteBuffer
+import kotlin.system.measureTimeMillis
 
 
 @AndroidEntryPoint
@@ -79,9 +83,31 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorBmp = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
     private var sensorThermalImage = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0.0f } }
     private var sensorThermalImageRGB = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0 } }
-
-
     private var lastText: String? = null
+
+    private lateinit var mSerialDrv: UARTDriver
+    private val mHandler = object:  Handler(Looper.getMainLooper()) {
+    }
+    private val ThermalImageHwInterface: Runnable = object : Runnable {
+        override fun run() {
+            try {
+                getThermalImage() //this function can change value of mInterval.
+                val elapsed = measureTimeMillis {
+/*                    for (i in 0 until sensSizeY) {
+                        for (j in 0 until sensSizeX) {
+                            sensorBmp[i][j] = 25.0f + j.toFloat()
+                        }
+                    }*/
+                    generateThrmalBmp()
+                }
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHandler.postDelayed(this, 100)
+            }
+        }
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -104,7 +130,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.backImage3.visibility = View.VISIBLE;
         binding.backText3.visibility = View.VISIBLE;
 
-
+        mSerialDrv = UARTDriver.create(context)
+        ThermalImageHwInterface.run();
+/*
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
                 sensorBmp[i][j] = 25.0f + j.toFloat()
@@ -113,6 +141,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         val elapsed = measureTimeMillis {
             generateThrmalBmp()
         }
+
+ */
     }
 
     override fun onDestroyView() {
@@ -145,6 +175,53 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             R.id.back_text3 -> {
                 if (mListener != null) {
                     mListener!!.onFragmentInteractionTempReader("")
+                }
+            }
+        }
+    }
+
+    private fun getThermalImage() {
+        var serialOk : Boolean = true;
+
+        if(mSerialDrv?.init() == false)
+            return;
+
+        if (mSerialDrv?.openPort(
+                UARTDriver.UARTDRIVER_PORT_MODE_NOEVENT,
+                0,
+                115200,
+                UARTDriver.UARTDRIVER_STOPBIT_1,
+                UARTDriver.UARTDRIVER_PARITY_NONE
+            ) == false
+        ) {
+            serialOk = false;
+        }
+        if(serialOk == false)
+            return;
+
+        val cmdObj = ByteArray(2)
+        cmdObj[0] = 'O'.code.toByte()
+        cmdObj[1] = '\r'.code.toByte()
+        mSerialDrv.write(cmdObj, 2)
+        var n : Int = 0
+        while(n == 0)
+        {
+            var ans = ByteArray(1+12*16*4+2)
+            n = mSerialDrv.read(ans, 1000)
+            if(n >= 1+12*16*4+2) {
+                if(ans[0] == 'O'.code.toByte()) {
+                    var k: Int = 1;
+                    for (i in 0 until sensSizeY) {
+                        for (j in 0 until sensSizeX) {
+                            var bf = ByteArray(4)
+                            bf[0] = ans[k+3]
+                            bf[1] = ans[k+2]
+                            bf[2] = ans[k+1]
+                            bf[3] = ans[k+0]
+                            sensorBmp[i][j] = ByteBuffer.wrap(bf).getFloat()
+                            k += 4
+                        }
+                    }
                 }
             }
         }
@@ -204,7 +281,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         for (i in 0 until (sensSizeY * sensScale)) {
             for (j in 0 until (sensSizeX * sensScale)) {
                 // H = Angolo Gradi, S = 0..1, B = 0..1
-                var H : Float = (m * sensorBmp[i][j]) + q
+                var H : Float = (m * sensorThermalImage[i][j]) + q
                 var S: Float = 1.0f
                 var B: Float = 1.0f
                 var color: Int = convertHSB2RGB(H, S, B)
@@ -215,7 +292,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         var bmp : Bitmap = createImage()
         binding.IVTemp.setImageBitmap(bmp)
         binding.IVTempOutline.setImageResource(R.drawable.outline)
-
+        binding.TVTempMin.setText("T min: " + getString(R.string.strf41, MinT))
+        binding.TVTempMax.setText("T_max: " + getString(R.string.strf41, MaxT))
     }
 
     private fun createImage(): Bitmap {
