@@ -11,6 +11,7 @@
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.13269927536231885" />
         <entry key="app/src/main/res/layout/fragment_code_reader.xml" value="0.18958333333333333" />
         <entry key="app/src/main/res/layout/fragment_code_verification.xml" value="0.246875" />
+        <entry key="app/src/main/res/layout/fragment_temp_reader.xml" value="0.21" />
         <entry key="app/src/main/res/layout/fragment_userdata_reader.xml" value="0.18958333333333333" />
         <entry key="app/src/main/res/layout/fragment_userdata_verification.xml" value="0.146875" />
         <entry key="app/src/main/res/layout/fragment_verification.xml" value="0.15896739130434784" />
