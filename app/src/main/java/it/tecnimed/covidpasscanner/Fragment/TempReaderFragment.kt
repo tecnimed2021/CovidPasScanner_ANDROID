@@ -291,7 +291,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
         var bmp : Bitmap = createImage()
         binding.IVTemp.setImageBitmap(bmp)
-        binding.IVTempOutline.setImageResource(R.drawable.outline)
+        binding.IVTempOutline.setImageResource(R.drawable.reticolo)
         binding.TVTempMin.setText("T min: " + getString(R.string.strf41, MinT))
         binding.TVTempMax.setText("T_max: " + getString(R.string.strf41, MaxT))
     }
