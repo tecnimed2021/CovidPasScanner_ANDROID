@@ -297,13 +297,13 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     }
 
     private fun createImage(): Bitmap {
-        var bitmap: Bitmap = Bitmap.createBitmap(sensSizeX * sensScale, sensSizeY * sensScale, Bitmap.Config.ARGB_8888);
+        var bitmap: Bitmap = Bitmap.createBitmap(sensSizeY * sensScale, sensSizeX * sensScale, Bitmap.Config.ARGB_8888);
         var canvas: Canvas = Canvas(bitmap)
         var paint: Paint = Paint()
         for (i in 0 until (sensSizeY * sensScale)) {
             for (j in 0 until (sensSizeX * sensScale)) {
                 paint.setColor(sensorThermalImageRGB[i][j])
-                canvas.drawPoint(j.toFloat(), i.toFloat(), paint)
+                canvas.drawPoint(i.toFloat(), j.toFloat(), paint)
             }
         }
         return bitmap;
