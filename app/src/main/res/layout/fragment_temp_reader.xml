@@ -68,47 +68,80 @@
         android:id="@+id/IVTemp"
         android:layout_width="420dp"
         android:layout_height="560dp"
-        android:layout_marginTop="20dp"
         android:scaleX="-1.0"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
+        app:layout_constraintRight_toRightOf="parent" />
 
     <ImageView
         android:id="@+id/IVTempOutline"
         android:layout_width="420dp"
         android:layout_height="560dp"
-        android:layout_marginTop="20dp"
         android:scaleType="center"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle"
         tools:srcCompat="@drawable/reticolo" />
+
+    <TextView
+        android:id="@+id/TVTempEnv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="196dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
+
+    <TextView
+        android:id="@+id/TVTempWndMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVTempEnv" />
+
+    <TextView
+        android:id="@+id/TVTempWndMax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
 
     <TextView
         android:id="@+id/TVTempMin"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="196dp"
         android:text="TextView"
         android:textAlignment="viewStart"
-        android:textSize="20dp"
+        android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintLeft_toLeftOf="@id/IVTemp"
-        app:layout_constraintTop_toBottomOf="@id/IVTemp" />
+        app:layout_constraintLeft_toRightOf="@id/IVTempOutline"
+        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
 
     <TextView
         android:id="@+id/TVTempMax"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginRight="20dp"
         android:text="TextView"
         android:textAlignment="viewEnd"
-        android:textSize="20dp"
+        android:textSize="12sp"
         android:textStyle="bold"
-        app:layout_constraintRight_toRightOf="@id/IVTemp"
-        app:layout_constraintTop_toBottomOf="@id/IVTemp" />
+        app:layout_constraintLeft_toRightOf="@id/IVTempOutline"
+        app:layout_constraintTop_toBottomOf="@id/TVTempMin" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

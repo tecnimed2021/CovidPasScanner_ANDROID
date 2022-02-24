@@ -80,7 +80,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val sensSizeX = 16
     private val sensSizeY = 12
     private val sensScale = 1
-    private var sensorBmp = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
+    private var sensorEnv = 0.0f
+    private var sensorObj = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
     private var sensorThermalImage = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0.0f } }
     private var sensorThermalImageRGB = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0 } }
     private var lastText: String? = null
@@ -95,7 +96,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 val elapsed = measureTimeMillis {
 /*                    for (i in 0 until sensSizeY) {
                         for (j in 0 until sensSizeX) {
-                            sensorBmp[i][j] = 25.0f + j.toFloat()
+                            sensorObj[i][j] = 25.0f + j.toFloat()
                         }
                     }*/
                     generateThrmalBmp()
@@ -135,7 +136,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 /*
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
-                sensorBmp[i][j] = 25.0f + j.toFloat()
+                sensorObj[i][j] = 25.0f + j.toFloat()
             }
         }
         val elapsed = measureTimeMillis {
@@ -200,25 +201,31 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             return;
 
         val cmdObj = ByteArray(2)
-        cmdObj[0] = 'O'.code.toByte()
+        cmdObj[0] = 'T'.code.toByte()
         cmdObj[1] = '\r'.code.toByte()
         mSerialDrv.write(cmdObj, 2)
         var n : Int = 0
-        while(n == 0)
-        {
-            var ans = ByteArray(1+12*16*4+2)
+        while(n == 0) {
+            val datasize = 1+(4)+(12*16*4)+2;
+            var ans = ByteArray(datasize)
             n = mSerialDrv.read(ans, 1000)
-            if(n >= 1+12*16*4+2) {
-                if(ans[0] == 'O'.code.toByte()) {
+            if(n >= datasize) {
+                if(ans[0] == 'T'.code.toByte()) {
+                    var bf = ByteArray(4)
                     var k: Int = 1;
+                    bf[0] = ans[k+3]
+                    bf[1] = ans[k+2]
+                    bf[2] = ans[k+1]
+                    bf[3] = ans[k+0]
+                    sensorEnv = ByteBuffer.wrap(bf).getFloat()
+                    k += 4
                     for (i in 0 until sensSizeY) {
                         for (j in 0 until sensSizeX) {
-                            var bf = ByteArray(4)
                             bf[0] = ans[k+3]
                             bf[1] = ans[k+2]
                             bf[2] = ans[k+1]
                             bf[3] = ans[k+0]
-                            sensorBmp[i][j] = ByteBuffer.wrap(bf).getFloat()
+                            sensorObj[i][j] = ByteBuffer.wrap(bf).getFloat()
                             k += 4
                         }
                     }
@@ -230,6 +237,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private fun generateThrmalBmp() {
         var MaxT: Float = -1000000.0f;
         var MinT: Float = 10000000.0f;
+        var MaxWndT: Float = -1000000.0f;
+        var MinWndT: Float = 10000000.0f;
 
         var idx: Int = 0;
         var idy: Int = 0;
@@ -241,13 +250,19 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         // Interpolazione
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
-                if(sensorBmp[i][j] < MinT)
-                    MinT = sensorBmp[i][j]
-                if(sensorBmp[i][j] > MaxT)
-                    MaxT = sensorBmp[i][j]
+                if(sensorObj[i][j] < MinT)
+                    MinT = sensorObj[i][j]
+                if(sensorObj[i][j] > MaxT)
+                    MaxT = sensorObj[i][j]
+                if(i >= 2 && i <= 9) {
+                    if(sensorObj[i][j] < MinWndT)
+                        MinWndT = sensorObj[i][j]
+                    if(sensorObj[i][j] > MaxWndT)
+                        MaxWndT = sensorObj[i][j]
+                }
                 for (ky in 0 until sensScale) {
                     for (kx in 0 until sensScale) {
-                        sensorThermalImage[i * sensScale + ky][j * sensScale + kx] = sensorBmp[i][j]
+                        sensorThermalImage[i * sensScale + ky][j * sensScale + kx] = sensorObj[i][j]
                     }
                 }
             }
@@ -292,8 +307,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         var bmp : Bitmap = createImage()
         binding.IVTemp.setImageBitmap(bmp)
         binding.IVTempOutline.setImageResource(R.drawable.reticolo)
-        binding.TVTempMin.setText("T min: " + getString(R.string.strf41, MinT))
-        binding.TVTempMax.setText("T_max: " + getString(R.string.strf41, MaxT))
+        binding.TVTempEnv.setText("Env:" + getString(R.string.strf41, sensorEnv))
+        binding.TVTempWndMin.setText(getString(R.string.strf41, MinWndT))
+        binding.TVTempWndMax.setText(getString(R.string.strf41, MaxWndT))
+        binding.TVTempMin.setText("Tmin:" + getString(R.string.strf41, MinT))
+        binding.TVTempMax.setText("Tmax:" + getString(R.string.strf41, MaxT))
     }
 
     private fun createImage(): Bitmap {
