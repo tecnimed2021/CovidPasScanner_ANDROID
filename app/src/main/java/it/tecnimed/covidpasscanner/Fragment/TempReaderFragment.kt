@@ -84,6 +84,13 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorObj = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
     private var sensorThermalImage = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0.0f } }
     private var sensorThermalImageRGB = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0 } }
+    private var sensorTHInt = 0;
+    private var sensorTHExt = 0;
+
+    private var Tenv = 0.0f;
+    private var Tobj = 0.0f;
+
+
     private var lastText: String? = null
 
     private lateinit var mSerialDrv: UARTDriver
@@ -130,7 +137,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.backText3.setOnClickListener(this)
         binding.backImage3.visibility = View.VISIBLE;
         binding.backText3.visibility = View.VISIBLE;
-
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run();
 /*
@@ -206,13 +212,25 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         mSerialDrv.write(cmdObj, 2)
         var n : Int = 0
         while(n == 0) {
-            val datasize = 1+(4)+(12*16*4)+2;
+            val datasize = 1+(4)+(4)+(4)+(12*16*4)+2;
             var ans = ByteArray(datasize)
             n = mSerialDrv.read(ans, 1000)
             if(n >= datasize) {
                 if(ans[0] == 'T'.code.toByte()) {
                     var bf = ByteArray(4)
                     var k: Int = 1;
+                    bf[0] = ans[k+3]
+                    bf[1] = ans[k+2]
+                    bf[2] = ans[k+1]
+                    bf[3] = ans[k+0]
+                    sensorTHInt = ByteBuffer.wrap(bf).getInt()
+                    k += 4
+                    bf[0] = ans[k+3]
+                    bf[1] = ans[k+2]
+                    bf[2] = ans[k+1]
+                    bf[3] = ans[k+0]
+                    sensorTHExt = ByteBuffer.wrap(bf).getInt()
+                    k += 4
                     bf[0] = ans[k+3]
                     bf[1] = ans[k+2]
                     bf[2] = ans[k+1]
@@ -304,14 +322,27 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
         }
 
+        // Calcolo Temperature
+        val x: Float = sensorTHInt.toFloat()
+        Tenv = (x * x * x * 0.00000000217112f)
+        Tenv += (x * x * (-0.0000120088f))
+        Tenv += (x * 0.041993773f)
+        Tenv += (-29.28437706f)
+        Tobj = MaxWndT + (Tenv * Tenv * Tenv * -0.00002633053221f +
+                          Tenv * Tenv * 0.004149859944f +
+                          Tenv * -0.2638655462f +
+                          6.25f)
+
+
         var bmp : Bitmap = createImage()
         binding.IVTemp.setImageBitmap(bmp)
         binding.IVTempOutline.setImageResource(R.drawable.reticolo)
-        binding.TVTempEnv.setText("Env:" + getString(R.string.strf41, sensorEnv))
+        binding.TVTempEnv.setText("Env\n" + getString(R.string.strf41, Tenv))
         binding.TVTempWndMin.setText(getString(R.string.strf41, MinWndT))
         binding.TVTempWndMax.setText(getString(R.string.strf41, MaxWndT))
-        binding.TVTempMin.setText("Tmin:" + getString(R.string.strf41, MinT))
-        binding.TVTempMax.setText("Tmax:" + getString(R.string.strf41, MaxT))
+        binding.TVTempWnd.setText(getString(R.string.strf41, Tobj))
+        binding.TVTempMin.setText("Min\n" + getString(R.string.strf41, MinT))
+        binding.TVTempMax.setText("Max\n" + getString(R.string.strf41, MaxT))
     }
 
     private fun createImage(): Bitmap {
