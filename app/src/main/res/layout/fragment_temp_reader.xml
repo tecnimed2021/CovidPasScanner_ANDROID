@@ -84,7 +84,7 @@
         tools:srcCompat="@drawable/reticolo" />
 
     <TextView
-        android:id="@+id/TVTempEnv"
+        android:id="@+id/TVTempEnvThInt"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="196dp"
@@ -96,7 +96,7 @@
         app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
 
     <TextView
-        android:id="@+id/TVTempWndMin"
+        android:id="@+id/TVTempEnvSensor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
@@ -105,7 +105,19 @@
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVTempEnv" />
+        app:layout_constraintTop_toBottomOf="@id/TVTempEnvThInt" />
+
+    <TextView
+        android:id="@+id/TVTempWndMin"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVTempEnvSensor" />
 
     <TextView
         android:id="@+id/TVTempWndMax"

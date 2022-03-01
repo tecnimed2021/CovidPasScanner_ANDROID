@@ -337,12 +337,17 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         var bmp : Bitmap = createImage()
         binding.IVTemp.setImageBitmap(bmp)
         binding.IVTempOutline.setImageResource(R.drawable.reticolo)
-        binding.TVTempEnv.setText("Env\n" + getString(R.string.strf41, Tenv))
+        binding.TVTempEnvThInt.setText("Int\n" + getString(R.string.strf41, Tenv))
+        binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
         binding.TVTempWndMin.setText(getString(R.string.strf41, MinWndT))
         binding.TVTempWndMax.setText(getString(R.string.strf41, MaxWndT))
         binding.TVTempWnd.setText(getString(R.string.strf41, Tobj))
         binding.TVTempMin.setText("Min\n" + getString(R.string.strf41, MinT))
         binding.TVTempMax.setText("Max\n" + getString(R.string.strf41, MaxT))
+    }
+
+    private fun findThrmalFigure() {
+
     }
 
     private fun createImage(): Bitmap {
