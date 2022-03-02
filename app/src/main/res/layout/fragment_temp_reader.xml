@@ -54,7 +54,7 @@
         android:id="@+id/TVUserTempReaderTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="@string/label_position_temp"
         android:textAlignment="center"
         android:textColor="@color/covidpasscanner_green"
@@ -120,11 +120,11 @@
         app:layout_constraintTop_toBottomOf="@id/TVTempEnvSensor" />
 
     <TextView
-        android:id="@+id/TVTempWndMax"
+        android:id="@+id/TVTempWndMaxFreeze"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="180dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:text="TextView"
         android:textAlignment="viewStart"
         android:textSize="30sp"
@@ -133,10 +133,10 @@
         app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
 
     <TextView
-        android:id="@+id/TVTempWnd"
+        android:id="@+id/TVTempObjFreeze"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="180dp"
         android:text="TextView"
         android:textAlignment="viewStart"
@@ -146,6 +146,34 @@
         app:layout_constraintLeft_toRightOf="@id/TVTempWndMax"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
+
+    <TextView
+        android:id="@+id/TVTempWndMax"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="180dp"
+        android:layout_marginTop="3dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVTempWndMaxFreeze" />
+
+    <TextView
+        android:id="@+id/TVTempObj"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:layout_marginRight="180dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toRightOf="@id/TVTempWndMax"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVTempObjFreeze" />
 
     <TextView
         android:id="@+id/TVTempMin"

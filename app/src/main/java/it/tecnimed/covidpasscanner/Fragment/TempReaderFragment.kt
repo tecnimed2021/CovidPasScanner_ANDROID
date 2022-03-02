@@ -87,6 +87,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorTHInt = 0;
     private var sensorTHExt = 0;
     private var sensorPosition = 0;
+    private var TargetState = false;
 
     private var Tenv = 0.0f;
     private var Tobj = 0.0f;
@@ -343,15 +344,44 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
         binding.TVTempWndMin.setText(getString(R.string.strf41, MinWndT))
         binding.TVTempWndMax.setText(getString(R.string.strf41, MaxWndT))
-        binding.TVTempWnd.setText(getString(R.string.strf41, Tobj))
+        binding.TVTempObj.setText(getString(R.string.strf41, Tobj))
         binding.TVTempMin.setText("Min\n" + getString(R.string.strf41, MinT))
         binding.TVTempMax.setText("Max\n" + getString(R.string.strf41, MaxT))
+        if(TargetState == false){
+            if(sensorPosition == 0) {
+                binding.TVPosition.setText("OK")
+                binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndT))
+                binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
+                TargetState = true
+            }
+            else{
+                binding.TVTempWndMaxFreeze.setText("---")
+                binding.TVTempObjFreeze.setText("---")
+            }
+        }
+        else {
+            if(sensorPosition != 0){
+                if(sensorPosition == 1)
+                    binding.TVPosition.setText("<-Sx")
+                else if(sensorPosition == 2)
+                    binding.TVPosition.setText("Dx->")
+                else
+                    binding.TVPosition.setText("--")
+                binding.TVTempWndMaxFreeze.setText("---")
+                binding.TVTempObjFreeze.setText("---")
+                TargetState = false
+            }
+            else {
+                binding.TVPosition.setText("OK")
+            }
+        }
+
         if(sensorPosition == 0)
             binding.TVPosition.setText("OK")
         else if(sensorPosition == 1)
-            binding.TVPosition.setText("Sx")
+            binding.TVPosition.setText("<-Sx")
         else if(sensorPosition == 2)
-            binding.TVPosition.setText("Dx")
+            binding.TVPosition.setText("Dx->")
         else
             binding.TVPosition.setText("--")
     }
