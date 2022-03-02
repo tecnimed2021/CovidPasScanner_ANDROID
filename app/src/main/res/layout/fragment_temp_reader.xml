@@ -171,4 +171,18 @@
         app:layout_constraintLeft_toRightOf="@id/IVTempOutline"
         app:layout_constraintTop_toBottomOf="@id/TVTempMin" />
 
+    <TextView
+        android:id="@+id/TVPosition"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

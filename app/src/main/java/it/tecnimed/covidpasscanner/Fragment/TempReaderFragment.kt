@@ -86,6 +86,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorThermalImageRGB = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0 } }
     private var sensorTHInt = 0;
     private var sensorTHExt = 0;
+    private var sensorPosition = 0;
 
     private var Tenv = 0.0f;
     private var Tobj = 0.0f;
@@ -212,7 +213,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         mSerialDrv.write(cmdObj, 2)
         var n : Int = 0
         while(n == 0) {
-            val datasize = 1+(4)+(4)+(4)+(12*16*4)+2;
+            val datasize = 1+(4)+(4)+(4)+(12*16*4)+1+2;
             var ans = ByteArray(datasize)
             n = mSerialDrv.read(ans, 1000)
             if(n >= datasize) {
@@ -247,6 +248,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                             k += 4
                         }
                     }
+                    sensorPosition = ans[k].toInt()
                 }
             }
         }
@@ -344,6 +346,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempWnd.setText(getString(R.string.strf41, Tobj))
         binding.TVTempMin.setText("Min\n" + getString(R.string.strf41, MinT))
         binding.TVTempMax.setText("Max\n" + getString(R.string.strf41, MaxT))
+        if(sensorPosition == 0)
+            binding.TVPosition.setText("OK")
+        else if(sensorPosition == 1)
+            binding.TVPosition.setText("Sx")
+        else if(sensorPosition == 2)
+            binding.TVPosition.setText("Dx")
+        else
+            binding.TVPosition.setText("--")
     }
 
     private fun findThrmalFigure() {
