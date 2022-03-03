@@ -139,6 +139,16 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.backText3.setOnClickListener(this)
         binding.backImage3.visibility = View.VISIBLE;
         binding.backText3.visibility = View.VISIBLE;
+        binding.TVTempEnvThInt.setText("---")
+        binding.TVTempEnvSensor.setText("---")
+        binding.TVTempWndMin.setText("---")
+        binding.TVTempWndMax.setText("---")
+        binding.TVTempObj.setText("---")
+        binding.TVTempMin.setText("---")
+        binding.TVTempMax.setText("---")
+        binding.TVTempWndMaxFreeze.setText("---")
+        binding.TVTempObjFreeze.setText("---")
+
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run();
 /*
@@ -354,10 +364,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
                 TargetState = true
             }
-            else{
-                binding.TVTempWndMaxFreeze.setText("---")
-                binding.TVTempObjFreeze.setText("---")
-            }
         }
         else {
             if(sensorPosition != 0){
@@ -367,8 +373,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     binding.TVPosition.setText("Dx->")
                 else
                     binding.TVPosition.setText("--")
-                binding.TVTempWndMaxFreeze.setText("---")
-                binding.TVTempObjFreeze.setText("---")
                 TargetState = false
             }
             else {
