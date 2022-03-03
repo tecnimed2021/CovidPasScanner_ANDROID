@@ -92,6 +92,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var Tenv = 0.0f;
     private var Tobj = 0.0f;
 
+    private var MaxWndTAve: Float = 0.0f;
+
+
 
     private var lastText: String? = null
 
@@ -298,6 +301,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
+        MaxWndTAve = ((MaxWndTAve * 4.0f) + MaxWndT) / 5.0f
         for (i in 0 until ((sensSizeY - 1) * sensScale)) {
             for (j in 0 until ((sensSizeX - 1) * sensScale) step sensScale) {
                 idx = (j / sensScale) * sensScale
@@ -341,10 +345,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         Tenv += (x * x * (-0.0000120088f))
         Tenv += (x * 0.041993773f)
         Tenv += (-29.28437706f)
-        Tobj = MaxWndT + (Tenv * Tenv * Tenv * -0.00002633053221f +
-                          Tenv * Tenv * 0.004149859944f +
-                          Tenv * -0.2638655462f +
-                          6.25f)
+        Tobj = MaxWndTAve + (Tenv * Tenv * Tenv * -0.00002633053221f +
+                             Tenv * Tenv * 0.004149859944f +
+                             Tenv * -0.2638655462f +
+                             6.25f)
 
 
         var bmp : Bitmap = createImage()
@@ -353,14 +357,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempEnvThInt.setText("Int\n" + getString(R.string.strf41, Tenv))
         binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
         binding.TVTempWndMin.setText(getString(R.string.strf41, MinWndT))
-        binding.TVTempWndMax.setText(getString(R.string.strf41, MaxWndT))
+        binding.TVTempWndMax.setText(getString(R.string.strf41, MaxWndTAve))
         binding.TVTempObj.setText(getString(R.string.strf41, Tobj))
         binding.TVTempMin.setText("Min\n" + getString(R.string.strf41, MinT))
         binding.TVTempMax.setText("Max\n" + getString(R.string.strf41, MaxT))
         if(TargetState == false){
             if(sensorPosition == 0) {
                 binding.TVPosition.setText("OK")
-                binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndT))
+                binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndTAve))
                 binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
                 TargetState = true
             }
