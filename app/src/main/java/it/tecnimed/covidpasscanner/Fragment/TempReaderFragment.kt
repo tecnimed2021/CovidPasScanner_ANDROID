@@ -147,8 +147,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempWndMin.setText("---")
         binding.TVTempWndMax.setText("---")
         binding.TVTempObj.setText("---")
-        binding.TVTempMin.setText("---")
-        binding.TVTempMax.setText("---")
         binding.TVTempWndMaxFreeze.setText("---")
         binding.TVTempObjFreeze.setText("---")
 
@@ -269,8 +267,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     }
 
     private fun generateThrmalBmp() {
-        var MaxT: Float = -1000000.0f;
-        var MinT: Float = 10000000.0f;
         var MaxWndT: Float = -1000000.0f;
         var MinWndT: Float = 10000000.0f;
 
@@ -284,16 +280,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         // Interpolazione
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
-                if(sensorObj[i][j] < MinT)
-                    MinT = sensorObj[i][j]
-                if(sensorObj[i][j] > MaxT)
-                    MaxT = sensorObj[i][j]
-                if(i >= 2 && i <= 9) {
-                    if(sensorObj[i][j] < MinWndT)
-                        MinWndT = sensorObj[i][j]
-                    if(sensorObj[i][j] > MaxWndT)
-                        MaxWndT = sensorObj[i][j]
-                }
+                if(sensorObj[i][j] < MinWndT)
+                    MinWndT = sensorObj[i][j]
+                if(sensorObj[i][j] > MaxWndT)
+                    MaxWndT = sensorObj[i][j]
                 for (ky in 0 until sensScale) {
                     for (kx in 0 until sensScale) {
                         sensorThermalImage[i * sensScale + ky][j * sensScale + kx] = sensorObj[i][j]
@@ -326,8 +316,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
 
         // Conversione RGB
-        var m: Float = - (250.0f / (MaxT - MinT))
-        var q: Float = 0 - (m * MaxT)
+        var m: Float = - (250.0f / (MaxWndT - MinWndT))
+        var q: Float = 0 - (m * MaxWndT)
         for (i in 0 until (sensSizeY * sensScale)) {
             for (j in 0 until (sensSizeX * sensScale)) {
                 // H = Angolo Gradi, S = 0..1, B = 0..1
@@ -359,8 +349,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempWndMin.setText(getString(R.string.strf41, MinWndT))
         binding.TVTempWndMax.setText(getString(R.string.strf41, MaxWndTAve))
         binding.TVTempObj.setText(getString(R.string.strf41, Tobj))
-        binding.TVTempMin.setText("Min\n" + getString(R.string.strf41, MinT))
-        binding.TVTempMax.setText("Max\n" + getString(R.string.strf41, MaxT))
         if(TargetState == false){
             if(sensorPosition == 0) {
                 binding.TVPosition.setText("OK")
