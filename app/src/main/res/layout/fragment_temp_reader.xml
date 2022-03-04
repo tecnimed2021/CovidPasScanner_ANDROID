@@ -176,30 +176,6 @@
         app:layout_constraintTop_toBottomOf="@id/TVTempObjFreeze" />
 
     <TextView
-        android:id="@+id/TVTempMin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="196dp"
-        android:text="Tmin:\n100"
-        android:textAlignment="viewStart"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toRightOf="@id/IVTempOutline"
-        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
-
-    <TextView
-        android:id="@+id/TVTempMax"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="TextView"
-        android:textAlignment="viewEnd"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintLeft_toRightOf="@id/IVTempOutline"
-        app:layout_constraintTop_toBottomOf="@id/TVTempMin" />
-
-    <TextView
         android:id="@+id/TVPosition"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
