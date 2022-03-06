@@ -88,6 +88,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorTHExt = 0;
     private var sensorPosition = 0;
     private var TargetState = false;
+    private var TargetTimeout = 0;
 
     private var Tenv = 0.0f;
     private var Tobj = 0.0f;
@@ -99,7 +100,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var lastText: String? = null
 
     private lateinit var mSerialDrv: UARTDriver
-    private val mHandler = object:  Handler(Looper.getMainLooper()) {
+    private val ThermalImageHwInterfaceHandler = object:  Handler(Looper.getMainLooper()) {
     }
     private val ThermalImageHwInterface: Runnable = object : Runnable {
         override fun run() {
@@ -116,7 +117,26 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
-                mHandler.postDelayed(this, 100)
+                ThermalImageHwInterfaceHandler.postDelayed(this, 100)
+            }
+        }
+    }
+    private val TimeoutHandler = object:  Handler(Looper.getMainLooper()) {
+    }
+    private val TimeoutHnd: Runnable = object : Runnable {
+        override fun run() {
+            try {
+                if (TargetTimeout > 0) {
+                    TargetTimeout--;
+                }
+                if(TargetTimeout == 0) {
+                    binding.TVTempWndMaxFreeze.setText("--")
+                    binding.TVTempObjFreeze.setText("--")
+                }
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                TimeoutHandler.postDelayed(this, 50)
             }
         }
     }
@@ -152,6 +172,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run();
+        TimeoutHnd.run();
 /*
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
@@ -349,12 +370,39 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempWndMin.setText(getString(R.string.strf41, MinWndT))
         binding.TVTempWndMax.setText(getString(R.string.strf41, MaxWndTAve))
         binding.TVTempObj.setText(getString(R.string.strf41, Tobj))
+        if(sensorPosition != 0){
+            if(sensorPosition == 1)
+                binding.TVPosition.setText("<-Sx")
+            else if(sensorPosition == 2)
+                binding.TVPosition.setText("Dx->")
+            else
+                binding.TVPosition.setText("--")
+            TargetState = false
+        }
+        else if(sensorPosition == 0) {
+            binding.TVPosition.setText("OK")
+            if(TargetState == false) {
+                binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndTAve))
+                binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
+                TargetState = true
+            }
+            TargetTimeout = 20
+        }
+/*
         if(TargetState == false){
             if(sensorPosition == 0) {
                 binding.TVPosition.setText("OK")
                 binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndTAve))
                 binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
+                TargetTimeout = 20
                 TargetState = true
+            }
+            if(TargetTimeout == 0) {
+                binding.TVTempWndMaxFreeze.setText("--")
+                binding.TVTempObjFreeze.setText("--")
+            }
+            else {
+                TargetTimeout--;
             }
         }
         else {
@@ -369,9 +417,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
             else {
                 binding.TVPosition.setText("OK")
+                binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndTAve))
+                binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
+                TargetTimeout = 20
             }
         }
-
         if(sensorPosition == 0)
             binding.TVPosition.setText("OK")
         else if(sensorPosition == 1)
@@ -380,6 +430,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             binding.TVPosition.setText("Dx->")
         else
             binding.TVPosition.setText("--")
+*/
     }
 
     private fun findThrmalFigure() {
