@@ -167,6 +167,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run();
         TimeoutHnd.run();
+        beepManager = BeepManager(requireActivity())
 /*
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
@@ -378,57 +379,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             if(TargetState == false) {
                 binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndTAve))
                 binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
+                try {
+                    beepManager.playBeepSoundAndVibrate()
+                } catch (e: Exception) {
+                }
                 TargetState = true
             }
             TargetTimeout = 20
-            try {
-                beepManager.playBeepSoundAndVibrate()
-            } catch (e: Exception) {
-            }
         }
-/*
-        if(TargetState == false){
-            if(sensorPosition == 0) {
-                binding.TVPosition.setText("OK")
-                binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndTAve))
-                binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
-                TargetTimeout = 20
-                TargetState = true
-            }
-            if(TargetTimeout == 0) {
-                binding.TVTempWndMaxFreeze.setText("--")
-                binding.TVTempObjFreeze.setText("--")
-            }
-            else {
-                TargetTimeout--;
-            }
-        }
-        else {
-            if(sensorPosition != 0){
-                if(sensorPosition == 1)
-                    binding.TVPosition.setText("<-Sx")
-                else if(sensorPosition == 2)
-                    binding.TVPosition.setText("Dx->")
-                else
-                    binding.TVPosition.setText("--")
-                TargetState = false
-            }
-            else {
-                binding.TVPosition.setText("OK")
-                binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndTAve))
-                binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
-                TargetTimeout = 20
-            }
-        }
-        if(sensorPosition == 0)
-            binding.TVPosition.setText("OK")
-        else if(sensorPosition == 1)
-            binding.TVPosition.setText("<-Sx")
-        else if(sensorPosition == 2)
-            binding.TVPosition.setText("Dx->")
-        else
-            binding.TVPosition.setText("--")
-*/
     }
 
     private fun findThrmalFigure() {
