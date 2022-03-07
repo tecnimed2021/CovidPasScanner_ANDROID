@@ -34,6 +34,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
+import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
@@ -95,9 +96,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     private var MaxWndTAve: Float = 0.0f;
 
-
-
-    private var lastText: String? = null
+    private lateinit var beepManager: BeepManager
 
     private lateinit var mSerialDrv: UARTDriver
     private val ThermalImageHwInterfaceHandler = object:  Handler(Looper.getMainLooper()) {
@@ -107,11 +106,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             try {
                 getThermalImage() //this function can change value of mInterval.
                 val elapsed = measureTimeMillis {
-/*                    for (i in 0 until sensSizeY) {
-                        for (j in 0 until sensSizeX) {
-                            sensorObj[i][j] = 25.0f + j.toFloat()
-                        }
-                    }*/
                     generateThrmalBmp()
                 }
             } finally {
@@ -193,7 +187,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     override fun onResume() {
         super.onResume()
-        lastText = ""
     }
 
     override fun onPause() {
@@ -388,6 +381,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 TargetState = true
             }
             TargetTimeout = 20
+            try {
+                beepManager.playBeepSoundAndVibrate()
+            } catch (e: Exception) {
+            }
         }
 /*
         if(TargetState == false){
