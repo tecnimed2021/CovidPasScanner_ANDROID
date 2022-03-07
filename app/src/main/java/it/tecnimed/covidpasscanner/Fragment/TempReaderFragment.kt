@@ -312,7 +312,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
-        MaxWndTAve = ((MaxWndTAve * 4.0f) + MaxWndT) / 5.0f
+        MaxWndTAve = ((MaxWndTAve * 1.0f) + MaxWndT) / 2.0f
+
         for (i in 0 until ((sensSizeY - 1) * sensScale)) {
             for (j in 0 until ((sensSizeX - 1) * sensScale) step sensScale) {
                 idx = (j / sensScale) * sensScale
