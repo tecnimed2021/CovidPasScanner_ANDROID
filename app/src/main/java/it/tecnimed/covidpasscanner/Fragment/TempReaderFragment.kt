@@ -90,7 +90,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorPosition = 0;
     private var TargetState = false;
     private var TargetTimeout = 0;
-    private var BuzzerEnable = false;
 
     private var Tenv = 0.0f;
     private var Tobj = 0.0f;
@@ -127,7 +126,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 if(TargetTimeout == 0) {
                     binding.TVTempWndMaxFreeze.setText("--")
                     binding.TVTempObjFreeze.setText("--")
-                    BuzzerEnable = true;
+                    TargetState = false;
                 }
             } finally {
                 // 100% guarantee that this always happens, even if
@@ -374,23 +373,19 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 binding.TVPosition.setText("Dx->")
             else
                 binding.TVPosition.setText("--")
-            TargetState = false
         }
         else if(sensorPosition == 0) {
             binding.TVPosition.setText("OK")
             if(TargetState == false) {
                 binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndTAve))
                 binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
-                if(BuzzerEnable) {
-                    try {
-                        beepManager.playBeepSoundAndVibrate()
-                    } catch (e: Exception) {
-                    }
-                    BuzzerEnable = false;
+                try {
+                    beepManager.playBeepSoundAndVibrate()
+                } catch (e: Exception) {
                 }
+                TargetTimeout = 20
                 TargetState = true
             }
-            TargetTimeout = 20
         }
     }
 
