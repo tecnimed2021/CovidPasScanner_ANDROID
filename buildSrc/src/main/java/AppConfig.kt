@@ -29,7 +29,7 @@ object Config {
     val javaVersion = JavaVersion.VERSION_1_8
 
     const val versionCode = 1
-    const val versionName = "1.41.41"
+    const val versionName = "1.41.42"
 
     const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
     const val proguardConsumerRules = "consumer-rules.pro"
