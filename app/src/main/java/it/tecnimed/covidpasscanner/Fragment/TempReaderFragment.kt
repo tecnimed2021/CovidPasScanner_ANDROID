@@ -40,6 +40,7 @@ import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
 import it.tecnimed.covidpasscanner.uart.UARTDriver
 import java.nio.ByteBuffer
+import kotlin.math.abs
 import kotlin.system.measureTimeMillis
 
 
@@ -307,7 +308,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
-        MaxWndTAve = ((MaxWndTAve * 1.0f) + MaxWndT) / 2.0f
+        if(abs(MaxWndT - MaxWndTAve) > 0.5f)
+            MaxWndTAve = MaxWndT
+        else
+            MaxWndTAve = ((MaxWndTAve * 1.0f) + MaxWndT) / 2.0f
 
         for (i in 0 until ((sensSizeY - 1) * sensScale)) {
             for (j in 0 until ((sensSizeX - 1) * sensScale) step sensScale) {
