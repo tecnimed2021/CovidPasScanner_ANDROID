@@ -387,7 +387,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     beepManager.playBeepSoundAndVibrate()
                 } catch (e: Exception) {
                 }
-                TargetTimeout = 20
+                TargetTimeout = 40
                 TargetState = true
             }
         }
