@@ -22,7 +22,6 @@
 package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
-import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
@@ -84,18 +83,23 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val sensScale = 1
     private var sensorEnv = 0.0f
     private var sensorObj = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
+    private var sensorObjMax = 0.0f
+    private var sensorObjMin = 0.0f
     private var sensorThermalImage = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0.0f } }
     private var sensorThermalImageRGB = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0 } }
     private var sensorTHInt = 0;
     private var sensorTHExt = 0;
-    private var sensorPosition = 0;
+    private var sensorTObjMax = 0.0f;
+    private var sensorTargetPosition = 0;
+    private var sensorTargetTObjMax = 0.0f;
+    private var sensorTargetTObjAve = 0.0f;
     private var TargetState = false;
     private var TargetTimeout = 0;
 
     private var Tenv = 0.0f;
     private var Tobj = 0.0f;
 
-    private var MaxWndTAve: Float = 0.0f;
+    private var AveSensorTargetTObjMax: Float = 0.0f;
 
     private lateinit var beepManager: BeepManager
 
@@ -125,8 +129,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     TargetTimeout--;
                 }
                 if(TargetTimeout == 0) {
-                    binding.TVTempWndMaxFreeze.setText("--")
-                    binding.TVTempObjFreeze.setText("--")
+                    binding.TVTempTargetMaxFreeze.setText("--")
+                    binding.TVTempTargetFreeze.setText("--")
                     TargetState = false;
                 }
             } finally {
@@ -160,27 +164,16 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.backText3.visibility = View.VISIBLE;
         binding.TVTempEnvThInt.setText("---")
         binding.TVTempEnvSensor.setText("---")
-        binding.TVTempWndMin.setText("---")
         binding.TVTempWndMax.setText("---")
-        binding.TVTempObj.setText("---")
-        binding.TVTempWndMaxFreeze.setText("---")
-        binding.TVTempObjFreeze.setText("---")
+        binding.TVTempTargetMax.setText("---")
+        binding.TVTempTarget.setText("---")
+        binding.TVTempTargetMaxFreeze.setText("---")
+        binding.TVTempTargetFreeze.setText("---")
 
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run();
         TimeoutHnd.run();
         beepManager = BeepManager(requireActivity())
-/*
-        for (i in 0 until sensSizeY) {
-            for (j in 0 until sensSizeX) {
-                sensorObj[i][j] = 25.0f + j.toFloat()
-            }
-        }
-        val elapsed = measureTimeMillis {
-            generateThrmalBmp()
-        }
-
- */
     }
 
     override fun onDestroyView() {
@@ -242,7 +235,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         mSerialDrv.write(cmdObj, 2)
         var n : Int = 0
         while(n == 0) {
-            val datasize = 1+(4)+(4)+(4)+(12*16*4)+1+2;
+            val datasize = 1+(4)+(4)+(4)+(12*16*4)+1+(4)+(4)+(4)+2;
             var ans = ByteArray(datasize)
             n = mSerialDrv.read(ans, 1000)
             if(n >= datasize) {
@@ -277,16 +270,32 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                             k += 4
                         }
                     }
-                    sensorPosition = ans[k].toInt()
+                    sensorTargetPosition = ans[k].toInt()
+                    k++
+                    bf[0] = ans[k+3]
+                    bf[1] = ans[k+2]
+                    bf[2] = ans[k+1]
+                    bf[3] = ans[k+0]
+                    sensorTObjMax = ByteBuffer.wrap(bf).getFloat()
+                    k += 4
+                    bf[0] = ans[k+3]
+                    bf[1] = ans[k+2]
+                    bf[2] = ans[k+1]
+                    bf[3] = ans[k+0]
+                    sensorTargetTObjMax = ByteBuffer.wrap(bf).getFloat()
+                    k += 4
+                    bf[0] = ans[k+3]
+                    bf[1] = ans[k+2]
+                    bf[2] = ans[k+1]
+                    bf[3] = ans[k+0]
+                    sensorTargetTObjAve = ByteBuffer.wrap(bf).getFloat()
                 }
             }
         }
     }
 
-    private fun generateThrmalBmp() {
-        var MaxWndT: Float = -1000000.0f;
-        var MinWndT: Float = 10000000.0f;
-
+    private fun generateThrmalBmp() 
+    {
         var idx: Int = 0;
         var idy: Int = 0;
         var mx: Float = 0.0f;
@@ -295,12 +304,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         var qy: Float = 0.0f;
 
         // Interpolazione
+        sensorObjMax = -1000000.0f;
+        sensorObjMin = 10000000.0f;
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
-                if(sensorObj[i][j] < MinWndT)
-                    MinWndT = sensorObj[i][j]
-                if(sensorObj[i][j] > MaxWndT)
-                    MaxWndT = sensorObj[i][j]
+                if(sensorObj[i][j] < sensorObjMin)
+                    sensorObjMin = sensorObj[i][j]
+                if(sensorObj[i][j] > sensorObjMax)
+                    sensorObjMax = sensorObj[i][j]
                 for (ky in 0 until sensScale) {
                     for (kx in 0 until sensScale) {
                         sensorThermalImage[i * sensScale + ky][j * sensScale + kx] = sensorObj[i][j]
@@ -308,10 +319,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
-        if(abs(MaxWndT - MaxWndTAve) > 0.5f)
-            MaxWndTAve = MaxWndT
+        if(abs(sensorTargetTObjMax - AveSensorTargetTObjMax) > 0.5f)
+            AveSensorTargetTObjMax = sensorTargetTObjMax
         else
-            MaxWndTAve = ((MaxWndTAve * 1.0f) + MaxWndT) / 2.0f
+            AveSensorTargetTObjMax = ((AveSensorTargetTObjMax * 1.0f) + sensorTargetTObjMax) / 2.0f
 
         for (i in 0 until ((sensSizeY - 1) * sensScale)) {
             for (j in 0 until ((sensSizeX - 1) * sensScale) step sensScale) {
@@ -337,8 +348,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
 
         // Conversione RGB
-        var m: Float = - (250.0f / (MaxWndT - MinWndT))
-        var q: Float = 0 - (m * MaxWndT)
+        var m: Float = - (250.0f / (sensorObjMax - sensorObjMin))
+        var q: Float = 0 - (m * sensorObjMax)
         for (i in 0 until (sensSizeY * sensScale)) {
             for (j in 0 until (sensSizeX * sensScale)) {
                 // H = Angolo Gradi, S = 0..1, B = 0..1
@@ -356,10 +367,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         Tenv += (x * x * (-0.0000120088f))
         Tenv += (x * 0.041993773f)
         Tenv += (-29.28437706f)
-        Tobj = MaxWndTAve + (Tenv * Tenv * Tenv * -0.00002633053221f +
-                             Tenv * Tenv * 0.004149859944f +
-                             Tenv * -0.2638655462f +
-                             6.25f)
+        Tobj = AveSensorTargetTObjMax + (Tenv * Tenv * Tenv * -0.00002633053221f +
+                                         Tenv * Tenv * 0.004149859944f +
+                                         Tenv * -0.2638655462f +
+                                         6.25f)
 
 
         var bmp : Bitmap = createImage()
@@ -367,22 +378,22 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.IVTempOutline.setImageResource(R.drawable.reticolo)
         binding.TVTempEnvThInt.setText("Int\n" + getString(R.string.strf41, Tenv))
         binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
-        binding.TVTempWndMin.setText(getString(R.string.strf41, MinWndT))
-        binding.TVTempWndMax.setText(getString(R.string.strf41, MaxWndTAve))
-        binding.TVTempObj.setText(getString(R.string.strf41, Tobj))
-        if(sensorPosition != 0){
-            if(sensorPosition == 1)
+        binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
+        binding.TVTempTargetMax.setText(getString(R.string.strf41, AveSensorTargetTObjMax))
+        binding.TVTempTarget.setText(getString(R.string.strf41, Tobj))
+        if(sensorTargetPosition != 0){
+            if(sensorTargetPosition == 1)
                 binding.TVPosition.setText("<-Sx")
-            else if(sensorPosition == 2)
+            else if(sensorTargetPosition == 2)
                 binding.TVPosition.setText("Dx->")
             else
                 binding.TVPosition.setText("--")
         }
-        else if(sensorPosition == 0) {
+        else if(sensorTargetPosition == 0) {
             binding.TVPosition.setText("OK")
             if(TargetState == false) {
-                binding.TVTempWndMaxFreeze.setText(getString(R.string.strf41, MaxWndTAve))
-                binding.TVTempObjFreeze.setText(getString(R.string.strf41, Tobj))
+                binding.TVTempTargetMaxFreeze.setText(getString(R.string.strf41, AveSensorTargetTObjMax))
+                binding.TVTempTargetFreeze.setText(getString(R.string.strf41, Tobj))
                 try {
                     beepManager.playBeepSoundAndVibrate()
                 } catch (e: Exception) {
