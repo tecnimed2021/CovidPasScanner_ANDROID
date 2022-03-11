@@ -322,7 +322,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         if(abs(sensorTargetTObjMax - AveSensorTargetTObjMax) > 0.5f)
             AveSensorTargetTObjMax = sensorTargetTObjMax
         else
-            AveSensorTargetTObjMax = ((AveSensorTargetTObjMax * 1.0f) + sensorTargetTObjMax) / 2.0f
+            AveSensorTargetTObjMax = ((AveSensorTargetTObjMax * 2.0f) + sensorTargetTObjMax) / 3.0f
 
         for (i in 0 until ((sensSizeY - 1) * sensScale)) {
             for (j in 0 until ((sensSizeX - 1) * sensScale) step sensScale) {
