@@ -131,6 +131,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 if(TargetTimeout == 0) {
                     binding.TVTempTargetMaxFreeze.setText("--")
                     binding.TVTempTargetFreeze.setText("--")
+                    binding.TVTempTargetMax.setText("--")
+                    binding.TVTempTarget.setText("--")
                     TargetState = false;
                 }
             } finally {
@@ -386,8 +388,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 binding.TVPosition.setText("<-Sx")
             else if(sensorTargetPosition == 2)
                 binding.TVPosition.setText("Dx->")
-            else
+            else {
                 binding.TVPosition.setText("--")
+                binding.TVTempTargetMax.setText("--")
+                binding.TVTempTarget.setText("--")
+            }
         }
         else if(sensorTargetPosition == 0) {
             binding.TVPosition.setText("OK")
@@ -402,10 +407,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 TargetState = true
             }
         }
-    }
-
-    private fun findThrmalFigure() {
-
     }
 
     private fun createImage(): Bitmap {
