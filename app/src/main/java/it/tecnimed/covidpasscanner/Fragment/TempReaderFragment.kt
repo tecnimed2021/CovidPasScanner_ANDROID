@@ -109,10 +109,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val ThermalImageHwInterface: Runnable = object : Runnable {
         override fun run() {
             try {
-                getThermalImage() //this function can change value of mInterval.
-                val elapsed = measureTimeMillis {
-                    generateThrmalBmp()
-                }
+                getThermalImage()
+                generateThrmalBmp()
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
@@ -129,6 +127,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     TargetTimeout--;
                 }
                 if(TargetTimeout == 0) {
+                    binding.TVPosition.setText("--")
                     binding.TVTempTargetMaxFreeze.setText("--")
                     binding.TVTempTargetFreeze.setText("--")
                     binding.TVTempTargetMax.setText("--")
@@ -294,8 +293,60 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
+        if(abs(sensorTargetTObjMax - AveSensorTargetTObjMax) > 0.5f)
+            AveSensorTargetTObjMax = sensorTargetTObjMax
+        else
+            AveSensorTargetTObjMax = ((AveSensorTargetTObjMax * 2.0f) + sensorTargetTObjMax) / 3.0f
+
+        processTemperature()
     }
 
+    private fun processTemperature()
+    {
+        // Calcolo
+        val x: Float = sensorTHInt.toFloat()
+        Tenv = (x * x * x * 0.00000000217112f)
+        Tenv += (x * x * (-0.0000120088f))
+        Tenv += (x * 0.041993773f)
+        Tenv += (-29.28437706f)
+        Tobj = AveSensorTargetTObjMax + (Tenv * Tenv * Tenv * -0.00002633053221f +
+                Tenv * Tenv * 0.004149859944f +
+                Tenv * -0.2638655462f +
+                6.25f)
+
+        // Visualizzazione
+        binding.TVTempEnvThInt.setText("Int\n" + getString(R.string.strf41, Tenv))
+        binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
+        binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
+        binding.TVTempTargetMax.setText(getString(R.string.strf41, AveSensorTargetTObjMax))
+        binding.TVTempTarget.setText(getString(R.string.strf41, Tobj))
+        if(sensorTargetPosition != 0){
+            if(TargetState == false) {
+                if (sensorTargetPosition == 1)
+                    binding.TVPosition.setText("<-Sx")
+                else if (sensorTargetPosition == 2)
+                    binding.TVPosition.setText("Dx->")
+                else {
+                    binding.TVPosition.setText("--")
+                    binding.TVTempTargetMax.setText("--")
+                    binding.TVTempTarget.setText("--")
+                }
+            }
+        }
+        else if(sensorTargetPosition == 0) {
+            if(TargetState == false) {
+                binding.TVPosition.setText("OK")
+                binding.TVTempTargetMaxFreeze.setText(getString(R.string.strf41, AveSensorTargetTObjMax))
+                binding.TVTempTargetFreeze.setText(getString(R.string.strf41, Tobj))
+                try {
+                    beepManager.playBeepSoundAndVibrate()
+                } catch (e: Exception) {
+                }
+                TargetTimeout = 40
+                TargetState = true
+            }
+        }
+    }
     private fun generateThrmalBmp() 
     {
         var idx: Int = 0;
@@ -321,16 +372,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
-        if(abs(sensorTargetTObjMax - AveSensorTargetTObjMax) > 0.5f)
-            AveSensorTargetTObjMax = sensorTargetTObjMax
-        else
-            AveSensorTargetTObjMax = ((AveSensorTargetTObjMax * 2.0f) + sensorTargetTObjMax) / 3.0f
 
         for (i in 0 until ((sensSizeY - 1) * sensScale)) {
             for (j in 0 until ((sensSizeX - 1) * sensScale) step sensScale) {
                 idx = (j / sensScale) * sensScale
-                mx =
-                    (sensorThermalImage[i][idx + sensScale] - sensorThermalImage[i][idx]) / sensScale
+                mx = (sensorThermalImage[i][idx + sensScale] - sensorThermalImage[i][idx]) / sensScale
                 qx = sensorThermalImage[i][idx]
                 for (kx in 0 until sensScale) {
                     sensorThermalImage[i][idx + kx] = mx * kx + qx
@@ -340,8 +386,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         for (j in 0 until ((sensSizeX - 1) * sensScale)) {
             for (i in 0 until ((sensSizeY - 1) * sensScale) step sensScale) {
                 idy = (i / sensScale) * sensScale
-                my =
-                    (sensorThermalImage[idy + sensScale][j] - sensorThermalImage[idy][j]) / sensScale
+                my = (sensorThermalImage[idy + sensScale][j] - sensorThermalImage[idy][j]) / sensScale
                 qy = sensorThermalImage[idy][j]
                 for (ky in 0 until sensScale) {
                     sensorThermalImage[idy + ky][j] = my * ky + qy
@@ -363,50 +408,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
         }
 
-        // Calcolo Temperature
-        val x: Float = sensorTHInt.toFloat()
-        Tenv = (x * x * x * 0.00000000217112f)
-        Tenv += (x * x * (-0.0000120088f))
-        Tenv += (x * 0.041993773f)
-        Tenv += (-29.28437706f)
-        Tobj = AveSensorTargetTObjMax + (Tenv * Tenv * Tenv * -0.00002633053221f +
-                                         Tenv * Tenv * 0.004149859944f +
-                                         Tenv * -0.2638655462f +
-                                         6.25f)
-
-
         var bmp : Bitmap = createImage()
         binding.IVTemp.setImageBitmap(bmp)
         binding.IVTempOutline.setImageResource(R.drawable.reticolo)
-        binding.TVTempEnvThInt.setText("Int\n" + getString(R.string.strf41, Tenv))
-        binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
-        binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
-        binding.TVTempTargetMax.setText(getString(R.string.strf41, AveSensorTargetTObjMax))
-        binding.TVTempTarget.setText(getString(R.string.strf41, Tobj))
-        if(sensorTargetPosition != 0){
-            if(sensorTargetPosition == 1)
-                binding.TVPosition.setText("<-Sx")
-            else if(sensorTargetPosition == 2)
-                binding.TVPosition.setText("Dx->")
-            else {
-                binding.TVPosition.setText("--")
-                binding.TVTempTargetMax.setText("--")
-                binding.TVTempTarget.setText("--")
-            }
-        }
-        else if(sensorTargetPosition == 0) {
-            binding.TVPosition.setText("OK")
-            if(TargetState == false) {
-                binding.TVTempTargetMaxFreeze.setText(getString(R.string.strf41, AveSensorTargetTObjMax))
-                binding.TVTempTargetFreeze.setText(getString(R.string.strf41, Tobj))
-                try {
-                    beepManager.playBeepSoundAndVibrate()
-                } catch (e: Exception) {
-                }
-                TargetTimeout = 40
-                TargetState = true
-            }
-        }
     }
 
     private fun createImage(): Bitmap {
