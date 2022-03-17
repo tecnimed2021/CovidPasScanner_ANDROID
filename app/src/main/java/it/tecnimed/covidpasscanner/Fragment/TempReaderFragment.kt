@@ -24,6 +24,7 @@ package it.tecnimed.covidpasscanner.Fragment
 import android.app.Activity
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Paint
 import android.os.Bundle
 import android.os.Handler
@@ -78,28 +79,32 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val binding get() = _binding!!
 
 
-    private val sensSizeX = 16
-    private val sensSizeY = 12
-    private val sensScale = 1
+    private val sensSizeX = 32
+    private val sensSizeY = 24
+    private val sensTargetPositionCoordN = 5
+    private val sensTargetPositionCoordNPix = 10
+
     private var sensorEnv = 0.0f
     private var sensorObj = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
     private var sensorObjMax = 0.0f
     private var sensorObjMin = 0.0f
-    private var sensorThermalImage = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0.0f } }
-    private var sensorThermalImageRGB = Array(sensSizeY * sensScale) { Array(sensSizeX * sensScale) { 0 } }
-    private var sensorTHInt = 0;
-    private var sensorTHExt = 0;
-    private var sensorTObjMax = 0.0f;
-    private var sensorTargetPosition = 0;
-    private var sensorTargetTObjMax = 0.0f;
-    private var sensorTargetTObjAve = 0.0f;
-    private var TargetState = false;
-    private var TargetTimeout = 0;
+    private var sensorObjImageRGB = Array(sensSizeY) { Array(sensSizeX) { 0 } }
+    private var sensorTHInt = 0
+    private var sensorTHExt = 0
+    private var sensorTObjMax = 0.0f
+    private var sensorTargetPosition = 0
+    private var sensorTargetCoordX = Array(sensTargetPositionCoordN) { Array(sensTargetPositionCoordNPix) { 0 } }
+    private var sensorTargetCoordY = Array(sensTargetPositionCoordN) { Array(sensTargetPositionCoordNPix) { 0 } }
+    private var sensorTargetCoordPnt = 0
+    private var sensorTargetTObjMax = 0.0f
+    private var sensorTargetTObjAve = 0.0f
+    private var TargetState = false
+    private var TargetTimeout = 0
 
-    private var Tenv = 0.0f;
-    private var Tobj = 0.0f;
+    private var Tenv = 0.0f
+    private var Tobj = 0.0f
 
-    private var AveSensorTargetTObjMax: Float = 0.0f;
+    private var AveSensorTargetTObjMax: Float = 0.0f
 
     private lateinit var beepManager: BeepManager
 
@@ -220,7 +225,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         if (mSerialDrv?.openPort(
                 UARTDriver.UARTDRIVER_PORT_MODE_NOEVENT,
                 0,
-                115200,
+                230400,
                 UARTDriver.UARTDRIVER_STOPBIT_1,
                 UARTDriver.UARTDRIVER_PARITY_NONE
             ) == false
@@ -236,7 +241,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         mSerialDrv.write(cmdObj, 2)
         var n : Int = 0
         while(n == 0) {
-            val datasize = 1+(4)+(4)+(4)+(12*16*4)+1+(4)+(4)+(4)+2;
+            val datasize = 1+(4)+(4)+(4)+(sensSizeY*sensSizeX*4)+1+((sensTargetPositionCoordN*sensTargetPositionCoordNPix*4*2)+1)+(4)+(4)+(4)+2;
             var ans = ByteArray(datasize)
             n = mSerialDrv.read(ans, 1000)
             if(n >= datasize) {
@@ -387,46 +392,27 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     sensorObjMin = sensorObj[i][j]
                 if(sensorObj[i][j] > sensorObjMax)
                     sensorObjMax = sensorObj[i][j]
-                for (ky in 0 until sensScale) {
-                    for (kx in 0 until sensScale) {
-                        sensorThermalImage[i * sensScale + ky][j * sensScale + kx] = sensorObj[i][j]
-                    }
-                }
-            }
-        }
-
-        for (i in 0 until ((sensSizeY - 1) * sensScale)) {
-            for (j in 0 until ((sensSizeX - 1) * sensScale) step sensScale) {
-                idx = (j / sensScale) * sensScale
-                mx = (sensorThermalImage[i][idx + sensScale] - sensorThermalImage[i][idx]) / sensScale
-                qx = sensorThermalImage[i][idx]
-                for (kx in 0 until sensScale) {
-                    sensorThermalImage[i][idx + kx] = mx * kx + qx
-                }
-            }
-        }
-        for (j in 0 until ((sensSizeX - 1) * sensScale)) {
-            for (i in 0 until ((sensSizeY - 1) * sensScale) step sensScale) {
-                idy = (i / sensScale) * sensScale
-                my = (sensorThermalImage[idy + sensScale][j] - sensorThermalImage[idy][j]) / sensScale
-                qy = sensorThermalImage[idy][j]
-                for (ky in 0 until sensScale) {
-                    sensorThermalImage[idy + ky][j] = my * ky + qy
-                }
             }
         }
 
         // Conversione RGB
         var m: Float = - (250.0f / (sensorObjMax - sensorObjMin))
         var q: Float = 0 - (m * sensorObjMax)
-        for (i in 0 until (sensSizeY * sensScale)) {
-            for (j in 0 until (sensSizeX * sensScale)) {
+        for (i in 0 until sensSizeY) {
+            for (j in 0 until sensSizeX) {
                 // H = Angolo Gradi, S = 0..1, B = 0..1
-                var H : Float = (m * sensorThermalImage[i][j]) + q
+                var H: Float = (m * sensorObj[i][j]) + q
                 var S: Float = 1.0f
                 var B: Float = 1.0f
                 var color: Int = convertHSB2RGB(H, S, B)
-                sensorThermalImageRGB[i][j] = color
+                sensorObjImageRGB[i][j] = color
+            }
+        }
+
+        // Posizione target
+        for (k in 0 until sensorTargetCoordPnt) {
+            for (l in 0 until sensTargetPositionCoordNPix) {
+                sensorObjImageRGB[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]] = Color.BLACK;
             }
         }
 
@@ -436,12 +422,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     }
 
     private fun createImage(): Bitmap {
-        var bitmap: Bitmap = Bitmap.createBitmap(sensSizeY * sensScale, sensSizeX * sensScale, Bitmap.Config.ARGB_8888);
+        var bitmap: Bitmap = Bitmap.createBitmap(sensSizeY, sensSizeX, Bitmap.Config.ARGB_8888);
         var canvas: Canvas = Canvas(bitmap)
         var paint: Paint = Paint()
-        for (i in 0 until (sensSizeY * sensScale)) {
-            for (j in 0 until (sensSizeX * sensScale)) {
-                paint.setColor(sensorThermalImageRGB[i][j])
+        for (i in 0 until (sensSizeY)) {
+            for (j in 0 until (sensSizeX)) {
+                paint.setColor(sensorObjImageRGB[i][j])
                 canvas.drawPoint(i.toFloat(), j.toFloat(), paint)
             }
         }
