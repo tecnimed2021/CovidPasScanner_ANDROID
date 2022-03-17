@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 public class UARTDriver implements SerialInputOutputManager.Listener
 {
     private static final String TAG_LOG = UARTDriver.class.getName();
-    private static final int BUF_SIZE = 4096;
+    private static final int BUF_SIZE = 8192;
     public static final int UARTDRIVER_PORT_MODE_NOEVENT = 0;
     public static final int UARTDRIVER_PORT_MODE_EVENTONREAD = 1;
     public static final int UARTDRIVER_STOPBIT_1 = UsbSerialPort.STOPBITS_1;
