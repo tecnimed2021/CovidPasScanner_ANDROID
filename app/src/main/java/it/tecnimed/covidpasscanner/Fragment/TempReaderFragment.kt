@@ -273,6 +273,28 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     }
                     sensorTargetPosition = ans[k].toInt()
                     k++
+                    for (i in 0 until sensTargetPositionCoordN) {
+                        for (j in 0 until sensTargetPositionCoordNPix) {
+                            bf[0] = ans[k+3]
+                            bf[1] = ans[k+2]
+                            bf[2] = ans[k+1]
+                            bf[3] = ans[k+0]
+                            sensorTargetCoordX[i][j] = ByteBuffer.wrap(bf).getInt()
+                            k += 4
+                        }
+                    }
+                    for (i in 0 until sensTargetPositionCoordN) {
+                        for (j in 0 until sensTargetPositionCoordNPix) {
+                            bf[0] = ans[k+3]
+                            bf[1] = ans[k+2]
+                            bf[2] = ans[k+1]
+                            bf[3] = ans[k+0]
+                            sensorTargetCoordY[i][j] = ByteBuffer.wrap(bf).getInt()
+                            k += 4
+                        }
+                    }
+                    sensorTargetCoordPnt = ans[k].toInt()
+                    k++
                     bf[0] = ans[k+3]
                     bf[1] = ans[k+2]
                     bf[2] = ans[k+1]
