@@ -320,11 +320,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
             }
         }
-        if(abs(sensorTargetTObjMax - AveSensorTargetTObjMax) > 0.5f)
-            AveSensorTargetTObjMax = sensorTargetTObjMax
-        else
-            AveSensorTargetTObjMax = ((AveSensorTargetTObjMax * 2.0f) + sensorTargetTObjMax) / 3.0f
-
+        AveSensorTargetTObjMax = sensorTargetTObjMax
         processTemperature()
     }
 
