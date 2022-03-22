@@ -225,7 +225,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         if (mSerialDrv?.openPort(
                 UARTDriver.UARTDRIVER_PORT_MODE_NOEVENT,
                 0,
-                921600,
+                115200,
                 UARTDriver.UARTDRIVER_STOPBIT_1,
                 UARTDriver.UARTDRIVER_PARITY_NONE
             ) == false
