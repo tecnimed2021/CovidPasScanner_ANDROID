@@ -142,7 +142,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
-                TimeoutHandler.postDelayed(this, 50)
+                TimeoutHandler.postDelayed(this, 40)
             }
         }
     }
