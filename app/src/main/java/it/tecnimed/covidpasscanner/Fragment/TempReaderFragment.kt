@@ -235,6 +235,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         if(serialOk == false)
             return;
 
+        sensorTargetPosition = 255;
+        sensorTargetCoordPnt = 0;
+
         val cmdObj = ByteArray(2)
         cmdObj[0] = 'T'.code.toByte()
         cmdObj[1] = '\r'.code.toByte()
