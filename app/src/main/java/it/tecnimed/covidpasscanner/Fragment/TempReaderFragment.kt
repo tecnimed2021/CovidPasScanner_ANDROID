@@ -132,12 +132,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     TargetTimeout--;
                 }
                 if(TargetTimeout == 0) {
-                    binding.TVPosition.setText("--")
-                    binding.TVTempTargetMaxFreeze.setText("--")
-                    binding.TVTempTargetFreeze.setText("--")
-                    binding.TVTempTargetMax.setText("--")
-                    binding.TVTempTarget.setText("--")
-                    TargetState = false;
+                    if(TargetState == true) {
+                        binding.TVPosition.setText("--")
+                        binding.TVTempTargetMaxFreeze.setText("--")
+                        binding.TVTempTargetFreeze.setText("--")
+                        binding.TVTempTargetMax.setText("--")
+                        binding.TVTempTarget.setText("--")
+                        TargetState = false;
+                    }
                 }
             } finally {
                 // 100% guarantee that this always happens, even if
