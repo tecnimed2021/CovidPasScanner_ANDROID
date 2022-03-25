@@ -411,7 +411,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         // Posizione target
         for (k in 0 until sensorTargetCoordPnt) {
             for (l in 0 until sensTargetPositionCoordNPix) {
-                sensorObjImageRGB[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]] = Color.BLACK;
+                if(sensorTargetPosition == 0)
+                    sensorObjImageRGB[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]] = Color.BLACK;
+                else
+                    sensorObjImageRGB[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]] = Color.WHITE;
             }
         }
 
