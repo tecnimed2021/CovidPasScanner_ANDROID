@@ -82,7 +82,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val sensSizeX = 32
     private val sensSizeY = 24
     private val sensTargetPositionCoordN = 5
-    private val sensTargetPositionCoordNPix = 10
+    private val sensTargetPositionCoordNPix = 8
 
     private var sensorEnv = 0.0f
     private var sensorObj = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
