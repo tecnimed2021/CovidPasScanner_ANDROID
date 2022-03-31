@@ -79,8 +79,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val binding get() = _binding!!
 
 
-    private val sensSizeX = 32
-    private val sensSizeY = 24
+    private val sensSizeX = 16*2
+    private val sensSizeY = 12*2
     private val sensTargetPositionCoordN = 5
     private val sensTargetPositionCoordNPix = 8
 
@@ -89,22 +89,19 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorObjMax = 0.0f
     private var sensorObjMin = 0.0f
     private var sensorObjImageRGB = Array(sensSizeY) { Array(sensSizeX) { 0 } }
-    private var sensorTHInt = 0
-    private var sensorTHExt = 0
+    private var sensorTHInt = 0.0f
+    private var sensorTHExt = 0.0f
     private var sensorTObjMax = 0.0f
     private var sensorTargetPosition = 0
     private var sensorTargetCoordX = Array(sensTargetPositionCoordN) { Array(sensTargetPositionCoordNPix) { 0 } }
     private var sensorTargetCoordY = Array(sensTargetPositionCoordN) { Array(sensTargetPositionCoordNPix) { 0 } }
     private var sensorTargetCoordPnt = 0
     private var sensorTargetTObjMax = 0.0f
+    private var sensorTargetTObjMaxAdjusted = 0.0f
     private var sensorTargetTObjAve = 0.0f
+    private var sensorTargetTObjAveAdjusted = 0.0f
     private var TargetState = false
     private var TargetTimeout = 0
-
-    private var Tenv = 0.0f
-    private var Tobj = 0.0f
-
-    private var AveSensorTargetTObjMax: Float = 0.0f
 
     private lateinit var beepManager: BeepManager
 
@@ -246,7 +243,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         mSerialDrv.write(cmdObj, 2)
         var n : Int = 0
         while(n == 0) {
-            val datasize = 1+(4)+(4)+(4)+(sensSizeY*sensSizeX*4)+1+((sensTargetPositionCoordN*sensTargetPositionCoordNPix*4*2)+1)+(4)+(4)+(4)+2;
+            val datasize = 1+(4)+(4)+(4)+(sensSizeY*sensSizeX*4)+1+((sensTargetPositionCoordN*sensTargetPositionCoordNPix*4*2)+1)+(4)+(4)+(4)+(4)+(4)+2;
             var ans = ByteArray(datasize)
             n = mSerialDrv.read(ans, 1000)
             if(n >= datasize) {
@@ -257,13 +254,13 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     bf[1] = ans[k+2]
                     bf[2] = ans[k+1]
                     bf[3] = ans[k+0]
-                    sensorTHInt = ByteBuffer.wrap(bf).getInt()
+                    sensorTHInt = ByteBuffer.wrap(bf).getFloat()
                     k += 4
                     bf[0] = ans[k+3]
                     bf[1] = ans[k+2]
                     bf[2] = ans[k+1]
                     bf[3] = ans[k+0]
-                    sensorTHExt = ByteBuffer.wrap(bf).getInt()
+                    sensorTHExt = ByteBuffer.wrap(bf).getFloat()
                     k += 4
                     bf[0] = ans[k+3]
                     bf[1] = ans[k+2]
@@ -321,33 +318,33 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     bf[1] = ans[k+2]
                     bf[2] = ans[k+1]
                     bf[3] = ans[k+0]
+                    sensorTargetTObjMaxAdjusted = ByteBuffer.wrap(bf).getFloat()
+                    k += 4
+                    bf[0] = ans[k+3]
+                    bf[1] = ans[k+2]
+                    bf[2] = ans[k+1]
+                    bf[3] = ans[k+0]
                     sensorTargetTObjAve = ByteBuffer.wrap(bf).getFloat()
+                    k += 4
+                    bf[0] = ans[k+3]
+                    bf[1] = ans[k+2]
+                    bf[2] = ans[k+1]
+                    bf[3] = ans[k+0]
+                    sensorTargetTObjAveAdjusted = ByteBuffer.wrap(bf).getFloat()
                 }
             }
         }
-        AveSensorTargetTObjMax = sensorTargetTObjMax
         processTemperature()
     }
 
     private fun processTemperature()
     {
-        // Calcolo
-        val x: Float = sensorTHInt.toFloat()
-        Tenv = (x * x * x * 0.00000000217112f)
-        Tenv += (x * x * (-0.0000120088f))
-        Tenv += (x * 0.041993773f)
-        Tenv += (-29.28437706f)
-        Tobj = AveSensorTargetTObjMax + (Tenv * Tenv * Tenv * -0.00002633053221f +
-                Tenv * Tenv * 0.004149859944f +
-                Tenv * -0.2638655462f +
-                6.25f)
-
         // Visualizzazione
-        binding.TVTempEnvThInt.setText("Int\n" + getString(R.string.strf41, Tenv))
+        binding.TVTempEnvThInt.setText("Int\n" + getString(R.string.strf41, sensorTHInt))
         binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
         binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
-        binding.TVTempTargetMax.setText(getString(R.string.strf41, AveSensorTargetTObjMax))
-        binding.TVTempTarget.setText(getString(R.string.strf41, Tobj))
+        binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
+        binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
         if(sensorTargetPosition != 0){
             if(TargetState == false) {
                 if (sensorTargetPosition == 1)
@@ -364,8 +361,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         else if(sensorTargetPosition == 0) {
             if(TargetState == false) {
                 binding.TVPosition.setText("OK")
-                binding.TVTempTargetMaxFreeze.setText(getString(R.string.strf41, AveSensorTargetTObjMax))
-                binding.TVTempTargetFreeze.setText(getString(R.string.strf41, Tobj))
+                binding.TVTempTargetMaxFreeze.setText(getString(R.string.strf41, sensorTargetTObjMax))
+                binding.TVTempTargetFreeze.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
                 try {
                     beepManager.playBeepSoundAndVibrate()
                 } catch (e: Exception) {
