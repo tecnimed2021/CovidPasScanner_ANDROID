@@ -363,6 +363,15 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 binding.TVPosition.setText("OK")
                 binding.TVTempTargetMaxFreeze.setText(getString(R.string.strf41, sensorTargetTObjMax))
                 binding.TVTempTargetFreeze.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
+                var s: String = ""
+                for (k in 0 until sensorTargetCoordPnt) {
+                    s = s + getString(R.string.strint, k+1) + " - "
+                    for (l in 0 until sensTargetPositionCoordNPix) {
+                        s = s + getString(R.string.strf41, sensorObj[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]]) + ", "
+                    }
+                    s = s + "\n"
+                }
+                binding.TVUserTempReaderTitle.setText(s)
                 try {
                     beepManager.playBeepSoundAndVibrate()
                 } catch (e: Exception) {
