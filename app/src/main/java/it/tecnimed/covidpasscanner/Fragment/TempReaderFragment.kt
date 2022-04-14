@@ -22,16 +22,15 @@
 package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import android.content.ContentValues
+import android.graphics.*
+import android.net.Uri
+import android.os.*
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import com.google.zxing.client.android.BeepManager
@@ -39,15 +38,16 @@ import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
 import it.tecnimed.covidpasscanner.uart.UARTDriver
+import java.io.*
 import java.nio.ByteBuffer
-import kotlin.math.abs
-import kotlin.system.measureTimeMillis
 
 
 @AndroidEntryPoint
 class TempReaderFragment : Fragment(), View.OnClickListener {
 
+    private lateinit var mActivity: Activity;
     private var mListener: OnFragmentInteractionListener? = null
+    private var fos: OutputStream? = null
 
     /**
      * Here we define the methods that we can fire off
@@ -60,6 +60,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     override fun onAttach(activity: Activity) {
         super.onAttach(requireActivity())
+        mActivity = activity;
         mListener = try {
             activity as OnFragmentInteractionListener
         } catch (e: ClassCastException) {
@@ -79,8 +80,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val binding get() = _binding!!
 
 
-    private val sensSizeX = 16*2
-    private val sensSizeY = 12*2
+    private val sensSizeX = 16 * 2
+    private val sensSizeY = 12 * 2
     private val sensTargetPositionCoordN = 5
     private val sensTargetPositionCoordNPix = 8
 
@@ -93,8 +94,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorTHExt = 0.0f
     private var sensorTObjMax = 0.0f
     private var sensorTargetPosition = 0
-    private var sensorTargetCoordX = Array(sensTargetPositionCoordN) { Array(sensTargetPositionCoordNPix) { 0 } }
-    private var sensorTargetCoordY = Array(sensTargetPositionCoordN) { Array(sensTargetPositionCoordNPix) { 0 } }
+    private var sensorTargetCoordX =
+        Array(sensTargetPositionCoordN) { Array(sensTargetPositionCoordNPix) { 0 } }
+    private var sensorTargetCoordY =
+        Array(sensTargetPositionCoordN) { Array(sensTargetPositionCoordNPix) { 0 } }
     private var sensorTargetCoordPnt = 0
     private var sensorTargetTObjMax = 0.0f
     private var sensorTargetTObjMaxAdjusted = 0.0f
@@ -106,7 +109,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private lateinit var beepManager: BeepManager
 
     private lateinit var mSerialDrv: UARTDriver
-    private val ThermalImageHwInterfaceHandler = object:  Handler(Looper.getMainLooper()) {
+    private val ThermalImageHwInterfaceHandler = object : Handler(Looper.getMainLooper()) {
     }
     private val ThermalImageHwInterface: Runnable = object : Runnable {
         override fun run() {
@@ -120,7 +123,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
         }
     }
-    private val TimeoutHandler = object:  Handler(Looper.getMainLooper()) {
+    private val TimeoutHandler = object : Handler(Looper.getMainLooper()) {
     }
     private val TimeoutHnd: Runnable = object : Runnable {
         override fun run() {
@@ -128,8 +131,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 if (TargetTimeout > 0) {
                     TargetTimeout--;
                 }
-                if(TargetTimeout == 0) {
-                    if(TargetState == true) {
+                if (TargetTimeout == 0) {
+                    if (TargetState == true) {
                         binding.TVPosition.setText("--")
                         binding.TVTempTargetMaxFreeze.setText("--")
                         binding.TVTempTargetFreeze.setText("--")
@@ -216,9 +219,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     }
 
     private fun getThermalImage() {
-        var serialOk : Boolean = true;
+        var serialOk: Boolean = true;
 
-        if(mSerialDrv?.init() == false)
+        if (mSerialDrv?.init() == false)
             return;
 
         if (mSerialDrv?.openPort(
@@ -231,7 +234,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         ) {
             serialOk = false;
         }
-        if(serialOk == false)
+        if (serialOk == false)
             return;
 
         sensorTargetPosition = 255;
@@ -241,39 +244,40 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         cmdObj[0] = 'T'.code.toByte()
         cmdObj[1] = '\r'.code.toByte()
         mSerialDrv.write(cmdObj, 2)
-        var n : Int = 0
-        while(n == 0) {
-            val datasize = 1+(4)+(4)+(4)+(sensSizeY*sensSizeX*4)+1+((sensTargetPositionCoordN*sensTargetPositionCoordNPix*4*2)+1)+(4)+(4)+(4)+(4)+(4)+2;
+        var n: Int = 0
+        while (n == 0) {
+            val datasize =
+                1 + (4) + (4) + (4) + (sensSizeY * sensSizeX * 4) + 1 + ((sensTargetPositionCoordN * sensTargetPositionCoordNPix * 4 * 2) + 1) + (4) + (4) + (4) + (4) + (4) + 2;
             var ans = ByteArray(datasize)
             n = mSerialDrv.read(ans, 1000)
-            if(n >= datasize) {
-                if(ans[0] == 'T'.code.toByte()) {
+            if (n >= datasize) {
+                if (ans[0] == 'T'.code.toByte()) {
                     var bf = ByteArray(4)
                     var k: Int = 1;
-                    bf[0] = ans[k+3]
-                    bf[1] = ans[k+2]
-                    bf[2] = ans[k+1]
-                    bf[3] = ans[k+0]
+                    bf[0] = ans[k + 3]
+                    bf[1] = ans[k + 2]
+                    bf[2] = ans[k + 1]
+                    bf[3] = ans[k + 0]
                     sensorTHInt = ByteBuffer.wrap(bf).getFloat()
                     k += 4
-                    bf[0] = ans[k+3]
-                    bf[1] = ans[k+2]
-                    bf[2] = ans[k+1]
-                    bf[3] = ans[k+0]
+                    bf[0] = ans[k + 3]
+                    bf[1] = ans[k + 2]
+                    bf[2] = ans[k + 1]
+                    bf[3] = ans[k + 0]
                     sensorTHExt = ByteBuffer.wrap(bf).getFloat()
                     k += 4
-                    bf[0] = ans[k+3]
-                    bf[1] = ans[k+2]
-                    bf[2] = ans[k+1]
-                    bf[3] = ans[k+0]
+                    bf[0] = ans[k + 3]
+                    bf[1] = ans[k + 2]
+                    bf[2] = ans[k + 1]
+                    bf[3] = ans[k + 0]
                     sensorEnv = ByteBuffer.wrap(bf).getFloat()
                     k += 4
                     for (i in 0 until sensSizeY) {
                         for (j in 0 until sensSizeX) {
-                            bf[0] = ans[k+3]
-                            bf[1] = ans[k+2]
-                            bf[2] = ans[k+1]
-                            bf[3] = ans[k+0]
+                            bf[0] = ans[k + 3]
+                            bf[1] = ans[k + 2]
+                            bf[2] = ans[k + 1]
+                            bf[3] = ans[k + 0]
                             sensorObj[i][j] = ByteBuffer.wrap(bf).getFloat()
                             k += 4
                         }
@@ -282,54 +286,54 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     k++
                     for (i in 0 until sensTargetPositionCoordN) {
                         for (j in 0 until sensTargetPositionCoordNPix) {
-                            bf[0] = ans[k+3]
-                            bf[1] = ans[k+2]
-                            bf[2] = ans[k+1]
-                            bf[3] = ans[k+0]
+                            bf[0] = ans[k + 3]
+                            bf[1] = ans[k + 2]
+                            bf[2] = ans[k + 1]
+                            bf[3] = ans[k + 0]
                             sensorTargetCoordX[i][j] = ByteBuffer.wrap(bf).getInt()
                             k += 4
                         }
                     }
                     for (i in 0 until sensTargetPositionCoordN) {
                         for (j in 0 until sensTargetPositionCoordNPix) {
-                            bf[0] = ans[k+3]
-                            bf[1] = ans[k+2]
-                            bf[2] = ans[k+1]
-                            bf[3] = ans[k+0]
+                            bf[0] = ans[k + 3]
+                            bf[1] = ans[k + 2]
+                            bf[2] = ans[k + 1]
+                            bf[3] = ans[k + 0]
                             sensorTargetCoordY[i][j] = ByteBuffer.wrap(bf).getInt()
                             k += 4
                         }
                     }
                     sensorTargetCoordPnt = ans[k].toInt()
                     k++
-                    bf[0] = ans[k+3]
-                    bf[1] = ans[k+2]
-                    bf[2] = ans[k+1]
-                    bf[3] = ans[k+0]
+                    bf[0] = ans[k + 3]
+                    bf[1] = ans[k + 2]
+                    bf[2] = ans[k + 1]
+                    bf[3] = ans[k + 0]
                     sensorTObjMax = ByteBuffer.wrap(bf).getFloat()
                     k += 4
-                    bf[0] = ans[k+3]
-                    bf[1] = ans[k+2]
-                    bf[2] = ans[k+1]
-                    bf[3] = ans[k+0]
+                    bf[0] = ans[k + 3]
+                    bf[1] = ans[k + 2]
+                    bf[2] = ans[k + 1]
+                    bf[3] = ans[k + 0]
                     sensorTargetTObjMax = ByteBuffer.wrap(bf).getFloat()
                     k += 4
-                    bf[0] = ans[k+3]
-                    bf[1] = ans[k+2]
-                    bf[2] = ans[k+1]
-                    bf[3] = ans[k+0]
+                    bf[0] = ans[k + 3]
+                    bf[1] = ans[k + 2]
+                    bf[2] = ans[k + 1]
+                    bf[3] = ans[k + 0]
                     sensorTargetTObjMaxAdjusted = ByteBuffer.wrap(bf).getFloat()
                     k += 4
-                    bf[0] = ans[k+3]
-                    bf[1] = ans[k+2]
-                    bf[2] = ans[k+1]
-                    bf[3] = ans[k+0]
+                    bf[0] = ans[k + 3]
+                    bf[1] = ans[k + 2]
+                    bf[2] = ans[k + 1]
+                    bf[3] = ans[k + 0]
                     sensorTargetTObjAve = ByteBuffer.wrap(bf).getFloat()
                     k += 4
-                    bf[0] = ans[k+3]
-                    bf[1] = ans[k+2]
-                    bf[2] = ans[k+1]
-                    bf[3] = ans[k+0]
+                    bf[0] = ans[k + 3]
+                    bf[1] = ans[k + 2]
+                    bf[2] = ans[k + 1]
+                    bf[3] = ans[k + 0]
                     sensorTargetTObjAveAdjusted = ByteBuffer.wrap(bf).getFloat()
                 }
             }
@@ -337,16 +341,15 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         processTemperature()
     }
 
-    private fun processTemperature()
-    {
+    private fun processTemperature() {
         // Visualizzazione
         binding.TVTempEnvThInt.setText("Int\n" + getString(R.string.strf41, sensorTHInt))
         binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
         binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
         binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
         binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
-        if(sensorTargetPosition != 0){
-            if(TargetState == false) {
+        if (sensorTargetPosition != 0) {
+            if (TargetState == false) {
                 if (sensorTargetPosition == 1)
                     binding.TVPosition.setText("<-Sx")
                 else if (sensorTargetPosition == 2)
@@ -357,21 +360,39 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     binding.TVTempTarget.setText("--")
                 }
             }
-        }
-        else if(sensorTargetPosition == 0) {
-            if(TargetState == false) {
+        } else if (sensorTargetPosition == 0) {
+            if (TargetState == false) {
                 binding.TVPosition.setText("OK")
-                binding.TVTempTargetMaxFreeze.setText(getString(R.string.strf41, sensorTargetTObjMax))
-                binding.TVTempTargetFreeze.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
+                binding.TVTempTargetMaxFreeze.setText(
+                    getString(
+                        R.string.strf41,
+                        sensorTargetTObjMax
+                    )
+                )
+                binding.TVTempTargetFreeze.setText(
+                    getString(
+                        R.string.strf41,
+                        sensorTargetTObjMaxAdjusted
+                    )
+                )
+                // Valori temperature sequenze target
                 var s: String = ""
                 for (k in 0 until sensorTargetCoordPnt) {
-                    s = s + getString(R.string.strint, k+1) + " - "
+                    s = s + getString(R.string.strint, k + 1) + " - "
                     for (l in 0 until sensTargetPositionCoordNPix) {
-                        s = s + getString(R.string.strf41, sensorObj[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]]) + ", "
+                        s = s + getString(
+                            R.string.strf41,
+                            sensorObj[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]]
+                        ) + ", "
                     }
                     s = s + "\n"
                 }
                 binding.TVUserTempReaderTitle.setText(s)
+                // Screenshot
+                val bmp: Bitmap? = getScreenShotFromView(mActivity.getWindow().decorView)
+                if(bmp != null)
+                    saveMediaToStorage(bmp);
+                // Sound
                 try {
                     beepManager.playBeepSoundAndVibrate()
                 } catch (e: Exception) {
@@ -381,8 +402,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
         }
     }
-    private fun generateThrmalBmp() 
-    {
+
+    private fun generateThrmalBmp() {
         var idx: Int = 0;
         var idy: Int = 0;
         var mx: Float = 0.0f;
@@ -395,15 +416,15 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         sensorObjMin = 10000000.0f;
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
-                if(sensorObj[i][j] < sensorObjMin)
+                if (sensorObj[i][j] < sensorObjMin)
                     sensorObjMin = sensorObj[i][j]
-                if(sensorObj[i][j] > sensorObjMax)
+                if (sensorObj[i][j] > sensorObjMax)
                     sensorObjMax = sensorObj[i][j]
             }
         }
 
         // Conversione RGB
-        var m: Float = - (250.0f / (sensorObjMax - sensorObjMin))
+        var m: Float = -(250.0f / (sensorObjMax - sensorObjMin))
         var q: Float = 0 - (m * sensorObjMax)
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
@@ -419,14 +440,16 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         // Posizione target
         for (k in 0 until sensorTargetCoordPnt) {
             for (l in 0 until sensTargetPositionCoordNPix) {
-                if(sensorTargetPosition == 0)
-                    sensorObjImageRGB[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]] = Color.BLACK;
+                if (sensorTargetPosition == 0)
+                    sensorObjImageRGB[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]] =
+                        Color.BLACK;
                 else
-                    sensorObjImageRGB[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]] = Color.WHITE;
+                    sensorObjImageRGB[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]] =
+                        Color.WHITE;
             }
         }
 
-        var bmp : Bitmap = createImage()
+        var bmp: Bitmap = createImage()
         binding.IVTemp.setImageBitmap(bmp)
         binding.IVTempOutline.setImageResource(R.drawable.reticolo)
     }
@@ -444,7 +467,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         return bitmap;
     }
 
-    private fun convertHSB2RGB(H : Float, S : Float, B : Float): Int {
+    private fun convertHSB2RGB(H: Float, S: Float, B: Float): Int {
         var cA: Float = 1.0f
         var cR: Float = 0.0f
         var cG: Float = 0.0f
@@ -469,7 +492,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         when (i) {
             0 -> {
                 cR = B
-                cG= t
+                cG = t
                 cB = p
             }
             1 -> {
@@ -513,5 +536,84 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             cA.toInt() and 0xff shl 24 or (cR.toInt() and 0xff shl 16) or (cG.toInt() and 0xff shl 8) or (cB.toInt() and 0xff)
 
         return color
+    }
+
+    private fun getScreenShotFromView(v: View): Bitmap? {
+        // create a bitmap object
+        var screenshot: Bitmap? = null
+        try {
+            // inflate screenshot object
+            // with Bitmap.createBitmap it
+            // requires three parameters
+            // width and height of the view and
+            // the background color
+            screenshot = Bitmap.createBitmap(v.measuredWidth, v.measuredHeight, Bitmap.Config.ARGB_8888)
+            // Now draw this bitmap on a canvas
+            val canvas = Canvas(screenshot)
+            v.draw(canvas)
+        } catch (e: Exception) {
+        }
+        // return the bitmap
+        return screenshot
+    }
+
+    private fun saveMediaToStorage(bitmap: Bitmap)
+    {
+        //Generating a file name
+        val filename = "${System.currentTimeMillis()}.jpg"
+
+        //Output stream
+        var fos: OutputStream? = null
+
+        //For devices running android >= Q (29)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            //getting the contentResolver
+            context?.contentResolver?.also { resolver ->
+
+                //Content resolver will process the contentvalues
+                val contentValues = ContentValues().apply {
+
+                    //putting file information in content values
+                    put(MediaStore.MediaColumns.DISPLAY_NAME, filename)
+                    put(MediaStore.MediaColumns.MIME_TYPE, "image/jpg")
+                    put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
+                }
+
+                //Inserting the contentValues to contentResolver and getting the Uri
+                val imageUri: Uri? =
+                    resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
+
+                //Opening an outputstream with the Uri that we got
+                fos = imageUri?.let { resolver.openOutputStream(it) }
+                fos?.use {
+                    //Finally writing the bitmap to the output stream that we opened
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+                    Toast.makeText(context, "Saved to Photos", Toast.LENGTH_SHORT).show()
+                }
+            }
+        } else {
+            //These for devices running on android < Q (29)
+            //So I don't think an explanation is needed here
+            val imagesDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES)
+            val imagefile = File(imagesDir, filename)
+            if (imagefile.exists()) imagefile.delete()
+            try {
+                val out = FileOutputStream(imagefile)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out)
+                // sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
+                //     Uri.parse("file://"+ Environment.getExternalStorageDirectory())));
+                out.flush()
+                out.close()
+                val values = ContentValues()
+                values.put(MediaStore.Images.Media.MIME_TYPE, "image/png")
+                values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis() / 1000);
+                values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+                values.put(MediaStore.Images.Media.DATA, imagefile.absolutePath)
+                // .DATA is deprecated in API 29
+                context?.contentResolver?.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+            } catch (e: java.lang.Exception) {
+                e.printStackTrace()
+            }
+        }
     }
 }
