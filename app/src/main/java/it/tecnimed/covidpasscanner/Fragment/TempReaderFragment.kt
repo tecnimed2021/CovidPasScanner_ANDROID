@@ -148,6 +148,18 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+    private val ScreenshotHandler = object : Handler(Looper.getMainLooper()) {
+    }
+    private val ScreenshotHnd: Runnable = object : Runnable {
+        override fun run() {
+            try {
+                val bmp: Bitmap? = getScreenShotFromView(mActivity.getWindow().decorView)
+                if(bmp != null)
+                    saveMediaToStorage(bmp);
+            } finally {
+            }
+        }
+    }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -389,9 +401,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
                 binding.TVUserTempReaderTitle.setText(s)
                 // Screenshot
-                val bmp: Bitmap? = getScreenShotFromView(mActivity.getWindow().decorView)
-                if(bmp != null)
-                    saveMediaToStorage(bmp);
+                ScreenshotHandler.postDelayed(ScreenshotHnd, 50)
                 // Sound
                 try {
                     beepManager.playBeepSoundAndVibrate()
