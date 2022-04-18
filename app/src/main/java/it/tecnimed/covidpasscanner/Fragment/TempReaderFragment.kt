@@ -366,6 +366,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     binding.TVPosition.setText("<-Sx")
                 else if (sensorTargetPosition == 2)
                     binding.TVPosition.setText("Dx->")
+                else if (sensorTargetPosition == 3)
+                    binding.TVPosition.setText("<-->")
                 else {
                     binding.TVPosition.setText("--")
                     binding.TVTempTargetMax.setText("--")
