@@ -40,6 +40,10 @@ import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
 import it.tecnimed.covidpasscanner.uart.UARTDriver
 import java.io.*
 import java.nio.ByteBuffer
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 @AndroidEntryPoint
@@ -390,7 +394,17 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     )
                 )
                 // Valori temperature sequenze target
-                var s: String = ""
+                var strdate: String = ""
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    val current = LocalDateTime.now()
+                    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
+                    strdate =  current.format(formatter)
+                } else {
+                    var date = Date()
+                    val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
+                    strdate = formatter.format(date)
+                }
+                var s: String = strdate + "\n"
                 for (k in 0 until sensorTargetCoordPnt) {
                     s = s + getString(R.string.strint, k + 1) + " - "
                     for (l in 0 until sensTargetPositionCoordNPix) {
