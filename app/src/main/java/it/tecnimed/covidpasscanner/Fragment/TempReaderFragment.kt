@@ -364,21 +364,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
         binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
         binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
-        if (sensorTargetPosition != 0) {
-            if (TargetState == false) {
-                if (sensorTargetPosition == 1)
-                    binding.TVPosition.setText("<-Sx")
-                else if (sensorTargetPosition == 2)
-                    binding.TVPosition.setText("Dx->")
-                else if (sensorTargetPosition == 3)
-                    binding.TVPosition.setText("<-->")
-                else {
-                    binding.TVPosition.setText("--")
-                    binding.TVTempTargetMax.setText("--")
-                    binding.TVTempTarget.setText("--")
-                }
-            }
-        } else if (sensorTargetPosition == 0) {
+        if (sensorTargetPosition == 0 || sensorTargetPosition == 3) {
             if (TargetState == false) {
                 binding.TVPosition.setText("OK")
                 binding.TVTempTargetMaxFreeze.setText(
@@ -425,6 +411,19 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
                 TargetTimeout = 40
                 TargetState = true
+            }
+        }
+        else {
+            if (TargetState == false) {
+                if (sensorTargetPosition == 1)
+                    binding.TVPosition.setText("<-Sx")
+                else if (sensorTargetPosition == 2)
+                    binding.TVPosition.setText("Dx->")
+                else {
+                    binding.TVPosition.setText("--")
+                    binding.TVTempTargetMax.setText("--")
+                    binding.TVTempTarget.setText("--")
+                }
             }
         }
     }
