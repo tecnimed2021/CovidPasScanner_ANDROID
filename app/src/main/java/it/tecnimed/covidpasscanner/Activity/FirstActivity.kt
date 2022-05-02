@@ -628,6 +628,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     override fun onClick(v: View?) {
+        /*
         if (v?.id == R.id.qrButton) {
             viewModel.getDrlDateLastSync().let {
                 if (binding.resumeDownload.isVisible) {
@@ -642,6 +643,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                 }
             }
         }
+        */
         if(DebugActive) {
             if (v?.id == R.id.ocrButton) {
                 viewModel.getDrlDateLastSync().let {
