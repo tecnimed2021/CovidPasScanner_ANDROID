@@ -24,14 +24,23 @@ package it.tecnimed.covidpasscanner.Fragment
 import android.app.Activity
 import android.content.ContentValues
 import android.graphics.*
+import android.media.Image
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
+import android.util.Log
+import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.Preview
+import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.camera.view.PreviewView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -44,6 +53,9 @@ import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
+import kotlin.math.abs
 
 
 @AndroidEntryPoint
@@ -118,6 +130,15 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val ThermalImageHwInterface: Runnable = object : Runnable {
         override fun run() {
             try {
+                if(differs > 3)
+                {
+                    // Sound
+                    try {
+                        beepManager.playBeepSoundAndVibrate()
+                    } catch (e: Exception) {
+                    }
+                    differs = 0
+                }
                 getThermalImage()
                 generateThrmalBmp()
             } finally {
@@ -164,11 +185,33 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+    private lateinit var cameraExecutor: ExecutorService
+    private lateinit var cameraProvider: ProcessCameraProvider
+    private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+    private val MotionSensorHandler = object : Handler(Looper.getMainLooper()) {
+    }
+    private val MotionSensor: Runnable = object : Runnable {
+        override fun run() {
+            try {
+                startCamera()
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                MotionSensorHandler.postDelayed(this, 1000)
+            }
+        }
+    }
+    private var imageCurrent : Bitmap? = null
+    private var imagePrev : Bitmap? = null
+    private var imagePrevCnt = 0
+    private var differs = 0
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback { requireActivity().finish() }
+        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     override fun onCreateView(
@@ -195,13 +238,17 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetFreeze.setText("---")
 
         mSerialDrv = UARTDriver.create(context)
-        ThermalImageHwInterface.run();
+        ThermalImageHwInterface.run()
         TimeoutHnd.run();
         beepManager = BeepManager(requireActivity())
+//        MotionSensor.run()
+        startCamera()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        cameraExecutor.shutdown()
+        cameraProvider.unbindAll()
         _binding = null
     }
 
@@ -641,4 +688,113 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+
+    private fun startCamera() {
+        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
+
+        cameraProviderFuture.addListener(Runnable {
+            // Used to bind the lifecycle of cameras to the lifecycle owner
+            cameraProvider = cameraProviderFuture.get()
+
+            // Preview
+            val preview = Preview.Builder()
+                .build()
+                .also {
+                    binding.previewViewTemp.implementationMode = PreviewView.ImplementationMode.PERFORMANCE
+                    it.setSurfaceProvider(binding.previewViewTemp.surfaceProvider)
+                }
+
+            // Image Analysis
+            val imageAnalysis = ImageAnalysis.Builder()
+                // enable the following line if RGBA output is needed.
+//                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
+                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
+                .setTargetResolution(Size(32, 24))
+                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+                .build()
+                .also {
+                    it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { imageProxy ->
+                        val mediaImage = imageProxy.image;
+                        val mediaImageRotationDegrees = imageProxy.imageInfo.rotationDegrees
+                        if (mediaImage != null) {
+                            if (imageCurrent != null) {
+                                if(imagePrevCnt == 0) {
+                                    imagePrev = imageCurrent;
+                                    imagePrevCnt = 5
+                                }
+                                else
+                                    imagePrevCnt -= 1
+                            }
+                            if(imageProxy.getFormat() == ImageFormat.JPEG)
+                                imageCurrent = ConvertImageToBitmapRGBA888(mediaImage)
+                            else
+                                imageCurrent = ConvertImageToBitmapYUV(mediaImage)
+                            if (imagePrev != null && imageCurrent != null) {
+                                val w = imageCurrent!!.width
+                                val h = imageCurrent!!.height
+                                var cbuf = IntArray(w * h)
+                                var pbuf = IntArray(w * h)
+                                imageCurrent!!.getPixels(cbuf, 0, w, 0, 0, w, h)
+                                imagePrev!!.getPixels(pbuf, 0, w, 0, 0, w, h)
+                                for (i in 0 until (w * h) step 10) {
+                                    var pR = pbuf.get(i) shr 16 and 0xff
+                                    var pG = pbuf.get(i) shr 8 and 0xff
+                                    var pB = pbuf.get(i) and 0xff
+                                    var cR = cbuf.get(i) shr 16 and 0xff
+                                    var cG = cbuf.get(i) shr 8 and 0xff
+                                    var cB = cbuf.get(i) and 0xff
+                                    if (abs(pR - cR) > 5 || abs(pG - cG) > 5 || abs(pB - cB) > 5) {
+                                        differs += 1
+                                    }
+                                    else{
+                                        if(differs > 0)
+                                            differs -= 1
+                                    }
+                                }
+                            }
+                            imageProxy.close()
+                        }
+                    })
+                }
+
+            try {
+                // Unbind use cases before rebinding
+                cameraProvider.unbindAll()
+
+                // Bind use cases to camera
+                cameraProvider.bindToLifecycle(this, mCameraSelector, preview, imageAnalysis)
+
+            } catch(exc: Exception) {
+                Log.d("Use case binding failed", exc.toString())
+            }
+
+        }, ContextCompat.getMainExecutor(requireActivity()))
+    }
+
+    private fun ConvertImageToBitmapRGBA888(image : Image) : Bitmap {
+        val buffer = image.getPlanes().get(0).buffer
+        buffer.rewind()
+        val bytes = ByteArray(buffer.capacity())
+        buffer.get(bytes)
+        return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
+    }
+    private fun ConvertImageToBitmapYUV(image : Image) : Bitmap {
+        val yBuffer = image.getPlanes().get(0).buffer // Y
+        val vuBuffer = image.getPlanes().get(2).buffer // VU
+
+        val ySize = yBuffer.remaining()
+        val vuSize = vuBuffer.remaining()
+
+        val nv21 = ByteArray(ySize + vuSize)
+
+        yBuffer.get(nv21, 0, ySize)
+        vuBuffer.get(nv21, ySize, vuSize)
+
+        val yuvImage = YuvImage(nv21, ImageFormat.NV21, image.width, image.height, null)
+        val out = ByteArrayOutputStream()
+        yuvImage.compressToJpeg(Rect(0, 0, yuvImage.width, yuvImage.height), 50, out)
+        val imageBytes = out.toByteArray()
+        return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
+    }
+
 }
