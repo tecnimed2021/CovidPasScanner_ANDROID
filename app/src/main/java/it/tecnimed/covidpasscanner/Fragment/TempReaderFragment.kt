@@ -35,6 +35,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.annotation.VisibleForTesting
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.Preview
@@ -391,7 +392,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
         binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
         binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
-        if (checkSensorMotionDetection() && (sensorTargetPosition == 0 || sensorTargetPosition == 3)) {
+        val motion = checkSensorMotionDetection()
+        if (motion)
+            binding.TVMotionSensor.visibility = View.VISIBLE
+        else
+            binding.TVMotionSensor.visibility = View.INVISIBLE
+        if (motion && (sensorTargetPosition == 0 || sensorTargetPosition == 3)) {
             if (TargetState == false) {
                 binding.TVPosition.setText("OK")
                 binding.TVTempTargetMaxFreeze.setText(
