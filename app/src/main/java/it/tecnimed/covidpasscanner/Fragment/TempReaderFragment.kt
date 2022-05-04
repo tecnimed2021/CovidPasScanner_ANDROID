@@ -130,15 +130,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val ThermalImageHwInterface: Runnable = object : Runnable {
         override fun run() {
             try {
-                if(differs > 3)
-                {
-                    // Sound
-                    try {
-                        beepManager.playBeepSoundAndVibrate()
-                    } catch (e: Exception) {
-                    }
-                    differs = 0
-                }
                 getThermalImage()
                 generateThrmalBmp()
             } finally {
@@ -188,19 +179,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraProvider: ProcessCameraProvider
     private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-    private val MotionSensorHandler = object : Handler(Looper.getMainLooper()) {
-    }
-    private val MotionSensor: Runnable = object : Runnable {
-        override fun run() {
-            try {
-                startCamera()
-            } finally {
-                // 100% guarantee that this always happens, even if
-                // your update method throws an exception
-                MotionSensorHandler.postDelayed(this, 1000)
-            }
-        }
-    }
     private var imageCurrent : Bitmap? = null
     private var imagePrev : Bitmap? = null
     private var imagePrevCnt = 0
@@ -241,12 +219,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         ThermalImageHwInterface.run()
         TimeoutHnd.run();
         beepManager = BeepManager(requireActivity())
-//        MotionSensor.run()
-        startCamera()
+        startSensorMotionDetection()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        ThermalImageHwInterfaceHandler.removeCallbacks(ThermalImageHwInterface)
+        TimeoutHandler.removeCallbacks(TimeoutHnd)
+        ScreenshotHandler.removeCallbacks(ScreenshotHnd)
         cameraExecutor.shutdown()
         cameraProvider.unbindAll()
         _binding = null
@@ -411,7 +391,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
         binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
         binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
-        if (sensorTargetPosition == 0 || sensorTargetPosition == 3) {
+        if (checkSensorMotionDetection() && (sensorTargetPosition == 0 || sensorTargetPosition == 3)) {
             if (TargetState == false) {
                 binding.TVPosition.setText("OK")
                 binding.TVTempTargetMaxFreeze.setText(
@@ -462,6 +442,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
         else {
             if (TargetState == false) {
+                binding.TVUserTempReaderTitle.setText("")
                 if (sensorTargetPosition == 1)
                     binding.TVPosition.setText("<-Sx")
                 else if (sensorTargetPosition == 2)
@@ -689,7 +670,16 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun startCamera() {
+    private fun checkSensorMotionDetection() : Boolean
+    {
+        if (differs > 3) {
+            differs = 0
+            return true
+        }
+        return false
+    }
+
+    private fun startSensorMotionDetection() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
 
         cameraProviderFuture.addListener(Runnable {
