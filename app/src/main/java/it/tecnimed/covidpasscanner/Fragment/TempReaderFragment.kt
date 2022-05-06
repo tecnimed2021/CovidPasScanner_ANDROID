@@ -736,14 +736,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                                 var pbuf = IntArray(w * h)
                                 imageCurrent!!.getPixels(cbuf, 0, w, 0, 0, w, h)
                                 imagePrev!!.getPixels(pbuf, 0, w, 0, 0, w, h)
-                                for (i in 0 until (w * h) step 10) {
+                                for (i in 0 until (w * h) step 11) {
                                     var pR = pbuf.get(i) shr 16 and 0xff
                                     var pG = pbuf.get(i) shr 8 and 0xff
                                     var pB = pbuf.get(i) and 0xff
                                     var cR = cbuf.get(i) shr 16 and 0xff
                                     var cG = cbuf.get(i) shr 8 and 0xff
                                     var cB = cbuf.get(i) and 0xff
-                                    if (abs(pR - cR) > 4 || abs(pG - cG) > 4 || abs(pB - cB) > 4) {
+                                    if (abs(pR - cR) > 7 || abs(pG - cG) > 7 || abs(pB - cB) > 7) {
                                         differs += 1
                                     }
                                     else{
