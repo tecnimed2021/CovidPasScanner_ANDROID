@@ -21,6 +21,7 @@
         <activity
             android:name=".Activity.IntroActivity"
             android:exported="true"
+            android:keepScreenOn="true"
             android:label="@string/title_activity_intro">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
