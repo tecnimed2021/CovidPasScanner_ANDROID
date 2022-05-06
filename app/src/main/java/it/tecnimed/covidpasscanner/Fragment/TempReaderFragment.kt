@@ -284,104 +284,108 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         sensorTargetPosition = 255;
         sensorTargetCoordPnt = 0;
 
+        // Lettura dati da seriale
         val cmdObj = ByteArray(2)
         cmdObj[0] = 'T'.code.toByte()
         cmdObj[1] = '\r'.code.toByte()
         mSerialDrv.write(cmdObj, 2)
         var n: Int = 0
-        while (n == 0) {
-            val datasize =
-                1 + (4) + (4) + (4) + (sensSizeY * sensSizeX * 4) + 1 + ((sensTargetPositionCoordN * sensTargetPositionCoordNPix * 4 * 2) + 1) + (4) + (4) + (4) + (4) + (4) + 2;
-            var ans = ByteArray(datasize)
-            n = mSerialDrv.read(ans, 1000)
-            if (n >= datasize) {
-                if (ans[0] == 'T'.code.toByte()) {
-                    var bf = ByteArray(4)
-                    var k: Int = 1;
-                    bf[0] = ans[k + 3]
-                    bf[1] = ans[k + 2]
-                    bf[2] = ans[k + 1]
-                    bf[3] = ans[k + 0]
-                    sensorTHInt = ByteBuffer.wrap(bf).getFloat()
-                    k += 4
-                    bf[0] = ans[k + 3]
-                    bf[1] = ans[k + 2]
-                    bf[2] = ans[k + 1]
-                    bf[3] = ans[k + 0]
-                    sensorTHExt = ByteBuffer.wrap(bf).getFloat()
-                    k += 4
-                    bf[0] = ans[k + 3]
-                    bf[1] = ans[k + 2]
-                    bf[2] = ans[k + 1]
-                    bf[3] = ans[k + 0]
-                    sensorEnv = ByteBuffer.wrap(bf).getFloat()
-                    k += 4
-                    for (i in 0 until sensSizeY) {
-                        for (j in 0 until sensSizeX) {
-                            bf[0] = ans[k + 3]
-                            bf[1] = ans[k + 2]
-                            bf[2] = ans[k + 1]
-                            bf[3] = ans[k + 0]
-                            sensorObj[i][j] = ByteBuffer.wrap(bf).getFloat()
-                            k += 4
-                        }
-                    }
-                    sensorTargetPosition = ans[k].toInt()
-                    k++
-                    for (i in 0 until sensTargetPositionCoordN) {
-                        for (j in 0 until sensTargetPositionCoordNPix) {
-                            bf[0] = ans[k + 3]
-                            bf[1] = ans[k + 2]
-                            bf[2] = ans[k + 1]
-                            bf[3] = ans[k + 0]
-                            sensorTargetCoordX[i][j] = ByteBuffer.wrap(bf).getInt()
-                            k += 4
-                        }
-                    }
-                    for (i in 0 until sensTargetPositionCoordN) {
-                        for (j in 0 until sensTargetPositionCoordNPix) {
-                            bf[0] = ans[k + 3]
-                            bf[1] = ans[k + 2]
-                            bf[2] = ans[k + 1]
-                            bf[3] = ans[k + 0]
-                            sensorTargetCoordY[i][j] = ByteBuffer.wrap(bf).getInt()
-                            k += 4
-                        }
-                    }
-                    sensorTargetCoordPnt = ans[k].toInt()
-                    k++
-                    bf[0] = ans[k + 3]
-                    bf[1] = ans[k + 2]
-                    bf[2] = ans[k + 1]
-                    bf[3] = ans[k + 0]
-                    sensorTObjMax = ByteBuffer.wrap(bf).getFloat()
-                    k += 4
-                    bf[0] = ans[k + 3]
-                    bf[1] = ans[k + 2]
-                    bf[2] = ans[k + 1]
-                    bf[3] = ans[k + 0]
-                    sensorTargetTObjMax = ByteBuffer.wrap(bf).getFloat()
-                    k += 4
-                    bf[0] = ans[k + 3]
-                    bf[1] = ans[k + 2]
-                    bf[2] = ans[k + 1]
-                    bf[3] = ans[k + 0]
-                    sensorTargetTObjMaxAdjusted = ByteBuffer.wrap(bf).getFloat()
-                    k += 4
-                    bf[0] = ans[k + 3]
-                    bf[1] = ans[k + 2]
-                    bf[2] = ans[k + 1]
-                    bf[3] = ans[k + 0]
-                    sensorTargetTObjAve = ByteBuffer.wrap(bf).getFloat()
-                    k += 4
-                    bf[0] = ans[k + 3]
-                    bf[1] = ans[k + 2]
-                    bf[2] = ans[k + 1]
-                    bf[3] = ans[k + 0]
-                    sensorTargetTObjAveAdjusted = ByteBuffer.wrap(bf).getFloat()
-                }
+        val datasize = 1 + (4) + (4) + (4) + (sensSizeY * sensSizeX * 4) + 1 + ((sensTargetPositionCoordN * sensTargetPositionCoordNPix * 4 * 2) + 1) +
+                       (4) + (4) + (4) + (4) + (4) + 2;
+        var ans = ByteArray(datasize)
+        n = mSerialDrv.read(ans, 1000)
+        mSerialDrv?.closePort()
+
+        // Decodifica
+        if (n < datasize)
+            return;
+        if (ans[0] != 'T'.code.toByte())
+            return;
+
+        var bf = ByteArray(4)
+        var k: Int = 1;
+        bf[0] = ans[k + 3]
+        bf[1] = ans[k + 2]
+        bf[2] = ans[k + 1]
+        bf[3] = ans[k + 0]
+        sensorTHInt = ByteBuffer.wrap(bf).getFloat()
+        k += 4
+        bf[0] = ans[k + 3]
+        bf[1] = ans[k + 2]
+        bf[2] = ans[k + 1]
+        bf[3] = ans[k + 0]
+        sensorTHExt = ByteBuffer.wrap(bf).getFloat()
+        k += 4
+        bf[0] = ans[k + 3]
+        bf[1] = ans[k + 2]
+        bf[2] = ans[k + 1]
+        bf[3] = ans[k + 0]
+        sensorEnv = ByteBuffer.wrap(bf).getFloat()
+        k += 4
+        for (i in 0 until sensSizeY) {
+            for (j in 0 until sensSizeX) {
+                bf[0] = ans[k + 3]
+                bf[1] = ans[k + 2]
+                bf[2] = ans[k + 1]
+                bf[3] = ans[k + 0]
+                sensorObj[i][j] = ByteBuffer.wrap(bf).getFloat()
+                k += 4
             }
         }
+        sensorTargetPosition = ans[k].toInt()
+        k++
+        for (i in 0 until sensTargetPositionCoordN) {
+            for (j in 0 until sensTargetPositionCoordNPix) {
+                bf[0] = ans[k + 3]
+                bf[1] = ans[k + 2]
+                bf[2] = ans[k + 1]
+                bf[3] = ans[k + 0]
+                sensorTargetCoordX[i][j] = ByteBuffer.wrap(bf).getInt()
+                k += 4
+            }
+        }
+        for (i in 0 until sensTargetPositionCoordN) {
+            for (j in 0 until sensTargetPositionCoordNPix) {
+                bf[0] = ans[k + 3]
+                bf[1] = ans[k + 2]
+                bf[2] = ans[k + 1]
+                bf[3] = ans[k + 0]
+                sensorTargetCoordY[i][j] = ByteBuffer.wrap(bf).getInt()
+                k += 4
+            }
+        }
+        sensorTargetCoordPnt = ans[k].toInt()
+        k++
+        bf[0] = ans[k + 3]
+        bf[1] = ans[k + 2]
+        bf[2] = ans[k + 1]
+        bf[3] = ans[k + 0]
+        sensorTObjMax = ByteBuffer.wrap(bf).getFloat()
+        k += 4
+        bf[0] = ans[k + 3]
+        bf[1] = ans[k + 2]
+        bf[2] = ans[k + 1]
+        bf[3] = ans[k + 0]
+        sensorTargetTObjMax = ByteBuffer.wrap(bf).getFloat()
+        k += 4
+        bf[0] = ans[k + 3]
+        bf[1] = ans[k + 2]
+        bf[2] = ans[k + 1]
+        bf[3] = ans[k + 0]
+        sensorTargetTObjMaxAdjusted = ByteBuffer.wrap(bf).getFloat()
+        k += 4
+        bf[0] = ans[k + 3]
+        bf[1] = ans[k + 2]
+        bf[2] = ans[k + 1]
+        bf[3] = ans[k + 0]
+        sensorTargetTObjAve = ByteBuffer.wrap(bf).getFloat()
+        k += 4
+        bf[0] = ans[k + 3]
+        bf[1] = ans[k + 2]
+        bf[2] = ans[k + 1]
+        bf[3] = ans[k + 0]
+        sensorTargetTObjAveAdjusted = ByteBuffer.wrap(bf).getFloat()
+
         processTemperature()
     }
 
@@ -748,8 +752,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                                     }
                                 }
                             }
-                            imageProxy.close()
                         }
+                        imageProxy.close()
                     })
                 }
 
