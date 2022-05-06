@@ -743,7 +743,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                                     var cR = cbuf.get(i) shr 16 and 0xff
                                     var cG = cbuf.get(i) shr 8 and 0xff
                                     var cB = cbuf.get(i) and 0xff
-                                    if (abs(pR - cR) > 5 || abs(pG - cG) > 5 || abs(pB - cB) > 5) {
+                                    if (abs(pR - cR) > 4 || abs(pG - cG) > 4 || abs(pB - cB) > 4) {
                                         differs += 1
                                     }
                                     else{
