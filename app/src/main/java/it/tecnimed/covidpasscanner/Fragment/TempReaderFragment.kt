@@ -184,6 +184,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var imagePrev : Bitmap? = null
     private var imagePrevCnt = 0
     private var differs = 0
+    private var differs_eq = 0
+    private var differs_ne = 0
 
 
 
@@ -682,7 +684,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     private fun checkSensorMotionDetection() : Boolean
     {
-        if (differs > 3) {
+        if (differs > 1) {
             differs = 0
             return true
         }
@@ -729,6 +731,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                                 imageCurrent = ConvertImageToBitmapRGBA888(mediaImage)
                             else
                                 imageCurrent = ConvertImageToBitmapYUV(mediaImage)
+                            differs_eq = 0;
+                            differs_ne = 0;
                             if (imagePrev != null && imageCurrent != null) {
                                 val w = imageCurrent!!.width
                                 val h = imageCurrent!!.height
@@ -736,21 +740,25 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                                 var pbuf = IntArray(w * h)
                                 imageCurrent!!.getPixels(cbuf, 0, w, 0, 0, w, h)
                                 imagePrev!!.getPixels(pbuf, 0, w, 0, 0, w, h)
-                                for (i in 0 until (w * h) step 11) {
+                                for (i in 0 until (w * h) step 6) {
                                     var pR = pbuf.get(i) shr 16 and 0xff
                                     var pG = pbuf.get(i) shr 8 and 0xff
                                     var pB = pbuf.get(i) and 0xff
                                     var cR = cbuf.get(i) shr 16 and 0xff
                                     var cG = cbuf.get(i) shr 8 and 0xff
                                     var cB = cbuf.get(i) and 0xff
-                                    if (abs(pR - cR) > 20 || abs(pG - cG) > 20 || abs(pB - cB) > 20) {
-                                        differs += 1
+                                    if (abs(pR - cR) > 10 || abs(pG - cG) > 10 || abs(pB - cB) > 10) {
+                                        differs_ne += 1
                                     }
                                     else{
-                                        if(differs > 0)
-                                            differs -= 1
+                                        differs_eq += 1
                                     }
                                 }
+                                if(differs_ne > differs_eq)
+                                    differs += 1;
+                                else
+                                    if(differs > 0)
+                                        differs -= 1;
                             }
                         }
                         imageProxy.close()
