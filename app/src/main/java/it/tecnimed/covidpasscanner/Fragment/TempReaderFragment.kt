@@ -156,6 +156,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         binding.TVTempTargetMax.setText("--")
                         binding.TVTempTarget.setText("--")
                         TargetState = false;
+                        navigateToNextPage(getString(
+                            R.string.strf41,
+                            sensorTargetTObjMaxAdjusted
+                        ))
                     }
                 }
             } finally {
