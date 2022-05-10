@@ -60,7 +60,8 @@
     <string name="scan_mode_BOOST_header">Verifica Booster</string>
     <string name="scan_mode_3G">Vaccinazione / Guarigione / Tampone</string>
     <string name="scan_mode_2G">Vaccinazione / Guarigione</string>
-    <string name="scan_mode_BOOST">Richiamo / ciclo completo+tampone / guarigione+tampone</string>
+    <!--<string name="scan_mode_BOOST">Richiamo / ciclo completo+tampone / guarigione+tampone</string>-->
+    <string name="scan_mode_BOOST">TEMPERATURA</string>
     <string name="loading">Ultimo aggiornamento dati e regole:\nAggiornamento in corso...</string>
     <string name="incompleteDownload">L\'aggiornamento della lista delle Certificazione verdi COVID-19 revocate è incompleto. Assicurati di essere connesso a Internet e clicca per continuare.</string>
     <string name="updatingRevokedPass">È in corso l\'aggiornamento della lista delle Certificazioni verdi COVID-19 revocate.</string>

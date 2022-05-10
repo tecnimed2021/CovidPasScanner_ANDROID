@@ -100,6 +100,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private lateinit var mWakeLock: PowerManager.WakeLock
 
+    private var AppSequenceComplete = false
+
     private val requestPermissionLauncherQr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
@@ -117,15 +119,21 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     override fun onFragmentInteractionTempReader(temp: String) {
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-        if(temp != ""){
-            var crf : Fragment = CodeReaderFragment()
-            tr.replace(R.id.frag_anch_point, crf)
-            tr.commitAllowingStateLoss()
-            mCodeReaderFrag = crf
+        if(AppSequenceComplete == true) {
+            if (temp != "") {
+                var crf: Fragment = CodeReaderFragment()
+                tr.replace(R.id.frag_anch_point, crf)
+                tr.commitAllowingStateLoss()
+                mCodeReaderFrag = crf
+            } else {
+                tr.remove(mTempReaderFrag)
+                tr.commitAllowingStateLoss()
+            }
         }
         else{
             tr.remove(mTempReaderFrag)
             tr.commitAllowingStateLoss()
+            openTempReader()
         }
     }
 
@@ -701,6 +709,11 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         mBuilder.setTitle(getString(R.string.label_scan_mode))
         mBuilder.setSingleChoiceItems(scanModeChoices, chosenScanMode) { dialog, which ->
             if (!viewModel.getScanModeFlag()) viewModel.setScanModeFlag(true)
+            when (which) {
+                0 -> AppSequenceComplete = true
+                1 -> AppSequenceComplete = true
+                2 -> AppSequenceComplete = false
+            }
             when (which) {
                 0 -> viewModel.setScanMode(ScanMode.STANDARD)
                 1 -> viewModel.setScanMode(ScanMode.STRENGTHENED)
