@@ -46,13 +46,14 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import com.journeyapps.barcodescanner.camera.CameraSettings
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.R
+import it.tecnimed.covidpasscanner.VL.VLTimer
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import it.tecnimed.covidpasscanner.databinding.FragmentCodeReaderBinding
 import java.lang.ClassCastException
 
 @AndroidEntryPoint
 class CodeReaderFragment : Fragment(),
-    View.OnClickListener, DecoratedBarcodeView.TorchListener {
+    View.OnClickListener, DecoratedBarcodeView.TorchListener , VLTimer.OnTimeElapsedListener{
 
     private var mListener: OnFragmentInteractionListener? = null
     /**
@@ -89,6 +90,8 @@ class CodeReaderFragment : Fragment(),
     private val viewModel by viewModels<VerificationViewModel>()
     private var torchOn = false
 
+    private lateinit var mTimeVar: VLTimer
+
     private val callback: BarcodeCallback = object : BarcodeCallback {
         override fun barcodeResult(result: BarcodeResult) {
             if (result.barcodeFormat != BarcodeFormat.QR_CODE && result.barcodeFormat != BarcodeFormat.AZTEC) {
@@ -115,6 +118,8 @@ class CodeReaderFragment : Fragment(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback { requireActivity().finish() }
+        mTimeVar = VLTimer.create(this)
+        mTimeVar.startSingle(10000)
     }
 
     override fun onCreateView(
@@ -195,6 +200,14 @@ class CodeReaderFragment : Fragment(),
     private fun navigateToVerificationPage(text: String) {
         if (mListener != null) {
             mListener!!.onFragmentInteractionCodeReader(text)
+        }
+    }
+
+    override fun VLTimerTimeElapsed(timer: VLTimer) {
+        if (timer === mTimeVar) {
+            if (mListener != null) {
+                mListener!!.onFragmentInteractionCodeReader("")
+            }
         }
     }
 

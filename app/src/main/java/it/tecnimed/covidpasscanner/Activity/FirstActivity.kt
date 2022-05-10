@@ -141,6 +141,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         else{
             tr.remove(mCodeReaderFrag)
             tr.commitAllowingStateLoss()
+            openTempReader()
         }
     }
 

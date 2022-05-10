@@ -30,11 +30,12 @@
         android:layout_width="24dp"
         android:layout_height="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.935"
+        app:layout_constraintHorizontal_bias="0.975"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.783">
+        app:layout_constraintVertical_bias="0.792"
+        tools:visibility="visible">
 
     </androidx.camera.view.PreviewView>
 
@@ -43,14 +44,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginRight="48dp"
+        android:layout_marginRight="20dp"
         android:text="O"
         android:textAlignment="center"
         android:textColor="@color/zxing_viewfinder_laser"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/previewViewTemp" />
+        app:layout_constraintTop_toBottomOf="@id/previewViewTemp"
+        tools:visibility="visible" />
 
     <ImageView
         android:id="@+id/back_image3"
@@ -85,7 +87,7 @@
         android:text="@string/label_position_temp"
         android:textAlignment="center"
         android:textColor="@color/covidpasscanner_green"
-        android:textSize="18sp"
+        android:textSize="30sp"
         android:textStyle="bold|italic"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -93,21 +95,26 @@
 
     <ImageView
         android:id="@+id/IVTemp"
-        android:layout_width="420dp"
-        android:layout_height="560dp"
+        android:layout_width="478dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
         android:scaleX="-1.0"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVTempTargetFreeze"
+        app:layout_constraintVertical_bias="0.823" />
 
     <ImageView
         android:id="@+id/IVTempOutline"
-        android:layout_width="420dp"
-        android:layout_height="560dp"
-        android:scaleType="center"
+        android:layout_width="479dp"
+        android:layout_height="0dp"
+        android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVTempTargetFreeze"
+        app:layout_constraintVertical_bias="0.823"
         tools:srcCompat="@drawable/reticolo" />
 
     <TextView
@@ -120,7 +127,8 @@
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
+        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/TVTempEnvSensor"
@@ -132,7 +140,8 @@
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVTempEnvThInt" />
+        app:layout_constraintTop_toBottomOf="@id/TVTempEnvThInt"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/TVTempWndMax"
@@ -144,33 +153,34 @@
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVTempEnvSensor" />
+        app:layout_constraintTop_toBottomOf="@id/TVTempEnvSensor"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/TVTempTargetMaxFreeze"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="180dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
         android:text="TextView"
         android:textAlignment="viewStart"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
+        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/TVTempTargetFreeze"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
-        android:layout_marginRight="180dp"
         android:text="TextView"
         android:textAlignment="viewStart"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="30sp"
         android:textStyle="bold"
-        app:layout_constraintLeft_toRightOf="@id/TVTempTargetMax"
+        app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
 
@@ -178,29 +188,31 @@
         android:id="@+id/TVTempTargetMax"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="180dp"
+        android:layout_marginLeft="10dp"
         android:layout_marginTop="3dp"
         android:text="TextView"
         android:textAlignment="viewStart"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVTempTargetMaxFreeze" />
+        app:layout_constraintTop_toBottomOf="@id/TVTempTargetMaxFreeze"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/TVTempTarget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="3dp"
-        android:layout_marginRight="180dp"
         android:text="TextView"
         android:textAlignment="viewStart"
         android:textColor="@android:color/holo_red_dark"
         android:textSize="30sp"
         android:textStyle="bold"
+        app:layout_constraintHorizontal_bias="0.119"
         app:layout_constraintLeft_toRightOf="@id/TVTempTargetMax"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVTempTargetFreeze" />
+        app:layout_constraintTop_toBottomOf="@id/TVTempTargetFreeze"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/TVPosition"
@@ -214,6 +226,7 @@
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle" />
+        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle"
+        tools:visibility="visible" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
