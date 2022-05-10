@@ -207,7 +207,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback { requireActivity().finish() }
-        cameraExecutor = Executors.newSingleThreadExecutor()
+//        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     override fun onCreateView(
@@ -241,14 +241,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetMaxFreeze.visibility = View.INVISIBLE
         binding.TVTempTargetFreeze.visibility = View.VISIBLE
         binding.TVPosition.visibility = View.INVISIBLE
-        binding.previewViewTemp.visibility = View.VISIBLE
-        binding.TVMotionSensor.visibility = View.VISIBLE
+        binding.previewViewTemp.visibility = View.INVISIBLE
+        binding.TVMotionSensor.visibility = View.INVISIBLE
 
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run()
         TimeoutHnd.run();
         beepManager = BeepManager(requireActivity())
-        startSensorMotionDetection()
+//        startSensorMotionDetection()
     }
 
     override fun onDestroyView() {
@@ -256,8 +256,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         ThermalImageHwInterfaceHandler.removeCallbacks(ThermalImageHwInterface)
         TimeoutHandler.removeCallbacks(TimeoutHnd)
         ScreenshotHandler.removeCallbacks(ScreenshotHnd)
-        cameraExecutor.shutdown()
-        cameraProvider.unbindAll()
+//        cameraExecutor.shutdown()
+//        cameraProvider.unbindAll()
         _binding = null
     }
 
@@ -425,10 +425,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
         binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
         val motion = checkSensorMotionDetection()
-        if (motion)
-            binding.TVMotionSensor.visibility = View.VISIBLE
-        else
-            binding.TVMotionSensor.visibility = View.INVISIBLE
+//        if (motion)
+//            binding.TVMotionSensor.visibility = View.VISIBLE
+//        else
+//            binding.TVMotionSensor.visibility = View.INVISIBLE
         if (motion && (sensorTargetPosition == 0 || sensorTargetPosition == 3)) {
             if (TargetState == false) {
                 binding.TVPosition.setText("OK")
@@ -486,7 +486,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     beepManager.playBeepSoundAndVibrate()
                 } catch (e: Exception) {
                 }
-                TargetTimeout = 24
+                TargetTimeout = 20
+                if(sensorTargetTObjMaxAdjustedIsValid == false)
+                    TargetTimeout = 40
                 TargetState = true
             }
         }
@@ -722,11 +724,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     private fun checkSensorMotionDetection() : Boolean
     {
-        if (MotionDetected == true) {
-            MotionDetected = false
-            return true
-        }
-        return false
+        return true
+//        if (MotionDetected == true) {
+//            MotionDetected = false
+//            return true
+//        }
+ //       return false
     }
 
     private fun startSensorMotionDetection() {
