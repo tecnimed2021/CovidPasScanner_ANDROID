@@ -187,9 +187,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var imageCurrent : Bitmap? = null
     private var imagePrev : Bitmap? = null
     private var imagePrevCnt = 0
-    private var differs = 0
-    private var differs_eq = 0
-    private var differs_ne = 0
+    private var MotionDiffers = 0
+    private var MotionDiffers_eq = 0
+    private var MotionDiffers_ne = 0
+    private var MotionDetected = false
 
 
 
@@ -688,8 +689,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     private fun checkSensorMotionDetection() : Boolean
     {
-        if (differs > 1) {
-            differs = 0
+        if (MotionDetected == true) {
+            MotionDetected = false
             return true
         }
         return false
@@ -726,7 +727,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                             if (imageCurrent != null) {
                                 if(imagePrevCnt == 0) {
                                     imagePrev = imageCurrent;
-                                    imagePrevCnt = 5
+                                    imagePrevCnt = 25
                                 }
                                 else
                                     imagePrevCnt -= 1
@@ -735,8 +736,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                                 imageCurrent = ConvertImageToBitmapRGBA888(mediaImage)
                             else
                                 imageCurrent = ConvertImageToBitmapYUV(mediaImage)
-                            differs_eq = 0;
-                            differs_ne = 0;
+                            MotionDiffers_eq = 0;
+                            MotionDiffers_ne = 0;
                             if (imagePrev != null && imageCurrent != null) {
                                 val w = imageCurrent!!.width
                                 val h = imageCurrent!!.height
@@ -744,25 +745,33 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                                 var pbuf = IntArray(w * h)
                                 imageCurrent!!.getPixels(cbuf, 0, w, 0, 0, w, h)
                                 imagePrev!!.getPixels(pbuf, 0, w, 0, 0, w, h)
-                                for (i in 0 until (w * h) step 6) {
+                                for (i in 0 until (w * h) step 11) {
                                     var pR = pbuf.get(i) shr 16 and 0xff
                                     var pG = pbuf.get(i) shr 8 and 0xff
                                     var pB = pbuf.get(i) and 0xff
                                     var cR = cbuf.get(i) shr 16 and 0xff
                                     var cG = cbuf.get(i) shr 8 and 0xff
                                     var cB = cbuf.get(i) and 0xff
-                                    if (abs(pR - cR) > 10 || abs(pG - cG) > 10 || abs(pB - cB) > 10) {
-                                        differs_ne += 1
+                                    if (abs(pR - cR) > 6 || abs(pG - cG) > 6 || abs(pB - cB) > 6) {
+                                        MotionDiffers_ne += 1
                                     }
                                     else{
-                                        differs_eq += 1
+                                        MotionDiffers_eq += 1
                                     }
                                 }
-                                if(differs_ne > differs_eq)
-                                    differs += 1;
-                                else
-                                    if(differs > 0)
-                                        differs -= 1;
+                                if(MotionDetected == false) {
+                                    if (MotionDiffers_ne > MotionDiffers_eq) {
+                                        MotionDiffers += 1
+                                    }
+                                    else {
+                                        if (MotionDiffers > 0)
+                                            MotionDiffers -= 1
+                                    }
+                                    if(MotionDiffers >= 3){
+                                        MotionDiffers = 0
+                                        MotionDetected = true
+                                    }
+                                }
                             }
                         }
                         imageProxy.close()
