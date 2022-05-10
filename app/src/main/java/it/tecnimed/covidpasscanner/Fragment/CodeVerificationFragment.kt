@@ -142,7 +142,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
                 }
 //                if (certificate.certificateStatus == CertificateStatus.VALID) {
                     mTimeVar = VLTimer.create(this)
-                    mTimeVar.startSingle(3000)
+                    mTimeVar.startSingle(1000)
 //                    Log.d("Validita", getString(R.string.label_gp_valid));
 //                }
             }
