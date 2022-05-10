@@ -94,6 +94,8 @@ It is used to access shows, sporting events, indoor dining, parties and discos, 
     <string name="label_position_greenpass">PLEASE SHOW YOUR GREEN PASS</string>
     <string name="label_position_iddoc">PLEASE SHOW YOUR IDENTIFICATION DOCUMENT</string>
 
+    <string name="label_temp_notvalid">ACCESSO DENIED. Try again in a few minutes</string>
+
     <string name="label_gp_valid">VALID</string>
     <string name="label_gp_notvalid">NOT VALID</string>
     <string name="label_gp_notyetvalid">NOT YET VALID</string>

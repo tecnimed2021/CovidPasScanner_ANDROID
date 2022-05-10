@@ -122,6 +122,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorTargetTObjAveAdjusted = 0.0f
     private var TargetState = false
     private var TargetTimeout = 0
+    private var sensorTargetTObjMaxAdjustedIsValid = false
 
     private lateinit var beepManager: BeepManager
 
@@ -156,10 +157,19 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         binding.TVTempTargetMax.setText("--")
                         binding.TVTempTarget.setText("--")
                         TargetState = false;
-                        navigateToNextPage(getString(
-                            R.string.strf41,
-                            sensorTargetTObjMaxAdjusted
-                        ))
+                        if(sensorTargetTObjMaxAdjustedIsValid == true) {
+                            navigateToNextPage(
+                                getString(
+                                    R.string.strf41,
+                                    sensorTargetTObjMaxAdjusted
+                                )
+                            )
+                        }
+                        else
+                        {
+                            binding.TVUserTempReaderTitle.setText(getString(R.string.label_position_temp))
+                            binding.TVUserTempReaderTitle.setTextColor(Color.parseColor("#008799"))
+                        }
                     }
                 }
             } finally {
@@ -434,6 +444,18 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         sensorTargetTObjMaxAdjusted
                     )
                 )
+                if(sensorTargetTObjMaxAdjusted > 37.5f)
+                {
+                    binding.TVUserTempReaderTitle.setText(getString(R.string.label_temp_notvalid))
+                    binding.TVUserTempReaderTitle.setTextColor(Color.parseColor("#ff0000"))
+                    sensorTargetTObjMaxAdjustedIsValid = false
+                }
+                else
+                {
+                    binding.TVUserTempReaderTitle.setText(getString(R.string.label_position_temp))
+                    binding.TVUserTempReaderTitle.setTextColor(Color.parseColor("#008799"))
+                    sensorTargetTObjMaxAdjustedIsValid = true
+                }
                 // Valori temperature sequenze target
                 var strdate: String = ""
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -464,7 +486,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     beepManager.playBeepSoundAndVibrate()
                 } catch (e: Exception) {
                 }
-                TargetTimeout = 12
+                TargetTimeout = 24
                 TargetState = true
             }
         }
