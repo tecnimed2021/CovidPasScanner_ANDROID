@@ -97,6 +97,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val binding get() = _binding!!
 
 
+    private var sensCom = false
+
     private val sensSizeX = 16 * 2
     private val sensSizeY = 12 * 2
     private val sensTargetPositionCoordN = 5
@@ -132,12 +134,16 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val ThermalImageHwInterface: Runnable = object : Runnable {
         override fun run() {
             try {
-                getThermalImage()
-                generateThrmalBmp()
+                sensCom = getThermalImage()
+                if(sensCom == true)
+                    generateThrmalBmp()
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
-                ThermalImageHwInterfaceHandler.postDelayed(this, 100)
+                if(sensCom == true)
+                    ThermalImageHwInterfaceHandler.postDelayed(this, 100)
+                else
+                    navigateToNextPage("--")
             }
         }
     }
@@ -290,11 +296,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun getThermalImage() {
+    private fun getThermalImage(): Boolean {
         var serialOk: Boolean = true;
 
         if (mSerialDrv?.init() == false)
-            return;
+            return false;
 
         if (mSerialDrv?.openPort(
                 UARTDriver.UARTDRIVER_PORT_MODE_NOEVENT,
@@ -307,7 +313,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             serialOk = false;
         }
         if (serialOk == false)
-            return;
+            return false;
 
         sensorTargetPosition = 255;
         sensorTargetCoordPnt = 0;
@@ -326,9 +332,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
         // Decodifica
         if (n < datasize)
-            return;
+            return true;
         if (ans[0] != 'T'.code.toByte())
-            return;
+            return true;
 
         var bf = ByteArray(4)
         var k: Int = 1;
@@ -415,6 +421,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         sensorTargetTObjAveAdjusted = ByteBuffer.wrap(bf).getFloat()
 
         processTemperature()
+
+        return true;
     }
 
     private fun processTemperature() {
