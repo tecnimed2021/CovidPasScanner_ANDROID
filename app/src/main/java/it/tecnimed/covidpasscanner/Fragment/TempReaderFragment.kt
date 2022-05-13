@@ -140,10 +140,13 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
-                if(sensCom == true)
+                if(sensCom == true) {
                     ThermalImageHwInterfaceHandler.postDelayed(this, 100)
-                else
+                }
+                else {
+                    ThermalImageHwInterfaceHandler.postDelayed(this, 200)
                     navigateToNextPage("--")
+                }
             }
         }
     }
@@ -198,7 +201,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
     }
     private lateinit var cameraExecutor: ExecutorService
-    private lateinit var cameraProvider: ProcessCameraProvider
+    private var cameraProvider: ProcessCameraProvider? = null
     private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
     private var imageCurrent : Bitmap? = null
     private var imagePrev : Bitmap? = null
@@ -213,7 +216,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().onBackPressedDispatcher.addCallback { requireActivity().finish() }
-        cameraExecutor = Executors.newSingleThreadExecutor()
     }
 
     override fun onCreateView(
@@ -254,6 +256,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         ThermalImageHwInterface.run()
         TimeoutHnd.run();
         beepManager = BeepManager(requireActivity())
+
+        cameraExecutor = Executors.newSingleThreadExecutor()
+        cameraProvider = null
         startSensorMotionDetection()
     }
 
@@ -262,9 +267,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         ThermalImageHwInterfaceHandler.removeCallbacks(ThermalImageHwInterface)
         TimeoutHandler.removeCallbacks(TimeoutHnd)
         ScreenshotHandler.removeCallbacks(ScreenshotHnd)
-        cameraExecutor.shutdown()
-        cameraProvider.unbindAll()
-        _binding = null
+        cameraExecutor.shutdownNow()
+        cameraProvider?.unbindAll()
+//        _binding = null
     }
 
     override fun onResume() {
@@ -750,7 +755,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             val preview = Preview.Builder()
                 .build()
                 .also {
-                    binding.previewViewTemp.implementationMode = PreviewView.ImplementationMode.PERFORMANCE
+                    binding.previewViewTemp.implementationMode =
+                        PreviewView.ImplementationMode.PERFORMANCE
                     it.setSurfaceProvider(binding.previewViewTemp.surfaceProvider)
                 }
 
@@ -823,10 +829,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
             try {
                 // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
+                cameraProvider?.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider.bindToLifecycle(this, mCameraSelector, preview, imageAnalysis)
+                cameraProvider?.bindToLifecycle(this, mCameraSelector, preview, imageAnalysis)
 
             } catch(exc: Exception) {
                 Log.d("Use case binding failed", exc.toString())
