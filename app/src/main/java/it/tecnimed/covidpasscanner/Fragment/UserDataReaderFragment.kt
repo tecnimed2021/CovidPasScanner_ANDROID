@@ -107,7 +107,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
         mTimeVar = VLTimer.create(this)
-        mTimeVar.startSingle(10000)
+        mTimeVar.startSingle(60000)
     }
 
     override fun onCreateView(
@@ -221,14 +221,18 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
                                             val lineCornerPoints = line.cornerPoints
                                             val lineFrame = line.boundingBox
                                             for (element in line.elements) {
-                                                val elementText = element.text
+                                                val elementText = element.text.uppercase()
                                                 val elementCornerPoints = element.cornerPoints
                                                 val elementFrame = element.boundingBox
-                                                if(elementText.contains(mFirstName.toString()))
+                                                if(elementText.contains(mFirstName.toString().uppercase()))
                                                     mFirstNameFounded = true;
-                                                if(elementText.contains(mLastName.toString()))
+                                                if(elementText.contains(mLastName.toString().uppercase()))
                                                     mLastNameFounded = true;
+                                                if(mFirstNameFounded == true && mLastNameFounded == true)
+                                                    break
                                             }
+                                            if(mFirstNameFounded == true && mLastNameFounded == true)
+                                                break
                                         }
                                     }
                                     // after done, release the ImageProxy object
@@ -252,7 +256,6 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
                                 }
                             // ...
                         }
-                        imageProxy.close()
                     })
                 }
 
