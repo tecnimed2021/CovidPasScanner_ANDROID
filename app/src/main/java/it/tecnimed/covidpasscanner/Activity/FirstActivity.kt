@@ -180,8 +180,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         if(UserDataFound == false)
             crf = UserDataVerificationFragment.newInstance("", "")
         else
-//            crf = UserDataVerificationFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
-            crf = UserDataVerificationFragment.newInstance("bellifemine", "francesco")
+            crf = UserDataVerificationFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
         tr.replace(R.id.frag_anch_point, crf)
         tr.commitAllowingStateLoss()
         mUserDataVerificationFrag = crf
@@ -608,14 +607,12 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     private fun openTempReader() {
-//        var crf : Fragment = TempReaderFragment()
-        var crf : Fragment = UserDataReaderFragment.newInstance("francesco", "bellifemine")
+        var crf : Fragment = TempReaderFragment()
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
         tr.add(R.id.frag_anch_point, crf)
         tr.commitAllowingStateLoss()
-        mUserDataVerificationFrag = crf
-//        mTempReaderFrag = crf
+        mTempReaderFrag = crf
     }
 
     private fun openQrCodeReader() {

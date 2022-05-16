@@ -241,14 +241,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetMaxFreeze.setText("---")
         binding.TVTempTargetFreeze.setText("---")
         binding.TVPosition.setText("---")
-        binding.TVTempEnvThInt.visibility = View.INVISIBLE
-        binding.TVTempEnvSensor.visibility = View.INVISIBLE
-        binding.TVTempWndMax.visibility = View.INVISIBLE
-        binding.TVTempTargetMax.visibility = View.INVISIBLE
-        binding.TVTempTarget.visibility = View.INVISIBLE
-        binding.TVTempTargetMaxFreeze.visibility = View.INVISIBLE
+        binding.TVTempEnvThInt.visibility = View.VISIBLE
+        binding.TVTempEnvSensor.visibility = View.VISIBLE
+        binding.TVTempWndMax.visibility = View.VISIBLE
+        binding.TVTempTargetMax.visibility = View.VISIBLE
+        binding.TVTempTarget.visibility = View.VISIBLE
+        binding.TVTempTargetMaxFreeze.visibility = View.VISIBLE
         binding.TVTempTargetFreeze.visibility = View.VISIBLE
-        binding.TVPosition.visibility = View.INVISIBLE
+        binding.TVPosition.visibility = View.VISIBLE
         binding.previewViewTemp.visibility = View.VISIBLE
         binding.TVMotionSensor.visibility = View.VISIBLE
 
@@ -269,7 +269,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         ScreenshotHandler.removeCallbacks(ScreenshotHnd)
         cameraExecutor.shutdownNow()
         cameraProvider?.unbindAll()
-        _binding = null
+//        _binding = null
     }
 
     override fun onResume() {
@@ -491,7 +491,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     }
                     s = s + "\n"
                 }
-//                binding.TVUserTempReaderTitle.setText(s)
+                binding.TVUserTempReaderTitle.setText(s)
                 // Screenshot
                 ScreenshotHandler.postDelayed(ScreenshotHnd, 50)
                 // Sound
@@ -507,7 +507,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
         else {
             if (TargetState == false) {
-//                binding.TVUserTempReaderTitle.setText("")
+                binding.TVUserTempReaderTitle.setText("")
                 if (sensorTargetPosition == 1)
                     binding.TVPosition.setText("<-Sx")
                 else if (sensorTargetPosition == 2)
