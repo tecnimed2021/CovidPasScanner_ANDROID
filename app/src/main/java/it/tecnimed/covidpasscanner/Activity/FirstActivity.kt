@@ -105,7 +105,6 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private val requestPermissionLauncherQr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-//                openQrCodeReader()
                 openTempReader()
             }
         }
@@ -120,7 +119,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
         if(AppSequenceComplete == true) {
-            if (temp != "") {
+            if (temp != "" && temp != "NOCOM") {
                 var crf: Fragment = CodeReaderFragment()
                 tr.replace(R.id.frag_anch_point, crf)
                 tr.commitAllowingStateLoss()
@@ -154,48 +153,45 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
     }
 
-    override fun onFragmentInteraction(certSimple: CertificateViewBean?) {
+    override fun onFragmentInteractionCodeVerification(certSimple: CertificateViewBean?) {
         // CodeVerificationFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-        tr.remove(mCodeVerificationFrag)
         if (certSimple != null) {
             mCertSimple = certSimple
             var crf : Fragment = UserDataReaderFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
-            tr.add(R.id.frag_anch_point, crf)
+            tr.replace(R.id.frag_anch_point, crf)
             tr.commitAllowingStateLoss()
             mUserDataReaderFrag = crf
         }
         else
         {
+            tr.remove(mCodeVerificationFrag)
             tr.commitAllowingStateLoss()
-//                openQrCodeReader()
             openTempReader()
         }
     }
 
-    override fun onFragmentInteraction(UserDataFound: Boolean) {
+    override fun onFragmentInteractionUserDataReader(UserDataFound: Boolean) {
         // UserDataReadFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-        tr.remove(mUserDataReaderFrag)
         var crf : Fragment
         if(UserDataFound == false)
             crf = UserDataVerificationFragment.newInstance("", "")
         else
             crf = UserDataVerificationFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
-        tr.add(R.id.frag_anch_point, crf)
+        tr.replace(R.id.frag_anch_point, crf)
         tr.commitAllowingStateLoss()
         mUserDataVerificationFrag = crf
     }
 
-    override fun onFragmentInteraction() {
+    override fun onFragmentInteractionUserDataVerification() {
         // UserDataVerificationFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
         tr.remove(mUserDataVerificationFrag)
         tr.commitAllowingStateLoss()
-//                openQrCodeReader()
         openTempReader()
     }
 

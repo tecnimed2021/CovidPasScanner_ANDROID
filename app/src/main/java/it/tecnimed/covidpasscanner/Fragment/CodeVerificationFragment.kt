@@ -72,7 +72,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
      * within the fragment.
      */
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(certSimple: CertificateViewBean?)
+        fun onFragmentInteractionCodeVerification(certSimple: CertificateViewBean?)
     }
 
     override fun onAttach(activity: Activity) {
@@ -175,14 +175,14 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
         if (timer === mTimeVar) {
             if (mListener != null) {
                 if(certificateModel.certificateStatus == CertificateStatus.VALID)
-                    mListener!!.onFragmentInteraction(certificateModel)
+                    mListener!!.onFragmentInteractionCodeVerification(certificateModel)
                 else {
                     toneG.startTone(ToneGenerator.TONE_SUP_PIP, 2000)
                     val handler = Handler(Looper.getMainLooper())
                     handler.postDelayed({
                         toneG.release()
                     }, (2000 + 50).toLong())
-                    mListener!!.onFragmentInteraction(null)
+                    mListener!!.onFragmentInteractionCodeVerification(null)
                 }
             }
         }

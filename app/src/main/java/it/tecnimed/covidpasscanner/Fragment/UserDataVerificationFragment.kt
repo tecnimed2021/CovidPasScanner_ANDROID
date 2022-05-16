@@ -70,7 +70,7 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
      * within the fragment.
      */
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction()
+        fun onFragmentInteractionUserDataVerification()
     }
 
     override fun onAttach(activity: Activity) {
@@ -153,7 +153,7 @@ class UserDataVerificationFragment : Fragment(), View.OnClickListener, OnTimeEla
     override fun VLTimerTimeElapsed(timer: VLTimer) {
         if (timer === mTimeVar) {
             if (mListener != null) {
-                mListener!!.onFragmentInteraction()
+                mListener!!.onFragmentInteractionUserDataVerification()
             }
         }
     }

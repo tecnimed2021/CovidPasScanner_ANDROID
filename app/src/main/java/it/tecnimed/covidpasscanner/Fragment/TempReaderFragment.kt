@@ -144,8 +144,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     ThermalImageHwInterfaceHandler.postDelayed(this, 100)
                 }
                 else {
-                    ThermalImageHwInterfaceHandler.postDelayed(this, 200)
-                    navigateToNextPage("--")
+                    ThermalImageHwInterfaceHandler.postDelayed(this, 1000)
+                    navigateToNextPage("NOCOM")
                 }
             }
         }
@@ -269,7 +269,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         ScreenshotHandler.removeCallbacks(ScreenshotHnd)
         cameraExecutor.shutdownNow()
         cameraProvider?.unbindAll()
-//        _binding = null
+        _binding = null
     }
 
     override fun onResume() {

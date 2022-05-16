@@ -80,7 +80,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
      * within the fragment.
      */
     interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(UserDataFound: Boolean)
+        fun onFragmentInteractionUserDataReader(UserDataFound: Boolean)
     }
 
     override fun onAttach(activity: Activity) {
@@ -134,12 +134,12 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
         when (v?.id) {
             R.id.back_image2 -> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteraction(false)
+                    mListener!!.onFragmentInteractionUserDataReader(false)
                 }
             }
             R.id.back_text2 -> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteraction(false)
+                    mListener!!.onFragmentInteractionUserDataReader(false)
                 }
             }
         }
@@ -155,7 +155,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
     override fun VLTimerTimeElapsed(timer: VLTimer) {
         if (timer === mTimeVar) {
             if (mListener != null) {
-                mListener!!.onFragmentInteraction(false)
+                mListener!!.onFragmentInteractionUserDataReader(false)
             }
         }
     }
@@ -237,7 +237,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
                                     if(mFirstNameFounded == true && mLastNameFounded == true)
                                     {
                                         if (mListener != null) {
-                                            mListener!!.onFragmentInteraction(true)
+                                            mListener!!.onFragmentInteractionUserDataReader(true)
                                         }
                                         mFirstNameFounded = false;
                                         mLastNameFounded = false;
@@ -252,6 +252,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
                                 }
                             // ...
                         }
+                        imageProxy.close()
                     })
                 }
 
