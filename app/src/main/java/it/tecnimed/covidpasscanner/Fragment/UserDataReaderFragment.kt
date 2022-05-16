@@ -198,7 +198,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
             val imageAnalysis = ImageAnalysis.Builder()
                 // enable the following line if RGBA output is needed.
                 // .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-                .setTargetResolution(Size(1024, 768))
+                .setTargetResolution(Size(256, 192))
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
                 .also {
@@ -234,6 +234,8 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
                                             if(mFirstNameFounded == true && mLastNameFounded == true)
                                                 break
                                         }
+                                        if(mFirstNameFounded == true && mLastNameFounded == true)
+                                            break
                                     }
                                     // after done, release the ImageProxy object
                                     imageProxy.close()
