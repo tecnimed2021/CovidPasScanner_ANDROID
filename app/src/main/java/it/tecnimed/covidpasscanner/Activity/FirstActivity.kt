@@ -130,10 +130,10 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             }
         }
         else{
-            tr.remove(mTempReaderFrag)
-            tr.commitAllowingStateLoss()
-            if (temp != "")
-                openTempReader()
+            if (temp == "" || temp == "NOCOM") {
+                tr.remove(mTempReaderFrag)
+                tr.commitAllowingStateLoss()
+            }
         }
     }
 
@@ -149,7 +149,9 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         else{
             tr.remove(mCodeReaderFrag)
             tr.commitAllowingStateLoss()
-            openTempReader()
+            Handler(Looper.getMainLooper()).postDelayed({
+                openTempReader()
+            }, 1000)
         }
     }
 
@@ -168,7 +170,9 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         {
             tr.remove(mCodeVerificationFrag)
             tr.commitAllowingStateLoss()
-            openTempReader()
+            Handler(Looper.getMainLooper()).postDelayed({
+                openTempReader()
+            }, 1000)
         }
     }
 
@@ -192,7 +196,9 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val tr = fm.beginTransaction()
         tr.remove(mUserDataVerificationFrag)
         tr.commitAllowingStateLoss()
-        openTempReader()
+        Handler(Looper.getMainLooper()).postDelayed({
+            openTempReader()
+        }, 1000)
     }
 
     @SuppressLint("InvalidWakeLockTag")
