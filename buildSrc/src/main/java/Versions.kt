@@ -60,6 +60,9 @@ object Versions {
     const val json_validation = "2.2.14"
     const val json_validation_rhino = "1.0"
 
+    // CameraX
+    const val camerax_version = "1.1.0-rc01"
+
     // Tests
     const val junit = "4.13.1"
     const val junit_jupiter = "5.7.1"
