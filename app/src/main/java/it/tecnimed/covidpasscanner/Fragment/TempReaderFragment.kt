@@ -201,7 +201,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
     }
     private lateinit var cameraExecutor: ExecutorService
-    private var cameraProvider: ProcessCameraProvider? = null
+    private lateinit var cameraProvider: ProcessCameraProvider
     private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
     private var imageCurrent : Bitmap? = null
     private var imagePrev : Bitmap? = null
@@ -258,7 +258,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         beepManager = BeepManager(requireActivity())
 
         cameraExecutor = Executors.newSingleThreadExecutor()
-        cameraProvider = null
         startSensorMotionDetection()
     }
 
@@ -268,8 +267,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         TimeoutHandler.removeCallbacks(TimeoutHnd)
         ScreenshotHandler.removeCallbacks(ScreenshotHnd)
         cameraExecutor.shutdownNow()
-        cameraProvider?.unbindAll()
-//        _binding = null
+        cameraProvider.unbindAll()
+        _binding = null
     }
 
     override fun onResume() {
@@ -829,10 +828,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
             try {
                 // Unbind use cases before rebinding
-                cameraProvider?.unbindAll()
+                cameraProvider.unbindAll()
 
                 // Bind use cases to camera
-                cameraProvider?.bindToLifecycle(this, mCameraSelector, preview, imageAnalysis)
+                cameraProvider.bindToLifecycle(this, mCameraSelector, preview, imageAnalysis)
 
             } catch(exc: Exception) {
                 Log.d("Use case binding failed", exc.toString())
