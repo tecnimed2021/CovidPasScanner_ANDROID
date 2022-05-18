@@ -107,7 +107,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
         }
         cameraExecutor = Executors.newSingleThreadExecutor()
         mTimeVar = VLTimer.create(this)
-        mTimeVar.startSingle(60000)
+        mTimeVar.startSingle(10000)
     }
 
     override fun onCreateView(
