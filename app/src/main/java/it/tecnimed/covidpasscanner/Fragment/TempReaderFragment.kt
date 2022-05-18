@@ -200,12 +200,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
         }
     }
-    private lateinit var cameraExecutor: ExecutorService
-    private lateinit var cameraProvider: ProcessCameraProvider
-    private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
-    private var imageCurrent : Bitmap? = null
-    private var imagePrev : Bitmap? = null
-    private var imagePrevCnt = 0
     private var MotionDiffers = 0
     private var MotionDiffers_eq = 0
     private var MotionDiffers_ne = 0
@@ -249,16 +243,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetMaxFreeze.visibility = View.VISIBLE
         binding.TVTempTargetFreeze.visibility = View.VISIBLE
         binding.TVPosition.visibility = View.VISIBLE
-        binding.previewViewTemp.visibility = View.VISIBLE
         binding.TVMotionSensor.visibility = View.VISIBLE
 
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run()
         TimeoutHnd.run();
         beepManager = BeepManager(requireActivity())
-
-        cameraExecutor = Executors.newSingleThreadExecutor()
-        startSensorMotionDetection()
     }
 
     override fun onDestroyView() {
@@ -266,8 +256,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         ThermalImageHwInterfaceHandler.removeCallbacks(ThermalImageHwInterface)
         TimeoutHandler.removeCallbacks(TimeoutHnd)
         ScreenshotHandler.removeCallbacks(ScreenshotHnd)
-        cameraExecutor.shutdownNow()
-        cameraProvider.unbindAll()
         _binding = null
     }
 
@@ -736,108 +724,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     private fun checkSensorMotionDetection() : Boolean
     {
+        return true
         if (MotionDetected == true) {
             MotionDetected = false
             return true
         }
         return false
-    }
-
-    private fun startSensorMotionDetection() {
-        val cameraProviderFuture = ProcessCameraProvider.getInstance(requireActivity())
-
-        cameraProviderFuture.addListener(Runnable {
-            // Used to bind the lifecycle of cameras to the lifecycle owner
-            cameraProvider = cameraProviderFuture.get()
-
-            // Preview
-            val preview = Preview.Builder()
-                .build()
-                .also {
-                    binding.previewViewTemp.implementationMode =
-                        PreviewView.ImplementationMode.PERFORMANCE
-                    it.setSurfaceProvider(binding.previewViewTemp.surfaceProvider)
-                }
-
-            // Image Analysis
-            val imageAnalysis = ImageAnalysis.Builder()
-                // enable the following line if RGBA output is needed.
-//                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_RGBA_8888)
-                .setOutputImageFormat(ImageAnalysis.OUTPUT_IMAGE_FORMAT_YUV_420_888)
-                .setTargetResolution(Size(32, 24))
-                .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-                .build()
-                .also {
-                    it.setAnalyzer(cameraExecutor, ImageAnalysis.Analyzer { imageProxy ->
-                        val mediaImage = imageProxy.image;
-                        val mediaImageRotationDegrees = imageProxy.imageInfo.rotationDegrees
-                        if (mediaImage != null) {
-                            if (imageCurrent != null) {
-                                if(imagePrevCnt == 0) {
-                                    imagePrev = imageCurrent;
-                                    imagePrevCnt = 25
-                                }
-                                else
-                                    imagePrevCnt -= 1
-                            }
-                            if(imageProxy.getFormat() == ImageFormat.JPEG)
-                                imageCurrent = ConvertImageToBitmapRGBA888(mediaImage)
-                            else
-                                imageCurrent = ConvertImageToBitmapYUV(mediaImage)
-                            MotionDiffers_eq = 0;
-                            MotionDiffers_ne = 0;
-                            if (imagePrev != null && imageCurrent != null) {
-                                val w = imageCurrent!!.width
-                                val h = imageCurrent!!.height
-                                var cbuf = IntArray(w * h)
-                                var pbuf = IntArray(w * h)
-                                imageCurrent!!.getPixels(cbuf, 0, w, 0, 0, w, h)
-                                imagePrev!!.getPixels(pbuf, 0, w, 0, 0, w, h)
-                                for (i in 0 until (w * h) step 11) {
-                                    var pR = pbuf.get(i) shr 16 and 0xff
-                                    var pG = pbuf.get(i) shr 8 and 0xff
-                                    var pB = pbuf.get(i) and 0xff
-                                    var cR = cbuf.get(i) shr 16 and 0xff
-                                    var cG = cbuf.get(i) shr 8 and 0xff
-                                    var cB = cbuf.get(i) and 0xff
-                                    if (abs(pR - cR) > 6 || abs(pG - cG) > 6 || abs(pB - cB) > 6) {
-                                        MotionDiffers_ne += 1
-                                    }
-                                    else{
-                                        MotionDiffers_eq += 1
-                                    }
-                                }
-                                if(MotionDetected == false) {
-                                    if (MotionDiffers_ne > MotionDiffers_eq) {
-                                        MotionDiffers += 1
-                                    }
-                                    else {
-                                        if (MotionDiffers > 0)
-                                            MotionDiffers -= 1
-                                    }
-                                    if(MotionDiffers >= 3){
-                                        MotionDiffers = 0
-                                        MotionDetected = true
-                                    }
-                                }
-                            }
-                        }
-                        imageProxy.close()
-                    })
-                }
-
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
-
-                // Bind use cases to camera
-                cameraProvider.bindToLifecycle(this, mCameraSelector, preview, imageAnalysis)
-
-            } catch(exc: Exception) {
-                Log.d("Use case binding failed", exc.toString())
-            }
-
-        }, ContextCompat.getMainExecutor(requireActivity()))
     }
 
     private fun ConvertImageToBitmapRGBA888(image : Image) : Bitmap {
@@ -865,5 +757,4 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         val imageBytes = out.toByteArray()
         return BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.size)
     }
-
 }
