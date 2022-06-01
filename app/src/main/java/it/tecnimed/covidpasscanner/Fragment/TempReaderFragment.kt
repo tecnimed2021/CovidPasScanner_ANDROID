@@ -106,6 +106,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     private var sensorEnv = 0.0f
     private var sensorObj = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
+    private var sensorObjPrev = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
     private var sensorObjMax = 0.0f
     private var sensorObjMin = 0.0f
     private var sensorObjImageRGB = Array(sensSizeY) { Array(sensSizeX) { 0 } }
@@ -414,7 +415,34 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
         processTemperature()
 
+        motionDetection()
+
         return true;
+    }
+
+    private fun motionDetection() {
+
+        MotionDiffers_ne = 0
+        MotionDiffers_eq = 0
+        for (i in 0 until sensSizeY) {
+            for (j in 0 until sensSizeX) {
+                if((i % 2 == 0) && (j % 2 == 0)){
+                    if(abs(sensorObjPrev[i][j] - sensorObj[i][j]) > 1.0)
+                        MotionDiffers_ne += 1
+                    else
+                        MotionDiffers_eq += 1
+                }
+                sensorObjPrev[i][j] = sensorObj[i][j]
+            }
+        }
+        if(MotionDiffers_eq > 0)
+            MotionDiffers = (MotionDiffers_ne * 100) / MotionDiffers_eq
+        else
+            MotionDiffers = 100
+
+        MotionDetected = false
+        if(MotionDiffers > 30)
+            MotionDetected = true
     }
 
     private fun processTemperature() {
@@ -516,7 +544,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         var my: Float = 0.0f;
         var qy: Float = 0.0f;
 
-        // Interpolazione
+        // Calcolo Max e Min
         sensorObjMax = -1000000.0f;
         sensorObjMin = 10000000.0f;
         for (i in 0 until sensSizeY) {
@@ -724,7 +752,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     private fun checkSensorMotionDetection() : Boolean
     {
-        return true
         if (MotionDetected == true) {
             MotionDetected = false
             return true
