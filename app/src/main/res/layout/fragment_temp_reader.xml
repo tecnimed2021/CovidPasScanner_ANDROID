@@ -274,4 +274,13 @@
         app:layout_constraintLeft_toRightOf="@id/BSnsP"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/BMovSnsTen"
+        android:layout_width="40dp"
+        android:layout_height="50dp"
+        android:layout_marginRight="5dp"
+        android:text="D"
+        app:layout_constraintBottom_toTopOf="@id/TVMotionSensor"
+        app:layout_constraintRight_toRightOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

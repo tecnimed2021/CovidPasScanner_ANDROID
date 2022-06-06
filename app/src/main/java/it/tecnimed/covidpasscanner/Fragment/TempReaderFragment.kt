@@ -157,7 +157,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         override fun run() {
             try {
                 if (TargetTimeout > 0) {
-                    TargetTimeout--;
+                    TargetTimeout--
                 }
                 if (TargetTimeout == 0) {
                     if (TargetState == true) {
@@ -182,9 +182,16 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         }
                     }
                 }
+
+                if(MotionTimeout > 0){
+                    MotionTimeout--
+                }
+                if(MotionTimeout == 0){
+                    MotionDetected = false
+                }
+
             } finally {
-                // 100% guarantee that this always happens, even if
-                // your update method throws an exception
+                // Circa 80ms
                 TimeoutHandler.postDelayed(this, 40)
             }
         }
@@ -202,12 +209,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private var MotionDelta = 1.0f
+    private var MotionDelta = 2.0f
     private var MotionPerc = 30
     private var MotionDiffers = 0
     private var MotionDiffers_eq = 0
     private var MotionDiffers_ne = 0
     private var MotionDetected = false
+    private var MotionTimeout = 36
+    private var MotionTimeoutEnable = false
 
 
 
@@ -252,6 +261,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.BDeltaM.setOnClickListener(this)
         binding.BSnsM.setOnClickListener(this)
         binding.BSnsP.setOnClickListener(this)
+        binding.BMovSnsTen.setOnClickListener(this)
 
 
         mSerialDrv = UARTDriver.create(context)
@@ -295,16 +305,26 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
             }
             R.id.BDeltaP -> {
-                MotionDelta += 0.1f
+                if(MotionDelta < 100.0f)
+                    MotionDelta += 0.5f
             }
             R.id.BDeltaM -> {
-                MotionDelta -= 0.1f
+                if(MotionDelta > 0.0f)
+                    MotionDelta -= 0.5f
             }
             R.id.BSnsP -> {
-                MotionPerc += 1
+                if(MotionPerc < 100)
+                    MotionPerc += 1
             }
             R.id.BSnsM -> {
-                MotionPerc -= 1
+                if(MotionPerc > 0)
+                    MotionPerc -= 1
+            }
+            R.id.BMovSnsTen -> {
+                if(MotionTimeoutEnable == false)
+                    MotionTimeoutEnable = true
+                else
+                    MotionTimeoutEnable = false
             }
         }
     }
@@ -465,12 +485,22 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         else
             MotionDiffers = 100
 
-        MotionDetected = false
-        if(MotionDiffers > MotionPerc)
-            MotionDetected = true
+        if(MotionDetected == false) {
+            if(MotionDiffers > MotionPerc) {
+                if(MotionTimeoutEnable)
+                    MotionTimeout = 36
+                else
+                    MotionTimeout = 10
+                MotionDetected = true
+            }
+        }
 
         binding.TVMovSnsDelta.setText(getString(R.string.strf41, MotionDelta))
         binding.TVMovSnsPerc.setText(getString(R.string.strint, MotionPerc))
+        if(MotionTimeoutEnable == false)
+            binding.BMovSnsTen.setText("D")
+        else
+            binding.BMovSnsTen.setText("E")
     }
 
     private fun processTemperature() {
@@ -780,11 +810,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
     private fun checkSensorMotionDetection() : Boolean
     {
-        if (MotionDetected == true) {
-            MotionDetected = false
-            return true
-        }
-        return false
+        return MotionDetected
     }
 
     private fun ConvertImageToBitmapRGBA888(image : Image) : Bitmap {
