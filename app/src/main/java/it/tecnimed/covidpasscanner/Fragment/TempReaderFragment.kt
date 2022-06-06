@@ -447,7 +447,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
                 if((i % 2 == 0) && (j % 2 == 0)){
-                    if(abs(sensorObjPrev[i][j] - sensorObj[i][j]) > MotionDelta)
+                    var dp = abs(sensorObjPrev[i][j] - sensorObj[i][j])
+                    dp = dp / sensorObjPrev[i][j]
+                    dp = dp * 100.0f
+                    if(dp < 0.3f)
+                        dp = 0.3f
+                    if(dp > MotionDelta)
                         MotionDiffers_ne += 1
                     else
                         MotionDiffers_eq += 1
