@@ -210,4 +210,68 @@
         app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle"
         tools:visibility="visible" />
 
+    <TextView
+        android:id="@+id/TVMovSnsDelta"
+        android:layout_width="80dp"
+        android:layout_height="43dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toRightOf="@id/back_text3"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/BDeltaP"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="+"
+        android:textAlignment="center"
+        app:layout_constraintLeft_toRightOf="@id/TVMovSnsDelta"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/BDeltaM"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:text="-"
+        app:layout_constraintLeft_toRightOf="@id/BDeltaP"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/TVMovSnsPerc"
+        android:layout_width="80dp"
+        android:layout_height="43dp"
+        android:layout_marginLeft="10dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toRightOf="@id/BDeltaM"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="visible" />
+
+    <Button
+        android:id="@+id/BSnsP"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:text="+"
+        android:textAlignment="center"
+        app:layout_constraintLeft_toRightOf="@id/TVMovSnsPerc"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/BSnsM"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="5dp"
+        android:text="-"
+        android:textAlignment="center"
+        app:layout_constraintLeft_toRightOf="@id/BSnsP"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

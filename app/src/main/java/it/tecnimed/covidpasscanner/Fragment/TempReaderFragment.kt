@@ -201,6 +201,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             }
         }
     }
+
+    private var MotionDelta = 1.0f
+    private var MotionPerc = 30
     private var MotionDiffers = 0
     private var MotionDiffers_eq = 0
     private var MotionDiffers_ne = 0
@@ -245,6 +248,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetFreeze.visibility = View.VISIBLE
         binding.TVPosition.visibility = View.VISIBLE
         binding.TVMotionSensor.visibility = View.VISIBLE
+        binding.BDeltaP.setOnClickListener(this)
+        binding.BDeltaM.setOnClickListener(this)
+        binding.BSnsM.setOnClickListener(this)
+        binding.BSnsP.setOnClickListener(this)
+
 
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run()
@@ -285,6 +293,18 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 if (mListener != null) {
                     mListener!!.onFragmentInteractionTempReader("")
                 }
+            }
+            R.id.BDeltaP -> {
+                MotionDelta += 0.1f
+            }
+            R.id.BDeltaM -> {
+                MotionDelta -= 0.1f
+            }
+            R.id.BSnsP -> {
+                MotionPerc += 1
+            }
+            R.id.BSnsM -> {
+                MotionPerc -= 1
             }
         }
     }
@@ -427,7 +447,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         for (i in 0 until sensSizeY) {
             for (j in 0 until sensSizeX) {
                 if((i % 2 == 0) && (j % 2 == 0)){
-                    if(abs(sensorObjPrev[i][j] - sensorObj[i][j]) > 1.0)
+                    if(abs(sensorObjPrev[i][j] - sensorObj[i][j]) > MotionDelta)
                         MotionDiffers_ne += 1
                     else
                         MotionDiffers_eq += 1
@@ -441,8 +461,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             MotionDiffers = 100
 
         MotionDetected = false
-        if(MotionDiffers > 30)
+        if(MotionDiffers > MotionPerc)
             MotionDetected = true
+
+        binding.TVMovSnsDelta.setText(getString(R.string.strf41, MotionDelta))
+        binding.TVMovSnsPerc.setText(getString(R.string.strint, MotionPerc))
     }
 
     private fun processTemperature() {
