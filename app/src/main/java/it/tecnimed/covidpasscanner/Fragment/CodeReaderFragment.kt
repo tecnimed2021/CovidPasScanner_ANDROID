@@ -144,7 +144,7 @@ class CodeReaderFragment : Fragment(),
 
         if (viewModel.getFrontCameraStatus()) {
             binding.barcodeScanner.barcodeView.cameraSettings.focusMode =
-                CameraSettings.FocusMode.AUTO
+                CameraSettings.FocusMode.MACRO
         }
         binding.barcodeScanner.initializeFromIntent(requireActivity().intent)
 
