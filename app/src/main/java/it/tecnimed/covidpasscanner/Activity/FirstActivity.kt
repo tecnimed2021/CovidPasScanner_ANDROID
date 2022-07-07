@@ -249,7 +249,6 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private fun observeScanMode() {
         viewModel.scanMode.observe(this, {
             setScanModeButtonText(it)
-            //setScanModeTexts(it)
         })
     }
 
@@ -393,33 +392,20 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
     }
 
-    private fun setScanModeButtonText(currentScanMode: String) {
+    private fun setScanModeButtonText(currentScanMode: ScanMode) {
         if (!viewModel.getScanModeFlag()) {
             val s = SpannableStringBuilder()
                 .bold { append(getString(R.string.label_choose_scan_mode)) }
             binding.scanModeButton.text = s
         } else {
-            var chosenScanMode =
+            val chosenScanMode =
                 when (currentScanMode) {
                     ScanMode.STANDARD -> getString(R.string.scan_mode_3G_header)
                     ScanMode.STRENGTHENED -> getString(R.string.scan_mode_2G_header)
                     ScanMode.BOOSTER -> getString(R.string.scan_mode_BOOST_header)
                     else -> getString(R.string.scan_mode_3G_header)
                 }
-            chosenScanMode += "\n"
-            val chosenModeDescription =
-                when (currentScanMode) {
-                    ScanMode.STANDARD -> getString(R.string.scan_mode_3G)
-                    ScanMode.STRENGTHENED -> getString(
-                        R.string.scan_mode_2G
-                    )
-                    ScanMode.BOOSTER -> getString(R.string.scan_mode_BOOST)
-                    else -> getString(R.string.scan_mode_3G)
-                }
-            val s = SpannableStringBuilder()
-                .bold { append(chosenScanMode) }
-                .append(chosenModeDescription)
-            binding.scanModeButton.text = s
+            binding.scanModeButton.text = chosenScanMode
         }
     }
 
@@ -599,7 +585,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             if (Utility.versionCompare(
                     it,
                     BuildConfig.VERSION_NAME
-                ) > 0 || viewModel.isSDKVersionObsoleted()
+                ) > 0 || viewModel.isSDKVersionObsolete()
             ) {
                 createForceUpdateDialog()
             }
