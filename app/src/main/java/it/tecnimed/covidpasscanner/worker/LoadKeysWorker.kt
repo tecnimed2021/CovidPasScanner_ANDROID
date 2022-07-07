@@ -29,7 +29,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedInject
-import it.tecnimed.covidpasscanner.data.VerifierRepository
+import it.tecnimed.covidpasscanner.data.repository.VerifierRepository
 
 /**
  *

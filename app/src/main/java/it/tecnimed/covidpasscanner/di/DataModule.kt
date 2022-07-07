@@ -28,8 +28,8 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import it.tecnimed.covidpasscanner.data.local.Preferences
-import it.tecnimed.covidpasscanner.data.local.PreferencesImpl
+import it.tecnimed.covidpasscanner.data.local.prefs.Preferences
+import it.tecnimed.covidpasscanner.data.local.prefs.PreferencesImpl
 import javax.inject.Singleton
 
 /**

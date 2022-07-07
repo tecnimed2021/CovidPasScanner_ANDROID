@@ -40,7 +40,45 @@ enum class ValidationRulesEnum(val value: String) {
     VACCINE_END_DAY_NOT_COMPLETE("vaccine_end_day_not_complete"),
     VACCINE_START_DAY_COMPLETE("vaccine_start_day_complete"),
     VACCINE_END_DAY_COMPLETE("vaccine_end_day_complete"),
+
+    VACCINE_START_DAY_COMPLETE_IT("vaccine_start_day_complete_IT"),
+    VACCINE_END_DAY_COMPLETE_IT("vaccine_end_day_complete_IT"),
+    VACCINE_START_DAY_BOOSTER_IT("vaccine_start_day_booster_IT"),
+    VACCINE_END_DAY_BOOSTER_IT("vaccine_end_day_booster_IT"),
+
+    VACCINE_START_DAY_COMPLETE_NOT_IT("vaccine_start_day_complete_NOT_IT"),
+    VACCINE_END_DAY_COMPLETE_NOT_IT("vaccine_end_day_complete_NOT_IT"),
+    VACCINE_START_DAY_BOOSTER_NOT_IT("vaccine_start_day_booster_NOT_IT"),
+    VACCINE_END_DAY_BOOSTER_NOT_IT("vaccine_end_day_booster_NOT_IT"),
+    VACCINE_END_DAY_COMPLETE_UNDER_18("vaccine_end_day_complete_under_18"),
+
+    RECOVERY_CERT_START_DAY_IT("recovery_cert_start_day_IT"),
+    RECOVERY_CERT_END_DAY_IT("recovery_cert_end_day_IT"),
+    RECOVERY_CERT_START_DAY_NOT_IT("recovery_cert_start_day_NOT_IT"),
+    RECOVERY_CERT_END_DAY_NOT_IT("recovery_cert_end_day_NOT_IT"),
+
+    VACCINE_END_DAY_COMPLETE_EXTENDED_EMA("vaccine_end_day_complete_extended_EMA"),
+    VACCINE_COMPLETE_UNDER_18_OFFSET("vaccine_complete_under_18_offset"),
+    EMA_VACCINES("EMA_vaccines"),
+
     BLACK_LIST_UVCI("black_list_uvci"),
     DRL_SYNC_ACTIVE("DRL_SYNC_ACTIVE"),
-    MAX_RETRY("MAX_RETRY")
+    MAX_RETRY("MAX_RETRY"),
+
+    BASE_SCAN_MODE_DESCRIPTION("3G_scan_mode_description"),
+    REINFORCED_SCAN_MODE_DESCRIPTION("2G_scan_mode_description"),
+    BOOSTER_SCAN_MODE_DESCRIPTION("booster_scan_mode_description"),
+    ITALY_ENTRY_SCAN_MODE_DESCRIPTION("italy_entry_scan_mode_description"),
+    INFO_SCAN_MODE_POPUP("info_scan_mode_popup"),
+    ERROR_SCAN_MODE_POPUP("error_scan_mode_popup"),
+    VALID_FAQ_TEXT("valid_faq_text"),
+    VALID_FAQ_LINK("valid_faq_link"),
+    NOT_VALID_FAQ_TEXT("not_valid_faq_text"),
+    NOT_VALID_FAQ_LINK("not_valid_faq_link"),
+    VERIFICATION_NEEDED_FAQ_TEXT("verification_needed_faq_text"),
+    VERIFICATION_NEEDED_FAQ_LINK("verification_needed_faq_link"),
+    NOT_VALID_YET_FAQ_TEXT("not_valid_yet_faq_text"),
+    NOT_VALID_YET_FAQ_LINK("not_valid_yet_faq_link"),
+    NOT_EU_DGC_FAQ_TEXT("not_eu_dgc_faq_text"),
+    NOT_EU_DGC_FAQ_LINK("not_eu_dgc_faq_link")
 }

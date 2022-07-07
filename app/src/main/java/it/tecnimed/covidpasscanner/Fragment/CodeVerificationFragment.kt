@@ -39,7 +39,7 @@ import it.tecnimed.covidpasscanner.*
 import it.tecnimed.covidpasscanner.VL.VLTimer
 import it.tecnimed.covidpasscanner.VL.VLTimer.OnTimeElapsedListener
 import it.tecnimed.covidpasscanner.databinding.FragmentCodeVerificationBinding
-import it.tecnimed.covidpasscanner.model.CertificateSimple
+import it.tecnimed.covidpasscanner.model.CertificateModel
 import it.tecnimed.covidpasscanner.model.CertificateStatus
 import it.tecnimed.covidpasscanner.model.CertificateViewBean
 import it.tecnimed.covidpasscanner.model.VerificationViewModel

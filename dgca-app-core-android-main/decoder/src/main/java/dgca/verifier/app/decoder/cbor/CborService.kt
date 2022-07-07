@@ -25,7 +25,6 @@ package dgca.verifier.app.decoder.cbor
 import dgca.verifier.app.decoder.model.GreenCertificate
 import dgca.verifier.app.decoder.model.VerificationResult
 import java.time.ZonedDateTime
-import java.util.*
 
 data class GreenCertificateData(
     val issuingCountry: String?,
@@ -33,15 +32,7 @@ data class GreenCertificateData(
     val greenCertificate: GreenCertificate,
     val issuedAt: ZonedDateTime,
     val expirationTime: ZonedDateTime
-) {
-
-    fun getNormalizedIssuingCountry(): String =
-        (if (this.issuingCountry?.isNotBlank() == true) {
-            this.issuingCountry
-        } else {
-            this.greenCertificate.getIssuingCountry()
-        }).toLowerCase(Locale.ROOT)
-}
+)
 
 /**
  * Decodes input as a CBOR structure
@@ -50,7 +41,8 @@ interface CborService {
 
     fun decode(input: ByteArray, verificationResult: VerificationResult): GreenCertificate?
 
-    fun decodeData(input: ByteArray, verificationResult: VerificationResult): GreenCertificateData?
-
-    fun getPayload(input: ByteArray): ByteArray?
+    fun decodeData(
+        input: ByteArray,
+        verificationResult: VerificationResult
+    ): GreenCertificateData?
 }

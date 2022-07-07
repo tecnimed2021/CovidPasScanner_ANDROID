@@ -31,22 +31,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import it.tecnimed.covidpasscanner.BuildConfig
-import it.tecnimed.covidpasscanner.data.local.AppDatabase
 import it.tecnimed.covidpasscanner.data.remote.ApiService
 import it.tecnimed.covidpasscanner.network.HeaderInterceptor
 import okhttp3.*
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.security.KeyStore
-import java.security.SecureRandom
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
-import javax.net.ssl.SSLContext
-import javax.net.ssl.TrustManager
-import javax.net.ssl.TrustManagerFactory
-import javax.net.ssl.X509TrustManager
-import javax.security.cert.CertificateException
 
 private const val CONNECT_TIMEOUT = 30L
 
@@ -83,6 +74,7 @@ object NetworkModule {
             addInterceptor(HeaderInterceptor())
         }
         addCertificateSHA(httpClient)
+
 
         return httpClient.build()
     }
@@ -128,7 +120,8 @@ object NetworkModule {
      */
     private fun addCertificateSHA(httpClient: OkHttpClient.Builder) {
         val certificatePinner = CertificatePinner.Builder()
-            .add(BuildConfig.SERVER_HOST, BuildConfig.CERTIFICATE_SHA)
+            .add(BuildConfig.SERVER_HOST, BuildConfig.LEAF_CERTIFICATE)
+            .add(BuildConfig.SERVER_HOST, BuildConfig.BACKUP_CERTIFICATE)
         httpClient.certificatePinner(certificatePinner.build())
     }
 

@@ -24,7 +24,7 @@ object Versions {
 
     // Base
     const val gradle = "4.1.3"
-    const val kotlin = "1.6.0"
+    const val kotlin = "1.6.21"
     const val desugar_jdk_libs = "1.1.5"
 
     const val androidx_core = "1.7.0"
@@ -32,7 +32,7 @@ object Versions {
     const val androidx_appcompat = "1.4.0"
     const val androidx_navigation = "2.3.5"
     const val androidx_material = "1.3.0"
-    const val androidx_constraint = "2.0.4"
+    const val androidx_constraint = "2.1.2"
     const val kotlinx_coroutines = "1.6.0"
     private const val work_hilt = "1.0.0-beta01"
     const val androidx_hilt_viewmodel = "1.0.0-alpha02"
@@ -51,7 +51,7 @@ object Versions {
     const val guave_conflict_resolver_version = "9999.0-empty-to-avoid-conflict-with-guava"
 
     // Decoder
-    const val kotlin_reflect = "1.6.10"
+    const val kotlin_reflect = "1.6.21"
     const val jackson_cbor = "2.12.3"
     const val java_cose = "1.1.0"
     const val bouncy_castle = "1.68"

@@ -23,20 +23,22 @@
 package dgca.verifier.app.decoder
 
 import COSE.HeaderKeys
+import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper
 import com.upokecenter.cbor.CBORObject
 import dgca.verifier.app.decoder.base45.Base45Decoder
-import dgca.verifier.app.decoder.cbor.DefaultGreenCertificateMapper
-import dgca.verifier.app.decoder.cbor.GreenCertificateMapper
+import dgca.verifier.app.decoder.cose.CoseService
 import dgca.verifier.app.decoder.cwt.CwtHeaderKeys
 import dgca.verifier.app.decoder.model.CoseData
 import dgca.verifier.app.decoder.model.GreenCertificate
+import java.time.Instant
 import java.util.zip.InflaterInputStream
 
 @ExperimentalUnsignedTypes
-class DefaultCertificateDecoder(
-    private val base45Decoder: Base45Decoder,
-    private val greenCertificateMapper: GreenCertificateMapper = DefaultGreenCertificateMapper()
-) : CertificateDecoder {
+class DefaultCertificateDecoder(private val base45Decoder: Base45Decoder) :
+    CertificateDecoder {
+    companion object {
+        const val PREFIX = "HC1:"
+    }
 
     override fun decodeCertificate(qrCodeText: String): CertificateDecodingResult {
         val withoutPrefix: String = if (qrCodeText.startsWith(PREFIX)) qrCodeText.drop(PREFIX.length) else qrCodeText
@@ -62,7 +64,8 @@ class DefaultCertificateDecoder(
             coseData.cbor.decodeGreenCertificate()
         } catch (error: Throwable) {
             return CertificateDecodingResult.Error(CertificateDecodingError.GreenCertificateDecodingError(error))
-        }
+        } ?: return CertificateDecodingResult.Error(CertificateDecodingError.EmptyGreenCertificate)
+
 
         return CertificateDecodingResult.Success(greenCertificate)
     }
@@ -85,27 +88,30 @@ class DefaultCertificateDecoder(
         val messageObject = CBORObject.DecodeFromBytes(this)
         val content = messageObject[2].GetByteString()
         val rgbProtected = messageObject[0].GetByteString()
-        val rgbUnprotected = messageObject[1]
+        var rgbUnprotected = messageObject[1];
         val key = HeaderKeys.KID.AsCBOR()
 
-        if (!CBORObject.DecodeFromBytes(rgbProtected).keys.contains(key)) {
+        if(!CBORObject.DecodeFromBytes(rgbProtected).keys.contains(key)) {
             val objunprotected = rgbUnprotected.get(key).GetByteString()
             return CoseData(content, objunprotected)
         }
         val objProtected = CBORObject.DecodeFromBytes(rgbProtected).get(key).GetByteString()
-
         return CoseData(content, objProtected)
     }
 
-    private fun ByteArray.decodeGreenCertificate(): GreenCertificate {
+    private fun ByteArray.decodeGreenCertificate(): GreenCertificate? {
         val map = CBORObject.DecodeFromBytes(this)
+
+        val issuedAt = Instant.ofEpochSecond(map[CwtHeaderKeys.ISSUED_AT.asCBOR()].AsInt64())
+        if (issuedAt.isAfter(Instant.now())) throw IllegalArgumentException("IssuedAt not correct: $issuedAt")
+
+        val expirationTime = Instant.ofEpochSecond(map[CwtHeaderKeys.EXPIRATION.asCBOR()].AsInt64())
+        if (expirationTime.isBefore(Instant.now())) throw IllegalArgumentException("Expiration not correct: $expirationTime")
+
         val hcert = map[CwtHeaderKeys.HCERT.asCBOR()]
-        val cborObject = hcert[CBORObject.FromObject(1)]
+        val hcertv1 = hcert[CBORObject.FromObject(1)].EncodeToBytes()
 
-        return greenCertificateMapper.readValue(cborObject)
-    }
-
-    companion object {
-        const val PREFIX = "HC1:"
+        return CBORMapper()
+            .readValue(hcertv1, GreenCertificate::class.java)
     }
 }

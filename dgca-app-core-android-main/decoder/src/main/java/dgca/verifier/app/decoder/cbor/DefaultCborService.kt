@@ -22,6 +22,7 @@
 
 package dgca.verifier.app.decoder.cbor
 
+import com.fasterxml.jackson.dataformat.cbor.databind.CBORMapper
 import com.upokecenter.cbor.CBORObject
 import dgca.verifier.app.decoder.cwt.CwtHeaderKeys
 import dgca.verifier.app.decoder.model.GreenCertificate
@@ -32,11 +33,12 @@ import java.time.ZoneOffset
 /**
  * Decodes input as a CBOR structure
  */
-class DefaultCborService(private val greenCertificateMapper: GreenCertificateMapper = DefaultGreenCertificateMapper()) :
-    CborService {
+class DefaultCborService : CborService {
 
-    override fun decode(input: ByteArray, verificationResult: VerificationResult): GreenCertificate? =
-        decodeData(input, verificationResult)?.greenCertificate
+    override fun decode(
+        input: ByteArray,
+        verificationResult: VerificationResult
+    ): GreenCertificate? = decodeData(input, verificationResult)?.greenCertificate
 
     override fun decodeData(
         input: ByteArray,
@@ -57,27 +59,13 @@ class DefaultCborService(private val greenCertificateMapper: GreenCertificateMap
             val hcert = map[CwtHeaderKeys.HCERT.asCBOR()]
 
             val cborObject = hcert[CBORObject.FromObject(1)]
+            val hcertv1 = cborObject.EncodeToBytes()
 
-            val greenCertificate: GreenCertificate = greenCertificateMapper.readValue(cborObject)
+            val greenCertificate: GreenCertificate = CBORMapper()
+                .readValue(hcertv1, GreenCertificate::class.java)
                 .also { verificationResult.cborDecoded = true }
-            GreenCertificateData(
-                issuingCountry,
-                cborObject.ToJSONString(),
-                greenCertificate,
-                issuedAt.atZone(ZoneOffset.UTC),
-                expirationTime.atZone(ZoneOffset.UTC)
-            )
+            GreenCertificateData(issuingCountry, cborObject.ToJSONString(), greenCertificate, issuedAt.atZone(ZoneOffset.UTC), expirationTime.atZone(ZoneOffset.UTC))
         } catch (e: Throwable) {
-            null
-        }
-    }
-
-    override fun getPayload(input: ByteArray): ByteArray? {
-        return try {
-            val map = CBORObject.DecodeFromBytes(input)
-            val hcert = map[CwtHeaderKeys.HCERT.asCBOR()]
-            hcert[CBORObject.FromObject(1)].EncodeToBytes()
-        } catch (ex: Exception) {
             null
         }
     }

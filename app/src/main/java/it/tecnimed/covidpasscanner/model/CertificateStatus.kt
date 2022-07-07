@@ -26,17 +26,24 @@ package it.tecnimed.covidpasscanner.model
  * This enum class defines all the possible status of certifications after their verification.
  *
  */
-enum class CertificateStatus {
-    NOT_VALID,
-    NOT_VALID_YET,
-    VALID,
-    REVOKED,
-    NOT_EU_DCC,
-    TEST_NEEDED;
+enum class CertificateStatus(val value: String) {
+    NOT_VALID("notValid"),
+    NOT_VALID_YET("notValidYet"),
+    VALID("valid"),
+    EXPIRED("expired"),
+    REVOKED("revoked"),
+    NOT_EU_DCC("notEuDCC"),
+    TEST_NEEDED("verificationIsNeeded");
 }
 
 fun CertificateStatus.applyFullModel(fullModel: Boolean): CertificateStatus {
     return if (!fullModel && this == CertificateStatus.NOT_VALID_YET) {
         CertificateStatus.NOT_VALID
     } else this
+}
+
+fun CertificateStatus.isANonValidCertificate(): Boolean {
+    val list = listOf(CertificateStatus.NOT_VALID, CertificateStatus.NOT_VALID_YET, CertificateStatus.EXPIRED, CertificateStatus.REVOKED)
+
+    return list.contains(this)
 }

@@ -18,8 +18,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 import it.tecnimed.covidpasscanner.VerificaDownloadInProgressException
 import it.tecnimed.covidpasscanner.VerificaMinSDKVersionException
 import it.tecnimed.covidpasscanner.VerificaMinVersionException
-import it.tecnimed.covidpasscanner.data.local.PrefKeys
-import it.tecnimed.covidpasscanner.model.CertificateSimple
+import it.tecnimed.covidpasscanner.data.local.prefs.PrefKeys
+import it.tecnimed.covidpasscanner.model.CertificateModel
 import it.tecnimed.covidpasscanner.model.CertificateStatus
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import it.tecnimed.covidpasscanner.util.FORMATTED_DATE_LAST_SYNC

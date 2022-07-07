@@ -23,6 +23,7 @@
 package it.tecnimed.covidpasscanner.model
 
 import dgca.verifier.app.decoder.model.*
+import it.tecnimed.covidpasscanner.util.TimeUtility.toLocalDate
 import java.util.*
 
 /**

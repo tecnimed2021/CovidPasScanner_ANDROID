@@ -32,11 +32,5 @@ import java.security.cert.Certificate
 interface CryptoService {
 
     fun validate(cose: ByteArray, certificate: Certificate, verificationResult: VerificationResult)
-
-    fun validate(
-        cose: ByteArray,
-        certificate: Certificate,
-        verificationResult: VerificationResult,
-        certificateType: CertificateType
-    )
+    fun validate(cose: ByteArray, certificate: Certificate, verificationResult: VerificationResult, certificateType: CertificateType)
 }

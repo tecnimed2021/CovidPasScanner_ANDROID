@@ -57,8 +57,8 @@ import it.tecnimed.covidpasscanner.BuildConfig
 import it.tecnimed.covidpasscanner.Fragment.*
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.VerificaApplication
-import it.tecnimed.covidpasscanner.data.local.PrefKeys
-import it.tecnimed.covidpasscanner.data.local.ScanMode
+import it.tecnimed.covidpasscanner.data.local.prefs.PrefKeys
+import it.tecnimed.covidpasscanner.model.ScanMode
 import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
 import it.tecnimed.covidpasscanner.model.CertificateViewBean
 import it.tecnimed.covidpasscanner.model.FirstViewModel

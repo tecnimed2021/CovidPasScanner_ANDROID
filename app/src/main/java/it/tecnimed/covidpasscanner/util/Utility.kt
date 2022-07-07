@@ -26,10 +26,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
-import android.util.Log
-import androidx.annotation.RequiresApi
 import java.security.MessageDigest
-import java.text.SimpleDateFormat
 import java.util.*
 
 /**
@@ -81,7 +78,7 @@ object Utility {
         return if (Build.VERSION.SDK_INT >= 26) {
             Base64.getEncoder().encodeToString(input)
         } else {
-            android.util.Base64.encodeToString(input, 0)
+            android.util.Base64.encodeToString(input, android.util.Base64.NO_WRAP)
         }
     }
 
@@ -105,5 +102,4 @@ object Utility {
         }
         return false
     }
-
 }

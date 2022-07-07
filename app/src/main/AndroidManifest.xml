@@ -51,7 +51,7 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="it.tecnimed.covidpasscanner.RealmInitializer"
+                android:name="it.tecnimed.covidpasscanner.data.local.realm.RealmInitializer"
                 android:value="androidx.startup" />
         </provider>
 

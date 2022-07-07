@@ -30,6 +30,4 @@ import dgca.verifier.app.decoder.model.VerificationResult
 interface PrefixValidationService {
 
     fun decode(input: String, verificationResult: VerificationResult): String
-
-    fun encode(input: String): String
 }

@@ -22,26 +22,28 @@
 
 package it.tecnimed.covidpasscanner.model
 
-import androidx.lifecycle.*
-import com.google.gson.Gson
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.tecnimed.covidpasscanner.BuildConfig
-import it.tecnimed.covidpasscanner.data.VerifierRepository
-import it.tecnimed.covidpasscanner.data.local.Preferences
-import it.tecnimed.covidpasscanner.data.remote.model.Rule
+import it.tecnimed.covidpasscanner.data.local.prefs.Preferences
+import it.tecnimed.covidpasscanner.data.repository.VerifierRepository
+import it.tecnimed.covidpasscanner.model.validation.RuleSet
 import it.tecnimed.covidpasscanner.util.Utility
 import javax.inject.Inject
 
 @HiltViewModel
 class FirstViewModel @Inject constructor(
-        val verifierRepository: VerifierRepository,
-        private val preferences: Preferences
+    val verifierRepository: VerifierRepository,
+    private val preferences: Preferences
 ) : ViewModel() {
 
     val fetchStatus: MediatorLiveData<Boolean> = MediatorLiveData()
 
-    private val _scanMode = MutableLiveData<String>()
-    val scanMode: LiveData<String> = _scanMode
+    private val _scanMode = MutableLiveData<ScanMode>()
+    val scanMode: LiveData<ScanMode> = _scanMode
 
     val maxRetryReached = MediatorLiveData<Boolean>().apply {
         value = false
@@ -58,12 +60,12 @@ class FirstViewModel @Inject constructor(
     val debugInfoLiveData = MediatorLiveData<DebugInfoWrapper>()
 
 
-    fun getScanMode() = preferences.scanMode
+    fun getScanMode() = ScanMode.from(preferences.scanMode!!)
 
-    fun setScanMode(value: String) =
+    fun setScanMode(scanMode: ScanMode) =
         run {
-            preferences.scanMode = value
-            _scanMode.value = value
+            preferences.scanMode = scanMode.value
+            _scanMode.value = scanMode
         }
 
     fun getScanModeFlag() = preferences.hasScanModeBeenChosen
@@ -73,6 +75,9 @@ class FirstViewModel @Inject constructor(
 
     init {
         preferences.shouldInitDownload = false
+        preferences.isDoubleScanFlow = false
+        preferences.userName = ""
+
         fetchStatus.addSource(verifierRepository.getCertificateFetchStatus()) {
             fetchStatus.value = it
         }
@@ -80,11 +85,11 @@ class FirstViewModel @Inject constructor(
         maxRetryReached.addSource(verifierRepository.getMaxRetryReached()) {
             maxRetryReached.value = it
         }
-        sizeOverLiveData.addSource(verifierRepository.getSizeOverLiveData()){
+        sizeOverLiveData.addSource(verifierRepository.getSizeOverLiveData()) {
             sizeOverLiveData.value = it
         }
 
-        initDownloadLiveData.addSource(verifierRepository.getInitDownloadLiveData()){
+        initDownloadLiveData.addSource(verifierRepository.getInitDownloadLiveData()) {
             initDownloadLiveData.value = it
         }
 
@@ -106,17 +111,12 @@ class FirstViewModel @Inject constructor(
 
     fun getSizeSingleChunkInByte() = preferences.sizeSingleChunkInByte
     fun getTotalChunk() = preferences.totalChunk //total number of chunks in a specific version
-    fun getIsSizeOverThreshold() = preferences.isSizeOverThreshold
-    fun getDownloadAvailable() = preferences.authorizedToDownload
     fun setDownloadAsAvailable() =
-            run { preferences.authorizedToDownload = 1L }
+        run { preferences.authorizedToDownload = 1L }
 
     fun getResumeAvailable() = preferences.authToResume
     fun setResumeAsAvailable() =
-            run { preferences.authToResume = 1L }
-
-    fun setUnAuthResume() =
-            run { preferences.authToResume = 0L }
+        run { preferences.authToResume = 1L }
 
     fun getIsPendingDownload(): Boolean {
         return preferences.currentVersion != preferences.requestedVersion
@@ -124,37 +124,27 @@ class FirstViewModel @Inject constructor(
 
     fun getIsDrlSyncActive() = preferences.isDrlSyncActive
 
-    fun shouldInitDownload() = preferences.shouldInitDownload
-
     fun setShouldInitDownload(value: Boolean) = run {
         preferences.shouldInitDownload = value
     }
+
     fun getCurrentChunk() = preferences.currentChunk
 
-    private fun getValidationRules(): Array<Rule> {
-        val jsonString = preferences.validationRulesJson
-        return Gson().fromJson(jsonString, Array<Rule>::class.java) ?: kotlin.run { emptyArray() }
-    }
-
     fun getAppMinVersion(): String {
-        return getValidationRules().find { it.name == ValidationRulesEnum.APP_MIN_VERSION.value }
-                ?.let {
-                    it.value
-                } ?: run {
-            ""
-        }
+        return getRuleSet()?.getAppMinVersion() ?: ""
     }
 
     private fun getSDKMinVersion(): String {
-        return getValidationRules().find { it.name == ValidationRulesEnum.SDK_MIN_VERSION.value }
-                ?.let {
-                    it.value
-                } ?: run {
-            ""
-        }
+        return getRuleSet()?.getSDKMinVersion() ?: ""
     }
 
-    fun isSDKVersionObsoleted(): Boolean {
+    fun getRuleSet(): RuleSet? {
+        return if (!preferences.validationRulesJson.isNullOrEmpty()) {
+            RuleSet(preferences.validationRulesJson)
+        } else null
+    }
+
+    fun isSDKVersionObsolete(): Boolean {
         this.getSDKMinVersion().let {
             if (Utility.versionCompare(it, BuildConfig.SDK_VERSION) > 0) {
                 return true

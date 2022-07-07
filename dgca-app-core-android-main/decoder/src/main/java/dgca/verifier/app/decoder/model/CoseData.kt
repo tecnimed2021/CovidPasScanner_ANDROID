@@ -26,7 +26,6 @@ data class CoseData(
     val cbor: ByteArray,
     val kid: ByteArray? = null
 ) {
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

@@ -26,7 +26,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import it.tecnimed.covidpasscanner.data.VerifierRepository
 import it.tecnimed.covidpasscanner.security.DefaultKeyStoreCryptor
 import it.tecnimed.covidpasscanner.security.KeyStoreCryptor
 import javax.inject.Singleton
