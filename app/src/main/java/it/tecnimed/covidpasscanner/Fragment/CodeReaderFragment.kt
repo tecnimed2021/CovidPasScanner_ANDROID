@@ -140,7 +140,7 @@ class CodeReaderFragment : Fragment(),
         binding.barcodeScanner.cameraSettings.isAutoFocusEnabled = true
 
         // Force Front Camera
-        viewModel.setFrontCameraStatus(false)
+        viewModel.setFrontCameraStatus(true)
 
         if (viewModel.getFrontCameraStatus()) {
             binding.barcodeScanner.barcodeView.cameraSettings.focusMode =

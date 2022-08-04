@@ -67,7 +67,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
 
     private lateinit var cameraExecutor: ExecutorService
     private lateinit var cameraProvider: ProcessCameraProvider
-    private var mCameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+    private var mCameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
 
     val textRecognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
 
