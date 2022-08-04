@@ -177,12 +177,13 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
                 if(certificateModel.certificateStatus == CertificateStatus.VALID)
                     mListener!!.onFragmentInteractionCodeVerification(certificateModel)
                 else {
-                    toneG.startTone(ToneGenerator.TONE_SUP_PIP, 2000)
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({
-                        toneG.release()
-                    }, (2000 + 50).toLong())
-                    mListener!!.onFragmentInteractionCodeVerification(null)
+                    mListener!!.onFragmentInteractionCodeVerification(certificateModel)
+//                    toneG.startTone(ToneGenerator.TONE_SUP_PIP, 2000)
+//                    val handler = Handler(Looper.getMainLooper())
+//                    handler.postDelayed({
+//                        toneG.release()
+//                    }, (2000 + 50).toLong())
+//                    mListener!!.onFragmentInteractionCodeVerification(null)
                 }
             }
         }
