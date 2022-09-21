@@ -452,6 +452,14 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         bf[2] = ans[k + 1]
         bf[3] = ans[k + 0]
         sensorTargetTObjAveAdjusted = ByteBuffer.wrap(bf).getFloat()
+        k += 4
+        sensorDistancePosition = ans[k].toInt()
+        k += 1
+        bf[0] = ans[k + 3]
+        bf[1] = ans[k + 2]
+        bf[2] = ans[k + 1]
+        bf[3] = ans[k + 0]
+        sensorDistanceAmbientLight = ByteBuffer.wrap(bf).getFloat()
 
         processTemperature()
 
