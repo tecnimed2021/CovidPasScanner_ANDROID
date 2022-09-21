@@ -126,6 +126,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var TargetState = false
     private var TargetTimeout = 0
     private var sensorTargetTObjMaxAdjustedIsValid = false
+    private var sensorDistancePosition = 0
+    private var sensorDistanceAmbientLight = 0.0f
 
     private lateinit var beepManager: BeepManager
 
@@ -187,7 +189,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     MotionTimeout--
                 }
                 if(MotionTimeout == 0){
-                    MotionDetected = false
+                    MotionDetected = 0
                 }
 
             } finally {
@@ -209,12 +211,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private var MotionDelta = 2.0f
-    private var MotionPerc = 30
-    private var MotionDiffers = 0
-    private var MotionDiffers_eq = 0
-    private var MotionDiffers_ne = 0
-    private var MotionDetected = false
+    private var MotionDetected = 0
     private var MotionTimeout = 36
     private var MotionTimeoutEnable = false
 
@@ -304,22 +301,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     mListener!!.onFragmentInteractionTempReader("")
                 }
             }
-            R.id.BDeltaP -> {
-                if(MotionDelta < 100.0f)
-                    MotionDelta += 0.5f
-            }
-            R.id.BDeltaM -> {
-                if(MotionDelta > 0.0f)
-                    MotionDelta -= 0.5f
-            }
-            R.id.BSnsP -> {
-                if(MotionPerc < 100)
-                    MotionPerc += 1
-            }
-            R.id.BSnsM -> {
-                if(MotionPerc > 0)
-                    MotionPerc -= 1
-            }
             R.id.BMovSnsTen -> {
                 if(MotionTimeoutEnable == false)
                     MotionTimeoutEnable = true
@@ -358,7 +339,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         mSerialDrv.write(cmdObj, 2)
         var n: Int = 0
         val datasize = 1 + (4) + (4) + (4) + (sensSizeY * sensSizeX * 4) + 1 + ((sensTargetPositionCoordN * sensTargetPositionCoordNPix * 4 * 2) + 1) +
-                       (4) + (4) + (4) + (4) + (4) + 2;
+                       (4) + (4) + (4) + (4) + (4) + (1 + 4) + 2;
         var ans = ByteArray(datasize)
         n = mSerialDrv.read(ans, 1000)
         mSerialDrv?.closePort()
@@ -469,42 +450,32 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     }
 
     private fun motionDetection() {
-
-        MotionDiffers_ne = 0
-        MotionDiffers_eq = 0
-        for (i in 0 until sensSizeY) {
-            for (j in 0 until sensSizeX) {
-                if((i % 2 == 0) && (j % 2 == 0)){
-                    var dp = abs(sensorObjPrev[i][j] - sensorObj[i][j])
-                    dp = dp / sensorObjPrev[i][j]
-                    dp = dp * 100.0f
-                    if(dp < 0.3f)
-                        dp = 0.3f
-                    if(dp > MotionDelta)
-                        MotionDiffers_ne += 1
-                    else
-                        MotionDiffers_eq += 1
-                }
-                sensorObjPrev[i][j] = sensorObj[i][j]
-            }
-        }
-        if(MotionDiffers_eq > 0)
-            MotionDiffers = (MotionDiffers_ne * 100) / MotionDiffers_eq
-        else
-            MotionDiffers = 100
-
-        if(MotionDetected == false) {
-            if(MotionDiffers > MotionPerc) {
+        if(MotionDetected != 2) {
+            if(sensorDistancePosition == 2) {
+                // Object detected
                 if(MotionTimeoutEnable)
                     MotionTimeout = 36
                 else
                     MotionTimeout = 10
-                MotionDetected = true
             }
         }
+        MotionDetected = sensorDistancePosition
+        if (MotionDetected != 0) {
+            binding.TVMotionSensor.visibility = View.VISIBLE
+            if(MotionDetected == 2)
+                // OK
+                binding.TVMotionSensor.text = "O"
+            else if(MotionDetected == 3)
+                // Too Far
+                binding.TVMotionSensor.text = "V"
+            else if(MotionDetected == 4)
+                // Too Close
+                binding.TVMotionSensor.text = "L"
+        }
+        else {
+            binding.TVMotionSensor.visibility = View.INVISIBLE
+        }
 
-        binding.TVMovSnsDelta.setText(getString(R.string.strf41, MotionDelta))
-        binding.TVMovSnsPerc.setText(getString(R.string.strint, MotionPerc))
         if(MotionTimeoutEnable == false)
             binding.BMovSnsTen.setText("D")
         else
@@ -519,11 +490,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
         binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
         val motion = checkSensorMotionDetection()
-        if (motion)
-            binding.TVMotionSensor.visibility = View.VISIBLE
-        else
-            binding.TVMotionSensor.visibility = View.INVISIBLE
-        if (motion && (sensorTargetPosition == 0 || sensorTargetPosition == 3)) {
+        if ((motion == 2) && (sensorTargetPosition == 0 || sensorTargetPosition == 3)) {
             if (TargetState == false) {
                 binding.TVPosition.setText("OK")
                 binding.TVTempTargetMaxFreeze.setText(
@@ -816,7 +783,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private fun checkSensorMotionDetection() : Boolean
+    private fun checkSensorMotionDetection() : Int
     {
         return MotionDetected
     }
