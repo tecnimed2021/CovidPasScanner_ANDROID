@@ -458,8 +458,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         ) {
             createPermissionAlertQr()
         } else {
-                openQrCodeReader()
-//            openTempReader()
+//                openQrCodeReader()
+            openTempReader()
         }
     }
 
