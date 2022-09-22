@@ -254,10 +254,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetFreeze.visibility = View.VISIBLE
         binding.TVPosition.visibility = View.VISIBLE
         binding.TVMotionSensor.visibility = View.VISIBLE
-        binding.BDeltaP.setOnClickListener(this)
-        binding.BDeltaM.setOnClickListener(this)
-        binding.BSnsM.setOnClickListener(this)
-        binding.BSnsP.setOnClickListener(this)
         binding.BMovSnsTen.setOnClickListener(this)
 
 
