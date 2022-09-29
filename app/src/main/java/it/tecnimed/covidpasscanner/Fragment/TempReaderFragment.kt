@@ -123,6 +123,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorDistanceAmbientLight = 0.0f
     private var sensorDistanceTargetPositionOK = 0
 
+    private var sensorDistanceNoTarget = false
+    private var sensorDistanceNoTargetTimeout = 200
 
     private lateinit var beepManager: BeepManager
 
@@ -179,7 +181,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         }
                     }
                 }
+                if (sensorDistanceNoTargetTimeout > 0) {
+                    sensorDistanceNoTargetTimeout--
                 }
+                if (sensorDistanceNoTargetTimeout == 0) {
+                    sensorDistanceNoTarget = true
                 }
             } finally {
                 // Circa 80ms
@@ -427,9 +433,26 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 
         sensorDistanceTargetPositionOK = sensorDistancePosition
 
+        if (sensorDistanceTargetPositionOK > 1) {
+            sensorDistanceNoTarget = false
+            sensorDistanceNoTargetTimeout = 200
         }
-        MotionDetected = sensorDistancePosition
-        if (MotionDetected != 0) {
+
+        var params: WindowManager.LayoutParams = mActivity.getWindow().getAttributes()
+        if(sensorDistanceNoTarget == false) {
+            mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//            if(params.screenBrightness != -1f) {
+//                params.screenBrightness = -1f
+//                mActivity.getWindow().setAttributes(params)
+//            }
+        }
+        else{
+            mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+//            if(params.screenBrightness != 0f) {
+//                params.screenBrightness = 0f
+//                mActivity.getWindow().setAttributes(params)
+//            }
+        }
 
         if (sensorDistanceTargetPositionOK != 0) {
             binding.TVMotionSensor.visibility = View.VISIBLE
