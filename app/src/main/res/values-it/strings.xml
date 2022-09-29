@@ -94,6 +94,9 @@
     <string name="label_position_iddoc">PREGO MOSTRA IL TUO DOCUMENTO DI IDENTITA\'</string>
 
     <string name="label_temp_notvalid">ACCESSO NEGATO. Riprova tra qualche minuto</string>
+    <string name="label_temp_position_ok">OK</string>
+    <string name="label_temp_position_toofar">Avvicinati</string>
+    <string name="label_temp_position_tooclose">Allontanati</string>
 
     <string name="label_gp_valid">VALIDO</string>
     <string name="label_gp_notvalid">NON VALIDO</string>

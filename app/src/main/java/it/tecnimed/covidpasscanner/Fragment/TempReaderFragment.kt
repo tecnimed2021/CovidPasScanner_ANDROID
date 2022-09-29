@@ -23,40 +23,34 @@ package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
 import android.content.ContentValues
+import android.content.Context
 import android.graphics.*
 import android.media.Image
 import android.net.Uri
 import android.os.*
+import android.os.PowerManager.WakeLock
 import android.provider.MediaStore
-import android.util.Log
-import android.util.Size
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.addCallback
-import androidx.annotation.VisibleForTesting
-import androidx.camera.core.CameraSelector
-import androidx.camera.core.ImageAnalysis
-import androidx.camera.core.Preview
-import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.camera.view.PreviewView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
 import it.tecnimed.covidpasscanner.uart.UARTDriver
-import java.io.*
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
+import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
-import java.util.concurrent.ExecutorService
-import java.util.concurrent.Executors
-import kotlin.math.abs
 
 
 @AndroidEntryPoint
@@ -96,7 +90,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var _binding: FragmentTempReaderBinding? = null
     private val binding get() = _binding!!
 
-
     private var sensCom = false
 
     private val sensSizeX = 16 * 2
@@ -128,6 +121,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorTargetTObjMaxAdjustedIsValid = false
     private var sensorDistancePosition = 0
     private var sensorDistanceAmbientLight = 0.0f
+    private var sensorDistanceTargetPositionOK = 0
+
 
     private lateinit var beepManager: BeepManager
 
@@ -184,14 +179,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         }
                     }
                 }
-
-                if(MotionTimeout > 0){
-                    MotionTimeout--
                 }
-                if(MotionTimeout == 0){
-                    MotionDetected = 0
                 }
-
             } finally {
                 // Circa 80ms
                 TimeoutHandler.postDelayed(this, 40)
@@ -211,9 +200,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    private var MotionDetected = 0
-    private var MotionTimeout = 36
-    private var MotionTimeoutEnable = false
 
 
 
@@ -254,8 +240,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetFreeze.visibility = View.VISIBLE
         binding.TVPosition.visibility = View.VISIBLE
         binding.TVMotionSensor.visibility = View.VISIBLE
-        binding.BMovSnsTen.setOnClickListener(this)
-
 
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run()
@@ -296,12 +280,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 if (mListener != null) {
                     mListener!!.onFragmentInteractionTempReader("")
                 }
-            }
-            R.id.BMovSnsTen -> {
-                if(MotionTimeoutEnable == false)
-                    MotionTimeoutEnable = true
-                else
-                    MotionTimeoutEnable = false
             }
         }
     }
@@ -446,36 +424,32 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     }
 
     private fun motionDetection() {
-        if(MotionDetected != 2) {
-            if(sensorDistancePosition == 2) {
-                // Object detected
-                if(MotionTimeoutEnable)
-                    MotionTimeout = 36
-                else
-                    MotionTimeout = 10
-            }
+
+        sensorDistanceTargetPositionOK = sensorDistancePosition
+
         }
         MotionDetected = sensorDistancePosition
         if (MotionDetected != 0) {
+
+        if (sensorDistanceTargetPositionOK != 0) {
             binding.TVMotionSensor.visibility = View.VISIBLE
-            if(MotionDetected == 2)
+            if(sensorDistanceTargetPositionOK == 2)
                 // OK
-                binding.TVMotionSensor.text = "O"
-            else if(MotionDetected == 3)
+                binding.TVMotionSensor.text = getString(R.string.label_temp_position_ok)
+            else if(sensorDistanceTargetPositionOK == 3)
                 // Too Far
-                binding.TVMotionSensor.text = "V"
-            else if(MotionDetected == 4)
+                binding.TVMotionSensor.text = getString(R.string.label_temp_position_toofar)
+            else if(sensorDistanceTargetPositionOK == 4)
                 // Too Close
-                binding.TVMotionSensor.text = "L"
+                binding.TVMotionSensor.text = getString(R.string.label_temp_position_tooclose)
+            else
+                // No target
+                binding.TVMotionSensor.text = ""
         }
         else {
             binding.TVMotionSensor.visibility = View.INVISIBLE
+            binding.TVMotionSensor.text = ""
         }
-
-        if(MotionTimeoutEnable == false)
-            binding.BMovSnsTen.setText("D")
-        else
-            binding.BMovSnsTen.setText("E")
     }
 
     private fun processTemperature() {
@@ -485,9 +459,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
         binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
         binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
-        val motion = checkSensorMotionDetection()
-        if ((motion == 2) && (sensorTargetPosition == 0 || sensorTargetPosition == 3)) {
-            if (TargetState == false) {
+        if (sensorTargetPosition == 0 || sensorTargetPosition == 3) {
+            if (TargetState == false && sensorDistanceTargetPositionOK == 2) {
                 binding.TVPosition.setText("OK")
                 binding.TVTempTargetMaxFreeze.setText(
                     getString(
@@ -777,11 +750,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 e.printStackTrace()
             }
         }
-    }
-
-    private fun checkSensorMotionDetection() : Int
-    {
-        return MotionDetected
     }
 
     private fun ConvertImageToBitmapRGBA888(image : Image) : Bitmap {

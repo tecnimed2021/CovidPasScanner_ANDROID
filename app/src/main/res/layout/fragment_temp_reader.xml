@@ -25,21 +25,6 @@
     android:keepScreenOn="true"
     android:textAlignment="inherit">
 
-    <TextView
-        android:id="@+id/TVMotionSensor"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="316dp"
-        android:layout_marginRight="16dp"
-        android:text="O"
-        android:textAlignment="center"
-        android:textColor="@color/zxing_viewfinder_laser"
-        android:textSize="30sp"
-        android:textStyle="bold"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@id/IVTempOutline"
-        tools:visibility="visible" />
-
     <ImageView
         android:id="@+id/back_image3"
         android:layout_width="wrap_content"
@@ -98,6 +83,21 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         tools:srcCompat="@drawable/reticolo" />
+
+    <TextView
+        android:id="@+id/TVMotionSensor"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="250dp"
+        android:text="O"
+        android:textAlignment="center"
+        android:textColor="@color/zxing_viewfinder_laser"
+        android:textSize="32sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/IVTempOutline"
+        tools:visibility="visible" />
 
     <TextView
         android:id="@+id/TVTempEnvThInt"
@@ -209,14 +209,5 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle"
         tools:visibility="visible" />
-
-    <Button
-        android:id="@+id/BMovSnsTen"
-        android:layout_width="40dp"
-        android:layout_height="50dp"
-        android:layout_marginRight="5dp"
-        android:text="D"
-        app:layout_constraintBottom_toTopOf="@id/TVMotionSensor"
-        app:layout_constraintRight_toRightOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
