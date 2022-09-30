@@ -23,6 +23,7 @@ package it.tecnimed.covidpasscanner.Activity;
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.KeyguardManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.graphics.Typeface
@@ -206,12 +207,15 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         setupUI()
         observeLiveData()
         mSerialDrv = UARTDriver.create(mContext)
-
         mWakeLock = (getSystemService(Context.POWER_SERVICE) as PowerManager).run {
                 newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "MyApp::MyWakelockTag").apply {
                     acquire()
                 }
             }
+        setTurnScreenOn(true)
+        val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager?
+        keyguardManager!!.requestDismissKeyguard(this, null)
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
     }
 
     private fun observeLiveData() {
