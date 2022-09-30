@@ -22,8 +22,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    android:textAlignment="inherit"
-    android:keepScreenOn="true">
+    android:keepScreenOn="false"
+    android:textAlignment="inherit">
 
     <TextView
         android:id="@+id/TVUserDataValidity"
