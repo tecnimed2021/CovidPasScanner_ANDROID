@@ -22,13 +22,13 @@
 package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
+import android.app.KeyguardManager
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.*
 import android.media.Image
 import android.net.Uri
 import android.os.*
-import android.os.PowerManager.WakeLock
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
@@ -36,6 +36,8 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
@@ -124,7 +126,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorDistanceTargetPositionOK = 0
 
     private var sensorDistanceNoTarget = false
-    private var sensorDistanceNoTargetTimeout = 200
+    private var sensorDistanceNoTargetTimeout = 600
 
     private lateinit var beepManager: BeepManager
 
@@ -429,36 +431,35 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         return true;
     }
 
+    @RequiresApi(Build.VERSION_CODES.O_MR1)
     private fun motionDetection() {
 
         sensorDistanceTargetPositionOK = sensorDistancePosition
 
         if (sensorDistanceTargetPositionOK > 1) {
             sensorDistanceNoTarget = false
-            sensorDistanceNoTargetTimeout = 200
+            sensorDistanceNoTargetTimeout = 600
         }
 
-        var params: WindowManager.LayoutParams = mActivity.getWindow().getAttributes()
         if(sensorDistanceNoTarget == false) {
-            mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//            if(params.screenBrightness != -1f) {
-//                params.screenBrightness = -1f
-//                mActivity.getWindow().setAttributes(params)
-//            }
+            mActivity.runOnUiThread(java.lang.Runnable {
+                mActivity.setTurnScreenOn(true)
+                val keyguardManager = mActivity.getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager?
+                keyguardManager!!.requestDismissKeyguard(mActivity, null)
+                mActivity.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            })
         }
         else{
-            mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
-//            if(params.screenBrightness != 0f) {
-//                params.screenBrightness = 0f
-//                mActivity.getWindow().setAttributes(params)
-//            }
+            mActivity.runOnUiThread(java.lang.Runnable {
+                mActivity.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+            })
         }
 
         if (sensorDistanceTargetPositionOK != 0) {
             binding.TVMotionSensor.visibility = View.VISIBLE
             if(sensorDistanceTargetPositionOK == 2)
                 // OK
-                binding.TVMotionSensor.text = getString(R.string.label_temp_position_ok)
+                binding.TVMotionSensor.text = ""
             else if(sensorDistanceTargetPositionOK == 3)
                 // Too Far
                 binding.TVMotionSensor.text = getString(R.string.label_temp_position_toofar)
