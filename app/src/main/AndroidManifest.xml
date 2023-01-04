@@ -50,15 +50,10 @@
             android:exported="false"
             tools:node="merge">
             <meta-data
-                android:name="it.tecnimed.covidpasscanner.data.local.realm.RealmInitializer"
-                android:value="androidx.startup" />
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
         </provider>
-
-        <provider
-            android:name="androidx.work.impl.WorkManagerInitializer"
-            android:authorities="${applicationId}.workmanager-init"
-            android:exported="false"
-            tools:node="remove" />
 
         <meta-data
             android:name="com.google.android.gms.version"
