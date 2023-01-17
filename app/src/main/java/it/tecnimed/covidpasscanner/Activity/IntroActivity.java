@@ -4,7 +4,6 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.WindowManager;
@@ -12,7 +11,7 @@ import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import it.tecnimed.covidpasscanner.R;
-import it.tecnimed.covidpasscanner.VL.VLTimer;
+import it.tecnimed.covidpasscanner.Tecnimed.VLTimer;
 
 public class IntroActivity extends AppCompatActivity implements  VLTimer.OnTimeElapsedListener
 {

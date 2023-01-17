@@ -41,11 +41,10 @@ import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.*
-import it.tecnimed.covidpasscanner.VL.VLTimer
+import it.tecnimed.covidpasscanner.Tecnimed.VLTimer
 import it.tecnimed.covidpasscanner.databinding.FragmentUserdataReaderBinding
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import java.lang.ClassCastException
-import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 

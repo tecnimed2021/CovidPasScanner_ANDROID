@@ -31,13 +31,11 @@ import androidx.fragment.app.viewModels
 import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.*
-import it.tecnimed.covidpasscanner.VL.VLTimer
-import it.tecnimed.covidpasscanner.VL.VLTimer.OnTimeElapsedListener
+import it.tecnimed.covidpasscanner.Tecnimed.VLTimer
+import it.tecnimed.covidpasscanner.Tecnimed.VLTimer.OnTimeElapsedListener
 import it.tecnimed.covidpasscanner.databinding.FragmentUserdataVerificationBinding
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
-import it.tecnimed.covidpasscanner.util.*
 import java.lang.ClassCastException
-import java.util.*
 import android.media.ToneGenerator
 
 import android.media.AudioManager

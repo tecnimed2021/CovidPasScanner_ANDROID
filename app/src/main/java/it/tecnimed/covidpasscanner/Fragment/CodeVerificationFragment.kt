@@ -25,8 +25,6 @@ import android.graphics.Color
 import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -36,17 +34,14 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.*
-import it.tecnimed.covidpasscanner.VL.VLTimer
-import it.tecnimed.covidpasscanner.VL.VLTimer.OnTimeElapsedListener
+import it.tecnimed.covidpasscanner.Tecnimed.VLTimer
+import it.tecnimed.covidpasscanner.Tecnimed.VLTimer.OnTimeElapsedListener
 import it.tecnimed.covidpasscanner.databinding.FragmentCodeVerificationBinding
-import it.tecnimed.covidpasscanner.model.CertificateModel
 import it.tecnimed.covidpasscanner.model.CertificateStatus
 import it.tecnimed.covidpasscanner.model.CertificateViewBean
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
-import it.tecnimed.covidpasscanner.util.*
 import it.tecnimed.covidpasscanner.util.TimeUtility.formatDateOfBirth
 import java.lang.ClassCastException
-import java.util.*
 
 @ExperimentalUnsignedTypes
 @AndroidEntryPoint

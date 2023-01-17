@@ -1,4 +1,4 @@
-package it.tecnimed.covidpasscanner.VL;
+package it.tecnimed.covidpasscanner.Tecnimed;
 
 import android.content.Context;
 import android.os.Handler;

@@ -22,9 +22,7 @@
 package it.tecnimed.covidpasscanner.Fragment
 
 import android.app.Activity
-import android.content.Context
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -32,9 +30,6 @@ import android.view.ViewGroup
 import androidx.activity.addCallback
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.navigation.NavController
-import androidx.navigation.NavDestination
-import androidx.navigation.fragment.findNavController
 import com.google.zxing.BarcodeFormat
 import com.google.zxing.DecodeHintType
 import com.google.zxing.ResultPoint
@@ -46,7 +41,7 @@ import com.journeyapps.barcodescanner.DefaultDecoderFactory
 import com.journeyapps.barcodescanner.camera.CameraSettings
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.R
-import it.tecnimed.covidpasscanner.VL.VLTimer
+import it.tecnimed.covidpasscanner.Tecnimed.VLTimer
 import it.tecnimed.covidpasscanner.model.VerificationViewModel
 import it.tecnimed.covidpasscanner.databinding.FragmentCodeReaderBinding
 import java.lang.ClassCastException
