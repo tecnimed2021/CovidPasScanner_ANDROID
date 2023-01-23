@@ -57,6 +57,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.BuildConfig
 import it.tecnimed.covidpasscanner.Fragment.*
 import it.tecnimed.covidpasscanner.R
+import it.tecnimed.covidpasscanner.Tecnimed.AppSetup
 import it.tecnimed.covidpasscanner.VerificaApplication
 import it.tecnimed.covidpasscanner.data.local.prefs.PrefKeys
 import it.tecnimed.covidpasscanner.model.ScanMode
@@ -77,6 +78,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     CodeVerificationFragment.OnFragmentInteractionListener,
     UserDataReaderFragment.OnFragmentInteractionListener,
     UserDataVerificationFragment.OnFragmentInteractionListener,
+    SetupFragment.OnFragmentInteractionListener,
     SharedPreferences.OnSharedPreferenceChangeListener {
 
     private lateinit var binding: ActivityFirstBinding
@@ -96,12 +98,15 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private lateinit var mCodeVerificationFrag: Fragment;
     private lateinit var mUserDataReaderFrag: Fragment;
     private lateinit var mUserDataVerificationFrag: Fragment;
+    private lateinit var mSetupFrag: Fragment;
 
     private lateinit var mCertSimple: CertificateViewBean
 
     private lateinit var mWakeLock: PowerManager.WakeLock
 
     private var AppSequenceComplete = false
+
+    private lateinit var mSetup: AppSetup
 
     private val requestPermissionLauncherQr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -196,6 +201,18 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         openTempReader()
     }
 
+    override fun onFragmentInteractionSetup(setupParams: AppSetup) {
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+        tr.remove(mSetupFrag)
+        tr.commitAllowingStateLoss()
+        viewModel.setSetupSequenceTemperature(setupParams.sequenceTemperature)
+        viewModel.setSetupSequenceGreenPass(setupParams.sequenceGreenPass)
+        viewModel.setSetupSequenceDocument(setupParams.sequenceDocument)
+        viewModel.setSetupRangeTemperatureGreen(setupParams.rangeGreen)
+        viewModel.setSetupRangeTemperatureOrange(setupParams.rangeOrange)
+    }
+
     @SuppressLint("InvalidWakeLockTag")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -216,6 +233,12 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val keyguardManager = getSystemService(Context.KEYGUARD_SERVICE) as KeyguardManager?
         keyguardManager!!.requestDismissKeyguard(this, null)
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
+        mSetup = AppSetup()
+        mSetup.sequenceTemperature = viewModel.getSetupSequenceTemperature()
+        mSetup.sequenceGreenPass = viewModel.getSetupSequenceGreenPass()
+        mSetup.sequenceDocument = viewModel.getSetupSequenceDocument()
+        mSetup.rangeGreen = viewModel.getSetupRangeTemperatureGreen()
+        mSetup.rangeOrange = viewModel.getSetupRangeTemperatureOrange()
     }
 
     private fun observeLiveData() {
@@ -565,7 +588,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         binding.initDownload.visibility = VISIBLE
         binding.qrButton.background.alpha = 128
         if(DebugActive)
-            binding.ocrButton.background.alpha = 128
+            binding.SetupButton.background.alpha = 128
         hideDownloadProgressViews()
         binding.dateLastSyncText.text = when (viewModel.getTotalSizeInByte()) {
             0L -> {
@@ -623,6 +646,15 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         mUserDataReaderFrag = crf
     }
 
+    private fun openSetup() {
+        val fm = supportFragmentManager
+        val tr = fm.beginTransaction()
+        var crf : Fragment = SetupFragment.newInstance(mSetup)
+        tr.add(R.id.frag_anch_point, crf)
+        tr.commitAllowingStateLoss()
+        mSetupFrag = crf
+    }
+
     override fun onClick(v: View?) {
         /*
         if (v?.id == R.id.qrButton) {
@@ -640,6 +672,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             }
         }
         */
+        if (v?.id == R.id.SetupButton) {
+            openSetup()
         if(DebugActive) {
             if (v?.id == R.id.ocrButton) {
                 viewModel.getDrlDateLastSync().let {
@@ -791,7 +825,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                         binding.resumeDownload.visibility = VISIBLE
                         binding.qrButton.background.alpha = 128
                         if(DebugActive)
-                            binding.ocrButton.background.alpha = 128
+                            binding.SetupButton.background.alpha = 128
                     }
                 }
                 PrefKeys.KEY_DRL_DATE_LAST_FETCH -> {

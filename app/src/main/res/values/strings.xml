@@ -62,8 +62,7 @@ It is used to access shows, sporting events, indoor dining, parties and discos, 
     <string name="scan_mode_BOOST_header">Booster Verification</string>
     <string name="scan_mode_3G">Vaccination /Healing / Swab</string>
     <string name="scan_mode_2G">Vaccination / Healing</string>
-    <!--<string name="scan_mode_BOOST">Booster / full cycle+swab / healing+swab</string>-->
-    <string name="scan_mode_BOOST">TEMPERATURE</string>
+    <string name="scan_mode_BOOST">Booster / full cycle+swab / healing+swab</string>
     <string name="loading">Last updated data and rules:\nUpdate in progress...</string>
     <string name="incompleteDownload">The update to the list of revoked COVID-19 GreenPass Certifications is incomplete. Please make sure you are connected to the Internet and click to continue.</string>
     <string name="updatingRevokedPass">The list of revoked COVID-19 GreenPass Certifications is currently being updated.</string>
@@ -111,5 +110,12 @@ It is used to access shows, sporting events, indoor dining, parties and discos, 
     <string name="label_ud_go">YOU CAN PROCEED\nHAVE A NICE DAY</string>
     <string name="label_ud_notvalid">ACCESS DENIED</string>
 
+    <string name="setup_sequence_title">Sequences setup</string>
+    <string name="setup_sequence_temp">Temperature</string>
+    <string name="setup_sequence_gp">Green Pass</string>
+    <string name="setup_sequence_doc">Document</string>
+    <string name="setup_rangetemp_title">Temperature Range setup</string>
+    <string name="setup_rangetemp_green">Green Range</string>
+    <string name="setup_rangetemp_orange">Orange Range</string>
 
 </resources>
