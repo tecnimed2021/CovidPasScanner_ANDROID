@@ -61,7 +61,8 @@ object Versions {
     const val json_validation_rhino = "1.0"
 
     // CameraX
-    const val camerax_version = "1.1.0-rc01"
+    const val camerax_version = "1.2.0"
+    const val mlkit_vision_version = "1.2.0-beta02"
 
     // Tests
     const val junit = "4.13.1"
