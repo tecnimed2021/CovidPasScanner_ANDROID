@@ -87,6 +87,12 @@ interface Preferences {
 
     var userName: String?
 
+    var setupSequenceTemperature: Boolean
+    var setupSequenceGreenPass: Boolean
+    var setupSequenceDocument: Boolean
+    var setupRangeTemperatureGreen: Float
+    var setupRangeTemperatureOrange: Float
+
     /**
      *
      * This method clears all values from the Shared Preferences file.
@@ -202,6 +208,32 @@ class PreferencesImpl(context: Context) : Preferences {
     )
     override var userName by StringPreference(preferences, PrefKeys.KEY_USER_NAME, "")
 
+    override var setupSequenceTemperature by BooleanPreference(
+        preferences,
+        PrefKeys.KEY_SETUP_SEQUENCE_TEMPERATURE,
+        true
+    )
+    override var setupSequenceGreenPass by BooleanPreference(
+        preferences,
+        PrefKeys.KEY_SETUP_SEQUENCE_GREENPASS,
+        false
+    )
+    override var setupSequenceDocument by BooleanPreference(
+        preferences,
+        PrefKeys.KEY_SETUP_SEQUENCE_DOCUMENT,
+        false
+    )
+    override var setupRangeTemperatureGreen by FloatPreference(
+        preferences,
+        PrefKeys.KEY_SETUP_RANGE_TEMPERATURE_GREEN,
+        37.5f
+    )
+    override var setupRangeTemperatureOrange by FloatPreference(
+        preferences,
+        PrefKeys.KEY_SETUP_RANGE_TEMPERATURE_ORANGE,
+        0.5f
+    )
+
     override fun clear() {
         preferences.value.edit().clear().apply()
     }
@@ -226,6 +258,11 @@ class PreferencesImpl(context: Context) : Preferences {
         preferences.value.edit().remove(PrefKeys.KEY_IS_DRL_SYNC_ACTIVE).apply()
         preferences.value.edit().remove(PrefKeys.KEY_SHOULD_INIT_DOWNLOAD).apply()
         preferences.value.edit().remove(PrefKeys.KEY_MAX_RETRY_NUM).apply()
+        preferences.value.edit().remove(PrefKeys.KEY_SETUP_SEQUENCE_TEMPERATURE).apply()
+        preferences.value.edit().remove(PrefKeys.KEY_SETUP_SEQUENCE_GREENPASS).apply()
+        preferences.value.edit().remove(PrefKeys.KEY_SETUP_SEQUENCE_DOCUMENT).apply()
+        preferences.value.edit().remove(PrefKeys.KEY_SETUP_RANGE_TEMPERATURE_GREEN).apply()
+        preferences.value.edit().remove(PrefKeys.KEY_SETUP_RANGE_TEMPERATURE_ORANGE).apply()
     }
 
     override fun registerOnSharedPreferenceChangeListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
@@ -266,6 +303,22 @@ class LongPreference(
 
     override fun setValue(thisRef: Any, property: KProperty<*>, value: Long) {
         preferences.value.edit { putLong(name, value) }
+    }
+}
+
+class FloatPreference(
+    private val preferences: Lazy<SharedPreferences>,
+    private val name: String,
+    private val defaultValue: Float
+) : ReadWriteProperty<Any, Float> {
+
+    @WorkerThread
+    override fun getValue(thisRef: Any, property: KProperty<*>): Float {
+        return preferences.value.getFloat(name, defaultValue)
+    }
+
+    override fun setValue(thisRef: Any, property: KProperty<*>, value: Float) {
+        preferences.value.edit { putFloat(name, value) }
     }
 }
 

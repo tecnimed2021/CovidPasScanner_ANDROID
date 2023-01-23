@@ -73,6 +73,22 @@ class FirstViewModel @Inject constructor(
     fun setScanModeFlag(value: Boolean) =
         run { preferences.hasScanModeBeenChosen = value }
 
+    fun getSetupSequenceTemperature() = preferences.setupSequenceTemperature
+    fun setSetupSequenceTemperature(value: Boolean) =
+        run { preferences.setupSequenceTemperature = value }
+    fun getSetupSequenceGreenPass() = preferences.setupSequenceGreenPass
+    fun setSetupSequenceGreenPass(value: Boolean) =
+        run { preferences.setupSequenceGreenPass = value }
+    fun getSetupSequenceDocument() = preferences.setupSequenceDocument
+    fun setSetupSequenceDocument(value: Boolean) =
+        run { preferences.setupSequenceDocument = value }
+    fun getSetupRangeTemperatureGreen() = preferences.setupRangeTemperatureGreen
+    fun setSetupRangeTemperatureGreen(value: Float) =
+        run { preferences.setupRangeTemperatureGreen = value }
+    fun getSetupRangeTemperatureOrange() = preferences.setupRangeTemperatureOrange
+    fun setSetupRangeTemperatureOrange(value: Float) =
+        run { preferences.setupRangeTemperatureOrange = value }
+
     init {
         preferences.shouldInitDownload = false
         preferences.isDoubleScanFlow = false

@@ -58,4 +58,10 @@ object PrefKeys {
 
     const val KEY_IS_DOUBLE_SCAN_FLOW = "double_scan_flow"
     const val KEY_USER_NAME = "user_name"
+
+    const val KEY_SETUP_SEQUENCE_TEMPERATURE = "sequence_temperature"
+    const val KEY_SETUP_SEQUENCE_GREENPASS = "sequence_greenpass"
+    const val KEY_SETUP_SEQUENCE_DOCUMENT = "sequence_document"
+    const val KEY_SETUP_RANGE_TEMPERATURE_GREEN = "range_tamperature_green"
+    const val KEY_SETUP_RANGE_TEMPERATURE_ORANGE = "range_tamperature_orange"
 }
