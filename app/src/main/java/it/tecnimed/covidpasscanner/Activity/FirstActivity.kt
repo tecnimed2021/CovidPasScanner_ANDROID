@@ -124,64 +124,60 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     override fun onFragmentInteractionTempReader(temp: String) {
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-        if(AppSequenceComplete == true) {
-            if (temp != "" && temp != "NOCOM") {
-                var crf: Fragment = CodeReaderFragment()
-                tr.replace(R.id.frag_anch_point, crf)
-                tr.commitAllowingStateLoss()
-                mCodeReaderFrag = crf
-            } else {
-                tr.remove(mTempReaderFrag)
-                tr.commitAllowingStateLoss()
-            }
+
+        if (temp == "" || temp == "NOCOM") {
+            tr.remove(mTempReaderFrag)
+            tr.commitAllowingStateLoss()
+            return;
         }
-        else{
-            if (temp == "" || temp == "NOCOM") {
-                tr.remove(mTempReaderFrag)
-                tr.commitAllowingStateLoss()
-            }
-        }
+        if(AppSetup.SequenceGreenPass == false)
+            return
+
+        var crf: Fragment = CodeReaderFragment()
+        tr.replace(R.id.frag_anch_point, crf)
+        tr.commitAllowingStateLoss()
+        mCodeReaderFrag = crf
     }
 
     override fun onFragmentInteractionCodeReader(qrcodeText: String) {
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-        if(qrcodeText != ""){
-            var crf : Fragment = CodeVerificationFragment.newInstance(qrcodeText)
-            tr.replace(R.id.frag_anch_point, crf)
-            tr.commitAllowingStateLoss()
-            mCodeVerificationFrag = crf
-        }
-        else{
+
+        if(qrcodeText == ""){
             tr.remove(mCodeReaderFrag)
             tr.commitAllowingStateLoss()
             openTempReader()
+            return
         }
+
+        var crf : Fragment = CodeVerificationFragment.newInstance(qrcodeText)
+        tr.replace(R.id.frag_anch_point, crf)
+        tr.commitAllowingStateLoss()
+        mCodeVerificationFrag = crf
     }
 
     override fun onFragmentInteractionCodeVerification(certSimple: CertificateViewBean?) {
-        // CodeVerificationFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
-        if (certSimple != null) {
-            mCertSimple = certSimple
-            var crf : Fragment = UserDataReaderFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
-            tr.replace(R.id.frag_anch_point, crf)
-            tr.commitAllowingStateLoss()
-            mUserDataReaderFrag = crf
-        }
-        else
-        {
+
+        if (certSimple == null || AppSetup.SequenceDocument == false) {
             tr.remove(mCodeVerificationFrag)
             tr.commitAllowingStateLoss()
             openTempReader()
+            return
         }
+
+        mCertSimple = certSimple!!
+        var crf : Fragment = UserDataReaderFragment.newInstance(mCertSimple.person?.familyName.toString(), mCertSimple.person?.givenName.toString())
+        tr.replace(R.id.frag_anch_point, crf)
+        tr.commitAllowingStateLoss()
+        mUserDataReaderFrag = crf
     }
 
     override fun onFragmentInteractionUserDataReader(UserDataFound: Boolean) {
-        // UserDataReadFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
+
         var crf : Fragment
         if(UserDataFound == false)
             crf = UserDataVerificationFragment.newInstance("", "")
@@ -193,9 +189,9 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     }
 
     override fun onFragmentInteractionUserDataVerification() {
-        // UserDataVerificationFragment
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
+
         tr.remove(mUserDataVerificationFrag)
         tr.commitAllowingStateLoss()
         openTempReader()
@@ -283,8 +279,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         viewModel.fetchStatus.observe(this) {
             if (it) {
                 binding.qrButton.background.alpha = 128
-                if(DebugActive)
-                    binding.ocrButton.background.alpha = 128
+                binding.SetupButton.background.alpha = 20
             } else {
                 if (!viewModel.getIsPendingDownload() && viewModel.maxRetryReached.value == false) {
                     viewModel.getDateLastSync().let { date ->
@@ -296,8 +291,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                         )
                     }
                     binding.qrButton.background.alpha = 255
-                    if(DebugActive)
-                        binding.ocrButton.background.alpha = 255
+                    binding.SetupButton.background.alpha = 20
                     hideDownloadProgressViews()
                 }
             }
@@ -320,8 +314,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             if (it != -1L) {
                 if (it == 0.toLong() || viewModel.getIsPendingDownload()) {
                     binding.qrButton.background.alpha = 128
-                    if(DebugActive)
-                        binding.ocrButton.background.alpha = 128
+                    binding.SetupButton.background.alpha = 20
                     binding.resumeDownload.visibility = VISIBLE
                     binding.dateLastSyncText.text = getString(R.string.incompleteDownload)
                     binding.chunkCount.visibility = VISIBLE
@@ -332,9 +325,9 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                 }
             }
         }
+        binding.SetupButton.visibility = VISIBLE
         if(DebugActive == false)
         {
-            binding.ocrButton.visibility = INVISIBLE
             binding.uartButton.visibility = VISIBLE
             binding.uartTest.visibility = VISIBLE
         }
@@ -351,8 +344,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private fun setOnClickListeners() {
         binding.qrButton.setOnClickListener(this)
-        if(DebugActive)
-            binding.ocrButton.setOnClickListener(this)
+        binding.SetupButton.setOnClickListener(this)
         binding.scanModeButton.setOnClickListener(this)
         binding.initDownload.setOnClickListener {
             if (Utility.isOnline(this)) {
@@ -674,26 +666,10 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         */
         if (v?.id == R.id.SetupButton) {
             openSetup()
-        if(DebugActive) {
-            if (v?.id == R.id.ocrButton) {
-                viewModel.getDrlDateLastSync().let {
-                    if (binding.resumeDownload.isVisible) {
-                        createNoSyncAlertDialog(getString(R.string.label_drl_download_in_progress))
-                        return
-                    }
-                    if ((viewModel.getIsDrlSyncActive() && System.currentTimeMillis() >= it + 24 * 60 * 60 * 1000) ||
-                        (viewModel.getIsDrlSyncActive() && it == -1L)
-                    ) {
-                        createNoSyncAlertDialog(getString(R.string.noKeyAlertMessageForDrl))
-                        return
-                    }
-                }
-            }
         }
 
         when (v?.id) {
             R.id.qrButton -> checkCameraPermissionQr()
-            R.id.ocrButton -> checkCameraPermissionOcr()
             R.id.scan_mode_button -> showScanModeChoiceAlertDialog()
         }
     }
