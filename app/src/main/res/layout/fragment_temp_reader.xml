@@ -66,8 +66,8 @@
 
     <ImageView
         android:id="@+id/IVTemp"
-        android:layout_width="420dp"
-        android:layout_height="560dp"
+        android:layout_width="600dp"
+        android:layout_height="600dp"
         android:scaleType="fitXY"
         android:scaleX="-1.0"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -76,8 +76,8 @@
 
     <ImageView
         android:id="@+id/IVTempOutline"
-        android:layout_width="420dp"
-        android:layout_height="560dp"
+        android:layout_width="600dp"
+        android:layout_height="600dp"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -185,15 +185,15 @@
         android:id="@+id/TVTempTarget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
+        android:layout_marginTop="20dp"
         android:text="TextView"
         android:textAlignment="viewStart"
         android:textColor="@android:color/holo_red_dark"
-        android:textSize="30sp"
+        android:textSize="80sp"
         android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TVTempTargetFreeze"
+        app:layout_constraintTop_toBottomOf="@id/TVUserTempReaderTitle"
         tools:visibility="visible" />
 
     <TextView
