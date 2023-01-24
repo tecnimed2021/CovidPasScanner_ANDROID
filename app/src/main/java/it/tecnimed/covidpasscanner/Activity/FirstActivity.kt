@@ -102,9 +102,10 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
     private lateinit var mCertSimple: CertificateViewBean
 
-    private lateinit var mWakeLock: PowerManager.WakeLock
+    private var mTemperature: String = ""
+    private var mTemperatureColor: Int = 0
 
-    private var AppSequenceComplete = false
+    private lateinit var mWakeLock: PowerManager.WakeLock
 
     private lateinit var mSetup: AppSetup
 
@@ -121,7 +122,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             }
         }
 
-    override fun onFragmentInteractionTempReader(temp: String) {
+    override fun onFragmentInteractionTempReader(temp: String, tempcolor: Int) {
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
 
@@ -130,6 +131,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             tr.commitAllowingStateLoss()
             return;
         }
+        mTemperature = temp
+        mTemperatureColor = tempcolor
         if(AppSetup.SequenceGreenPass == false)
             return
 
@@ -150,7 +153,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             return
         }
 
-        var crf : Fragment = CodeVerificationFragment.newInstance(qrcodeText)
+        var crf : Fragment = CodeVerificationFragment.newInstance(qrcodeText, mTemperature, mTemperatureColor)
         tr.replace(R.id.frag_anch_point, crf)
         tr.commitAllowingStateLoss()
         mCodeVerificationFrag = crf
@@ -477,8 +480,17 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         ) {
             createPermissionAlertQr()
         } else {
-//                openQrCodeReader()
-            openTempReader()
+            if(AppSetup.SequenceTemperature == true) {
+                openTempReader()
+                return;
+            }
+            if(AppSetup.SequenceGreenPass == true) {
+                openQrCodeReader()
+                return;
+            }
+            if(AppSetup.SequenceDocument == true) {
+                openOcrReader()
+            }
         }
     }
 
@@ -706,11 +718,6 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         mBuilder.setTitle(getString(R.string.label_scan_mode))
         mBuilder.setSingleChoiceItems(scanModeChoices, chosenScanMode) { dialog, which ->
             if (!viewModel.getScanModeFlag()) viewModel.setScanModeFlag(true)
-            when (which) {
-                0 -> AppSequenceComplete = true
-                1 -> AppSequenceComplete = true
-                2 -> AppSequenceComplete = false
-            }
             when (which) {
                 0 -> viewModel.setScanMode(ScanMode.STANDARD)
                 1 -> viewModel.setScanMode(ScanMode.STRENGTHENED)
