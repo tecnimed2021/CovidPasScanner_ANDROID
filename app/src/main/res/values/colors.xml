@@ -9,4 +9,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="covidpasscanner_brown">#FF7D4E24</color>
     <color name="covidpasscanner_green">#FF008799</color>
+    <color name="covidpasscanner_orange">#FFFFAA00</color>
+    <color name="covidpasscanner_red">#FFFF0000</color>
 </resources>
