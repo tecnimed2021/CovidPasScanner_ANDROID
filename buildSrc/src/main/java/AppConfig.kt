@@ -24,12 +24,12 @@ import org.gradle.api.JavaVersion
 
 object Config {
     const val minSdk = 27
-    const val compileSdk = 31
-    const val targetSdk = 31
+    const val compileSdk = 33
+    const val targetSdk = 33
     val javaVersion = JavaVersion.VERSION_1_8
 
     const val versionCode = 1
-    const val versionName = "1.50.17"
+    const val versionName = "1.50.20"
 
     const val androidTestInstrumentation = "androidx.test.runner.AndroidJUnitRunner"
     const val proguardConsumerRules = "consumer-rules.pro"

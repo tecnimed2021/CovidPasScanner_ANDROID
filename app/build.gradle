@@ -223,6 +223,8 @@ dependencies {
     implementation("androidx.camera:camera-video:${Versions.camerax_version}")
     // If you want to additionally use the CameraX View class
     implementation("androidx.camera:camera-view:${Versions.camerax_version}")
+    // If you want to additionally add CameraX ML Kit Vision Integration
+    implementation("androidx.camera:camera-mlkit-vision:${Versions.mlkit_vision_version}")
     // If you want to additionally use the CameraX Extensions library
     implementation("androidx.camera:camera-extensions:${Versions.camerax_version}")
 
