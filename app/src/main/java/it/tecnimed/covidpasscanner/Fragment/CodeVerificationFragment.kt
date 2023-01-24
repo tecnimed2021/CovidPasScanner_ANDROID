@@ -29,6 +29,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.observe
@@ -49,12 +50,15 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
 
 //    private val args by navArgs<VerificationFragmentArgs>()
     private val viewModel by viewModels<VerificationViewModel>()
+    private lateinit var mActivity: Activity;
 
     private var _binding: FragmentCodeVerificationBinding? = null
     private val binding get() = _binding!!
     private lateinit var certificateModel: CertificateViewBean
 
     private var qrcodestr : String? = ""
+    private var temperaturestr : String? = ""
+    private var temperaturestrcolor : Int = 0
 
     private lateinit var mTimeVar: VLTimer
 
@@ -72,6 +76,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
 
     override fun onAttach(activity: Activity) {
         super.onAttach(requireActivity())
+        mActivity = activity;
         mListener = try {
             activity as CodeVerificationFragment.OnFragmentInteractionListener
         } catch (e: ClassCastException) {
@@ -90,6 +95,8 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
         super.onCreate(savedInstanceState)
         arguments?.let {
             qrcodestr = it.getString("QRCODESTR")
+            temperaturestr = it.getString("TEMPSTR")
+            temperaturestrcolor = it.getInt("TEMPSTRCOLOR")
         }
     }
 
@@ -115,6 +122,8 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
                 binding.TVCognome.text = it.person?.familyName
                 binding.TVNome.text = it.person?.givenName
                 binding.TVDataNascita.text = it.dateOfBirth?.formatDateOfBirth() ?: ""
+                binding.TVTemperatura.text = temperaturestr
+                binding.TVTemperatura.setTextColor(ContextCompat.getColor(mActivity, temperaturestrcolor))
                 if(certificate.certificateStatus == CertificateStatus.VALID) {
                     binding.TVGreenPassValidity.text = getString(R.string.label_gp_valid)
                     binding.TVGreenPassValidity.setTextColor(Color.parseColor("#00ff00"))
@@ -137,7 +146,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
                 }
 //                if (certificate.certificateStatus == CertificateStatus.VALID) {
                     mTimeVar = VLTimer.create(this)
-                    mTimeVar.startSingle(1000)
+                    mTimeVar.startSingle(3000)
 //                    Log.d("Validita", getString(R.string.label_gp_valid));
 //                }
             }
@@ -195,10 +204,12 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
          */
         // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String) =
+        fun newInstance(param1: String, param2:String, param3: Int) =
             CodeVerificationFragment().apply {
                 arguments = Bundle().apply {
                     putString("QRCODESTR", param1)
+                    putString("TEMPSTR", param2)
+                    putInt("TEMPSTRCOLOR", param3)
                 }
             }
     }
