@@ -37,11 +37,13 @@ import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.R
+import it.tecnimed.covidpasscanner.Tecnimed.AppSetup
 import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
 import it.tecnimed.covidpasscanner.uart.UARTDriver
 import java.io.ByteArrayOutputStream
@@ -62,13 +64,15 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var mListener: OnFragmentInteractionListener? = null
     private var fos: OutputStream? = null
 
+    private val DebugActive: Boolean = false
+
     /**
      * Here we define the methods that we can fire off
      * in our parent Activity once something has changed
      * within the fragment.
      */
     interface OnFragmentInteractionListener {
-        fun onFragmentInteractionTempReader(temp: String)
+        fun onFragmentInteractionTempReader(temp: String, tempcolor: Int)
     }
 
     override fun onAttach(activity: Activity) {
@@ -147,7 +151,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
                 else {
                     ThermalImageHwInterfaceHandler.postDelayed(this, 1000)
-                    navigateToNextPage("NOCOM")
+                    navigateToNextPage("NOCOM", 0)
                 }
             }
         }
@@ -169,17 +173,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         binding.TVTempTarget.setText("--")
                         TargetState = false;
                         if(sensorTargetTObjMaxAdjustedIsValid == true) {
-                            navigateToNextPage(
-                                getString(
-                                    R.string.strf41,
-                                    sensorTargetTObjMaxAdjusted
-                                )
-                            )
+                            NavigateToNextPageHandler.postDelayed(NavigateToNextPageHnd, 2000)
                         }
                         else
                         {
                             binding.TVUserTempReaderTitle.setText(getString(R.string.label_position_temp))
-                            binding.TVUserTempReaderTitle.setTextColor(Color.parseColor("#008799"))
+                            binding.TVUserTempReaderTitle.setTextColor(getColor(mActivity, R.color.covidpasscanner_green))
                         }
                     }
                 }
@@ -203,6 +202,21 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 val bmp: Bitmap? = getScreenShotFromView(mActivity.getWindow().decorView)
                 if(bmp != null)
                     saveMediaToStorage(bmp);
+            } finally {
+            }
+        }
+    }
+    private val NavigateToNextPageHandler = object : Handler(Looper.getMainLooper()) {
+    }
+    private val NavigateToNextPageHnd: Runnable = object : Runnable {
+        override fun run() {
+            try {
+                if(sensorTargetTObjMaxAdjusted <= AppSetup.RangeTempGreen)
+                    navigateToNextPage(getString(R.string.strf41, sensorTargetTObjMaxAdjusted), R.color.covidpasscanner_green)
+                else if(sensorTargetTObjMaxAdjusted <= (AppSetup.RangeTempGreen + AppSetup.RangeTempOrange))
+                    navigateToNextPage(getString(R.string.strf41, sensorTargetTObjMaxAdjusted), R.color.covidpasscanner_orange)
+                else
+                    navigateToNextPage(getString(R.string.strf41, sensorTargetTObjMaxAdjusted), R.color.covidpasscanner_red)
             } finally {
             }
         }
@@ -239,16 +253,29 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempTargetMaxFreeze.setText("---")
         binding.TVTempTargetFreeze.setText("---")
         binding.TVPosition.setText("---")
-        binding.TVTempEnvThInt.visibility = View.VISIBLE
-        binding.TVTempEnvSensor.visibility = View.VISIBLE
-        binding.TVTempWndMax.visibility = View.VISIBLE
-        binding.TVTempTargetMax.visibility = View.VISIBLE
-        binding.TVTempTarget.visibility = View.VISIBLE
-        binding.TVTempTargetMaxFreeze.visibility = View.VISIBLE
-        binding.TVTempTargetFreeze.visibility = View.VISIBLE
-        binding.TVPosition.visibility = View.VISIBLE
-        binding.TVMotionSensor.visibility = View.VISIBLE
-
+        if(DebugActive == false) {
+            binding.TVTempEnvThInt.visibility = View.INVISIBLE
+            binding.TVTempEnvSensor.visibility = View.INVISIBLE
+            binding.TVTempWndMax.visibility = View.INVISIBLE
+            binding.TVTempTargetMax.visibility = View.INVISIBLE
+            binding.TVTempTarget.visibility = View.VISIBLE
+            binding.TVTempTargetMaxFreeze.visibility = View.INVISIBLE
+            binding.TVTempTargetFreeze.visibility = View.INVISIBLE
+            binding.TVPosition.visibility = View.INVISIBLE
+            binding.TVMotionSensor.visibility = View.VISIBLE
+        }
+        else
+        {
+            binding.TVTempEnvThInt.visibility = View.VISIBLE
+            binding.TVTempEnvSensor.visibility = View.VISIBLE
+            binding.TVTempWndMax.visibility = View.VISIBLE
+            binding.TVTempTargetMax.visibility = View.VISIBLE
+            binding.TVTempTarget.visibility = View.VISIBLE
+            binding.TVTempTargetMaxFreeze.visibility = View.VISIBLE
+            binding.TVTempTargetFreeze.visibility = View.VISIBLE
+            binding.TVPosition.visibility = View.VISIBLE
+            binding.TVMotionSensor.visibility = View.VISIBLE
+        }
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run()
         TimeoutHnd.run();
@@ -260,6 +287,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         ThermalImageHwInterfaceHandler.removeCallbacks(ThermalImageHwInterface)
         TimeoutHandler.removeCallbacks(TimeoutHnd)
         ScreenshotHandler.removeCallbacks(ScreenshotHnd)
+        NavigateToNextPageHandler.removeCallbacks(NavigateToNextPageHnd)
         _binding = null
     }
 
@@ -271,9 +299,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         super.onPause()
     }
 
-    private fun navigateToNextPage(text: String) {
+    private fun navigateToNextPage(temp: String, tempcolor: Int) {
         if (mListener != null) {
-            mListener!!.onFragmentInteractionTempReader(text)
+            mListener!!.onFragmentInteractionTempReader(temp, tempcolor)
         }
     }
 
@@ -281,12 +309,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.back_image3 -> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteractionTempReader("")
+                    mListener!!.onFragmentInteractionTempReader("", 0)
                 }
             }
             R.id.back_text3 -> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteractionTempReader("")
+                    mListener!!.onFragmentInteractionTempReader("", 0)
                 }
             }
         }
@@ -483,6 +511,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
         binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
         binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
+        if(sensorTargetTObjMaxAdjusted <= AppSetup.RangeTempGreen)
+            binding.TVTempTarget.setTextColor(getColor(mActivity, R.color.covidpasscanner_green))
+        else if(sensorTargetTObjMaxAdjusted <= (AppSetup.RangeTempGreen + AppSetup.RangeTempOrange))
+            binding.TVTempTarget.setTextColor(getColor(mActivity, R.color.covidpasscanner_orange))
+        else
+            binding.TVTempTarget.setTextColor(getColor(mActivity, R.color.covidpasscanner_red))
         if (sensorTargetPosition == 0 || sensorTargetPosition == 3) {
             if (TargetState == false && sensorDistanceTargetPositionOK == 2) {
                 binding.TVPosition.setText("OK")
@@ -498,43 +532,45 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         sensorTargetTObjMaxAdjusted
                     )
                 )
-                if(sensorTargetTObjMaxAdjusted > 37.5f)
+                if(sensorTargetTObjMaxAdjusted > (AppSetup.RangeTempGreen + AppSetup.RangeTempOrange))
                 {
                     binding.TVUserTempReaderTitle.setText(getString(R.string.label_temp_notvalid))
-                    binding.TVUserTempReaderTitle.setTextColor(Color.parseColor("#ff0000"))
+//                    binding.TVUserTempReaderTitle.setTextColor(getColor(mActivity, R.color.covidpasscanner_red))
                     sensorTargetTObjMaxAdjustedIsValid = false
                 }
                 else
                 {
                     binding.TVUserTempReaderTitle.setText(getString(R.string.label_position_temp))
-                    binding.TVUserTempReaderTitle.setTextColor(Color.parseColor("#008799"))
+//                    binding.TVUserTempReaderTitle.setTextColor(Color.parseColor("#008799"))
                     sensorTargetTObjMaxAdjustedIsValid = true
                 }
-                // Valori temperature sequenze target
-                var strdate: String = ""
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val current = LocalDateTime.now()
-                    val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
-                    strdate =  current.format(formatter)
-                } else {
-                    var date = Date()
-                    val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
-                    strdate = formatter.format(date)
-                }
-                var s: String = strdate + "\n"
-                for (k in 0 until sensorTargetCoordPnt) {
-                    s = s + getString(R.string.strint, k + 1) + " - "
-                    for (l in 0 until sensTargetPositionCoordNPix) {
-                        s = s + getString(
-                            R.string.strf41,
-                            sensorObj[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]]
-                        ) + ", "
+                if(DebugActive) {
+                    // Valori temperature sequenze target
+                    var strdate: String = ""
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        val current = LocalDateTime.now()
+                        val formatter = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm:ss")
+                        strdate = current.format(formatter)
+                    } else {
+                        var date = Date()
+                        val formatter = SimpleDateFormat("dd.MM.yyyy HH:mm:ss")
+                        strdate = formatter.format(date)
                     }
-                    s = s + "\n"
+                    var s: String = strdate + "\n"
+                    for (k in 0 until sensorTargetCoordPnt) {
+                        s = s + getString(R.string.strint, k + 1) + " - "
+                        for (l in 0 until sensTargetPositionCoordNPix) {
+                            s = s + getString(
+                                R.string.strf41,
+                                sensorObj[sensorTargetCoordX[k][l]][sensorTargetCoordY[k][l]]
+                            ) + ", "
+                        }
+                        s = s + "\n"
+                    }
+                    binding.TVUserTempReaderTitle.setText(s)
+                    // Screenshot
+                    ScreenshotHandler.postDelayed(ScreenshotHnd, 50)
                 }
-                binding.TVUserTempReaderTitle.setText(s)
-                // Screenshot
-                ScreenshotHandler.postDelayed(ScreenshotHnd, 50)
                 // Sound
                 try {
                     beepManager.playBeepSoundAndVibrate()
@@ -548,7 +584,9 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         }
         else {
             if (TargetState == false) {
-                binding.TVUserTempReaderTitle.setText("")
+                if(DebugActive) {
+                    binding.TVUserTempReaderTitle.setText("")
+                }
                 if (sensorTargetPosition == 1)
                     binding.TVPosition.setText("<-Sx")
                 else if (sensorTargetPosition == 2)
