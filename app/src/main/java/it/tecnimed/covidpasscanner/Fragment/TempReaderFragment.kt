@@ -26,7 +26,9 @@ import android.app.KeyguardManager
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.*
+import android.media.AudioManager
 import android.media.Image
+import android.media.ToneGenerator
 import android.net.Uri
 import android.os.*
 import android.provider.MediaStore
@@ -134,6 +136,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorDistanceNoTargetTimeout = 600
 
     private lateinit var beepManager: BeepManager
+    private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 500)
 
     private lateinit var mSerialDrv: UARTDriver
     private val ThermalImageHwInterfaceHandler = object : Handler(Looper.getMainLooper()) {
@@ -180,8 +183,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         }
                         else
                         {
-                            binding.TVUserTempReaderTitle.setText(getString(R.string.label_position_temp))
-                            binding.TVUserTempReaderTitle.setTextColor(getColor(mActivity, R.color.covidpasscanner_green))
+                            ResumeMeasureHandler.postDelayed(ResumeMeasureHnd, 2000)
                         }
                     }
                 }
@@ -220,6 +222,17 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     navigateToNextPage(getString(R.string.strf41, sensorTargetTObjMaxAdjusted), R.color.covidpasscanner_orange)
                 else
                     navigateToNextPage(getString(R.string.strf41, sensorTargetTObjMaxAdjusted), R.color.covidpasscanner_red)
+            } finally {
+            }
+        }
+    }
+    private val ResumeMeasureHandler = object : Handler(Looper.getMainLooper()) {
+    }
+    private val ResumeMeasureHnd: Runnable = object : Runnable {
+        override fun run() {
+            try {
+                sensorMeasureEnabled = true
+                sensorTargetTObjMaxAdjustedIsValid = false
             } finally {
             }
         }
@@ -539,14 +552,13 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 )
                 if(sensorTargetTObjMaxAdjusted > (AppSetup.RangeTempGreen + AppSetup.RangeTempOrange))
                 {
-                    binding.TVUserTempReaderTitle.setText(getString(R.string.label_temp_notvalid))
-//                    binding.TVUserTempReaderTitle.setTextColor(getColor(mActivity, R.color.covidpasscanner_red))
+                    binding.TVUserTempReaderTitle.setText(getString(R.string.label_position_temp))
+                    sensorMeasureEnabled = false
                     sensorTargetTObjMaxAdjustedIsValid = false
                 }
                 else
                 {
                     binding.TVUserTempReaderTitle.setText(getString(R.string.label_position_temp))
-//                    binding.TVUserTempReaderTitle.setTextColor(Color.parseColor("#008799"))
                     sensorMeasureEnabled = false
                     sensorTargetTObjMaxAdjustedIsValid = true
                 }
@@ -578,9 +590,19 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                     ScreenshotHandler.postDelayed(ScreenshotHnd, 50)
                 }
                 // Sound
-                try {
-                    beepManager.playBeepSoundAndVibrate()
-                } catch (e: Exception) {
+                if(sensorTargetTObjMaxAdjustedIsValid == true) {
+                    try {
+                        beepManager.playBeepSoundAndVibrate()
+                    } catch (e: Exception) {
+                    }
+                }
+                else
+                {
+                    toneG.startTone(ToneGenerator.TONE_SUP_PIP, 2000)
+                    val handler = Handler(Looper.getMainLooper())
+                    handler.postDelayed({
+                        toneG.stopTone()
+                    }, (2000 + 50).toLong())
                 }
                 TargetTimeout = 20
                 if(sensorTargetTObjMaxAdjustedIsValid == false)
