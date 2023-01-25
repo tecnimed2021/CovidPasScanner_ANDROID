@@ -66,8 +66,8 @@
 
     <ImageView
         android:id="@+id/IVTemp"
-        android:layout_width="600dp"
-        android:layout_height="600dp"
+        android:layout_width="480dp"
+        android:layout_height="640dp"
         android:scaleType="fitXY"
         android:scaleX="-1.0"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -76,8 +76,8 @@
 
     <ImageView
         android:id="@+id/IVTempOutline"
-        android:layout_width="600dp"
-        android:layout_height="600dp"
+        android:layout_width="480"
+        android:layout_height="640"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
