@@ -58,7 +58,7 @@ class CodeVerificationFragment : Fragment(), View.OnClickListener, OnTimeElapsed
 
     private var qrcodestr : String? = ""
     private var temperaturestr : String? = ""
-    private var temperaturestrcolor : Int = 0
+    private var temperaturestrcolor : Int = R.color.covidpasscanner_green
 
     private lateinit var mTimeVar: VLTimer
 
