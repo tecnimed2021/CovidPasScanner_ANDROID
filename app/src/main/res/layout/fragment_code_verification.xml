@@ -46,7 +46,7 @@
         android:layout_marginTop="96dp"
         android:textAlignment="viewStart"
         android:textColor="@color/covidpasscanner_green"
-        android:textSize="20sp"
+        android:textSize="50sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/TVGreenPassValidity" />
