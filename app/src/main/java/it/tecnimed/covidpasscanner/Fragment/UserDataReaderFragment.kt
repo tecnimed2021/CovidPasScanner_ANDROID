@@ -133,11 +133,13 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
         when (v?.id) {
             R.id.back_image2 -> {
                 if (mListener != null) {
+                    mTimeVar.invalidate()
                     mListener!!.onFragmentInteractionUserDataReader(false)
                 }
             }
             R.id.back_text2 -> {
                 if (mListener != null) {
+                    mTimeVar.invalidate()
                     mListener!!.onFragmentInteractionUserDataReader(false)
                 }
             }
@@ -242,6 +244,7 @@ class UserDataReaderFragment : Fragment(), View.OnClickListener, VLTimer.OnTimeE
                                     if(mFirstNameFounded == true && mLastNameFounded == true)
                                     {
                                         if (mListener != null) {
+                                            mTimeVar.invalidate()
                                             mListener!!.onFragmentInteractionUserDataReader(true)
                                         }
                                         mFirstNameFounded = false;

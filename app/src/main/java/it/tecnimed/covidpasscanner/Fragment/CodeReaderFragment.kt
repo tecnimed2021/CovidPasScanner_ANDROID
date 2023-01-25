@@ -194,6 +194,7 @@ class CodeReaderFragment : Fragment(),
 
     private fun navigateToVerificationPage(text: String) {
         if (mListener != null) {
+            mTimeVar.invalidate()
             mListener!!.onFragmentInteractionCodeReader(text)
         }
     }
@@ -210,11 +211,13 @@ class CodeReaderFragment : Fragment(),
         when (v?.id) {
             R.id.back_image -> {
                 if (mListener != null) {
+                    mTimeVar.invalidate()
                     mListener!!.onFragmentInteractionCodeReader("")
                 }
             }
             R.id.back_text -> {
                 if (mListener != null) {
+                    mTimeVar.invalidate()
                     mListener!!.onFragmentInteractionCodeReader("")
                 }
             }
