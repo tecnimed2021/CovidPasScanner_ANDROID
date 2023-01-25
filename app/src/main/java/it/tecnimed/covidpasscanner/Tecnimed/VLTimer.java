@@ -15,6 +15,7 @@ public class VLTimer
 
     private boolean mMode;
     private long mTime;
+    private boolean mKill;
     private final vltimerHandler mHandler;
     private vltimerThread mThread;
     private OnTimeElapsedListener mListener;
@@ -41,8 +42,10 @@ public class VLTimer
                 final VLTimer timer = mTimer.get();
                 if(timer != null)
                 {
-                    timer.mListener.VLTimerTimeElapsed(timer);
+                    if(timer.mKill == false)
+                        timer.mListener.VLTimerTimeElapsed(timer);
                     timer.finalizeTimer();
+                    timer.mKill = false;
                 }
             }
         }
@@ -78,6 +81,7 @@ public class VLTimer
     {
         mMode = false;
         mTime = time;
+        mKill = false;
         mHandler = new vltimerHandler(this);
         mThread = new vltimerThread();
         mListener = (VLTimer.OnTimeElapsedListener)obj;
@@ -111,6 +115,13 @@ public class VLTimer
     {
         mMode = false;
         mTime = 1;
+    }
+
+    public void invalidate()
+    {
+        mMode = false;
+        mTime = 1;
+        mKill = true;
     }
 
     private void finalizeTimer()
