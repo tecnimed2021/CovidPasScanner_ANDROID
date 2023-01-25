@@ -120,9 +120,10 @@
         android:id="@+id/TVRangeGreenTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginLeft="32dp"
         android:text="@string/setup_rangetemp_green"
+        android:textColor="@color/covidpasscanner_green"
+        android:textSize="30sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@id/BRangeGreenP" />
 
@@ -161,9 +162,10 @@
         android:id="@+id/TVRangeOrangeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginLeft="32dp"
         android:text="@string/setup_rangetemp_orange"
+        android:textColor="@color/covidpasscanner_orange"
+        android:textSize="30sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@id/BRangeOrangeP" />
 

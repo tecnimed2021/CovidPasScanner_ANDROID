@@ -112,7 +112,7 @@
     <string name="setup_sequence_gp">Green Pass</string>
     <string name="setup_sequence_doc">Documento</string>
     <string name="setup_rangetemp_title">Impostazione Range Temperature</string>
-    <string name="setup_rangetemp_green">Range Verde</string>
-    <string name="setup_rangetemp_orange">Range Arancione</string>
+    <string name="setup_rangetemp_green">Verde</string>
+    <string name="setup_rangetemp_orange">Arancione</string>
 
 </resources>

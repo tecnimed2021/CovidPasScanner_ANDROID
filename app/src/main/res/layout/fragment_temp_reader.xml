@@ -76,8 +76,8 @@
 
     <ImageView
         android:id="@+id/IVTempOutline"
-        android:layout_width="480"
-        android:layout_height="640"
+        android:layout_width="480dp"
+        android:layout_height="640dp"
         android:scaleType="fitXY"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -185,7 +185,7 @@
         android:id="@+id/TVTempTarget"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:text="TextView"
         android:textAlignment="viewStart"
         android:textColor="@android:color/holo_red_dark"

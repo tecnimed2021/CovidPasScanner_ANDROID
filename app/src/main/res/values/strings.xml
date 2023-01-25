@@ -115,7 +115,7 @@ It is used to access shows, sporting events, indoor dining, parties and discos, 
     <string name="setup_sequence_gp">Green Pass</string>
     <string name="setup_sequence_doc">Document</string>
     <string name="setup_rangetemp_title">Temperature Range setup</string>
-    <string name="setup_rangetemp_green">Green Range</string>
-    <string name="setup_rangetemp_orange">Orange Range</string>
+    <string name="setup_rangetemp_green">Green</string>
+    <string name="setup_rangetemp_orange">Orange</string>
 
 </resources>
