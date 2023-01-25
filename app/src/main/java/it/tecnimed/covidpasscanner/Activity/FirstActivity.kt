@@ -62,6 +62,7 @@ import it.tecnimed.covidpasscanner.VerificaApplication
 import it.tecnimed.covidpasscanner.data.local.prefs.PrefKeys
 import it.tecnimed.covidpasscanner.model.ScanMode
 import it.tecnimed.covidpasscanner.databinding.ActivityFirstBinding
+import it.tecnimed.covidpasscanner.model.CertificateStatus
 import it.tecnimed.covidpasscanner.model.CertificateViewBean
 import it.tecnimed.covidpasscanner.model.FirstViewModel
 import it.tecnimed.covidpasscanner.uart.UARTDriver
@@ -112,13 +113,13 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private val requestPermissionLauncherQr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                openTempReader()
+                startSequence()
             }
         }
     private val requestPermissionLauncherOcr =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
             if (isGranted) {
-                openOcrReader()
+                startSequence()
             }
         }
 
@@ -136,7 +137,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         if(AppSetup.SequenceGreenPass == false) {
             tr.remove(mTempReaderFrag)
             tr.commitAllowingStateLoss()
-            openTempReader()
+            startSequence()
             return
         }
 
@@ -153,7 +154,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         if(qrcodeText == ""){
             tr.remove(mCodeReaderFrag)
             tr.commitAllowingStateLoss()
-            openTempReader()
+            startSequence()
             return
         }
 
@@ -167,10 +168,10 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         val fm = supportFragmentManager
         val tr = fm.beginTransaction()
 
-        if (certSimple == null || AppSetup.SequenceDocument == false) {
+        if (certSimple == null || AppSetup.SequenceDocument == false || certSimple.certificateStatus != CertificateStatus.VALID) {
             tr.remove(mCodeVerificationFrag)
             tr.commitAllowingStateLoss()
-            openTempReader()
+            startSequence()
             return
         }
 
@@ -201,7 +202,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
 
         tr.remove(mUserDataVerificationFrag)
         tr.commitAllowingStateLoss()
-        openTempReader()
+        startSequence()
     }
 
     override fun onFragmentInteractionSetup(setupParams: AppSetup) {
@@ -484,17 +485,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         ) {
             createPermissionAlertQr()
         } else {
-            if(AppSetup.SequenceTemperature == true) {
-                openTempReader()
-                return;
-            }
-            if(AppSetup.SequenceGreenPass == true) {
-                openQrCodeReader()
-                return;
-            }
-            if(AppSetup.SequenceDocument == true) {
-                openOcrReader()
-            }
+            startSequence()
         }
     }
 
@@ -623,6 +614,20 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
             ) {
                 createForceUpdateDialog()
             }
+        }
+    }
+
+    private fun startSequence() {
+        if(AppSetup.SequenceTemperature == true) {
+            openTempReader()
+            return;
+        }
+        if(AppSetup.SequenceGreenPass == true) {
+            openQrCodeReader()
+            return;
+        }
+        if(AppSetup.SequenceDocument == true) {
+            openOcrReader()
         }
     }
 
