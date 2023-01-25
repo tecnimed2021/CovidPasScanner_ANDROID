@@ -103,7 +103,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
     private lateinit var mCertSimple: CertificateViewBean
 
     private var mTemperature: String = ""
-    private var mTemperatureColor: Int = 0
+    private var mTemperatureColor: Int = R.color.covidpasscanner_green
 
     private lateinit var mWakeLock: PowerManager.WakeLock
 
