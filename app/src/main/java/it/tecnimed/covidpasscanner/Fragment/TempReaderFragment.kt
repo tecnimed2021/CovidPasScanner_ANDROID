@@ -103,6 +103,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val sensTargetPositionCoordN = 5
     private val sensTargetPositionCoordNPix = 8
 
+    private var sensorMeasureEnabled = true
     private var sensorEnv = 0.0f
     private var sensorObj = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
     private var sensorObjPrev = Array(sensSizeY) { Array(sensSizeX) { 0.0f } }
@@ -140,9 +141,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private val ThermalImageHwInterface: Runnable = object : Runnable {
         override fun run() {
             try {
-                sensCom = getThermalImage()
-                if(sensCom == true)
-                    generateThrmalBmp()
+                if(sensorMeasureEnabled == true) {
+                    sensCom = getThermalImage()
+                    if (sensCom == true)
+                        generateThrmalBmp()
+                }
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
@@ -170,7 +173,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         binding.TVTempTargetMaxFreeze.setText("--")
                         binding.TVTempTargetFreeze.setText("--")
                         binding.TVTempTargetMax.setText("--")
-                        binding.TVTempTarget.setText("--")
+//                        binding.TVTempTarget.setText("--")
                         TargetState = false;
                         if(sensorTargetTObjMaxAdjustedIsValid == true) {
                             NavigateToNextPageHandler.postDelayed(NavigateToNextPageHnd, 2000)
@@ -276,6 +279,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             binding.TVPosition.visibility = View.VISIBLE
             binding.TVMotionSensor.visibility = View.VISIBLE
         }
+        sensorMeasureEnabled = true
+        sensorTargetTObjMaxAdjustedIsValid = false
         mSerialDrv = UARTDriver.create(context)
         ThermalImageHwInterface.run()
         TimeoutHnd.run();
@@ -542,6 +547,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 {
                     binding.TVUserTempReaderTitle.setText(getString(R.string.label_position_temp))
 //                    binding.TVUserTempReaderTitle.setTextColor(Color.parseColor("#008799"))
+                    sensorMeasureEnabled = false
                     sensorTargetTObjMaxAdjustedIsValid = true
                 }
                 if(DebugActive) {
