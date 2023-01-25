@@ -157,7 +157,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
                 else {
                     ThermalImageHwInterfaceHandler.postDelayed(this, 1000)
-                    navigateToNextPage("NOCOM", 0)
+                    navigateToNextPage("NOCOM", R.color.covidpasscanner_green)
                 }
             }
         }
@@ -327,12 +327,12 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         when (v?.id) {
             R.id.back_image3 -> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteractionTempReader("", 0)
+                    mListener!!.onFragmentInteractionTempReader("", R.color.covidpasscanner_green)
                 }
             }
             R.id.back_text3 -> {
                 if (mListener != null) {
-                    mListener!!.onFragmentInteractionTempReader("", 0)
+                    mListener!!.onFragmentInteractionTempReader("", R.color.covidpasscanner_green)
                 }
             }
         }
