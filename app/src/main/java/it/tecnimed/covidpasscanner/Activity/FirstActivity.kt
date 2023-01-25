@@ -133,8 +133,12 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         }
         mTemperature = temp
         mTemperatureColor = tempcolor
-        if(AppSetup.SequenceGreenPass == false)
+        if(AppSetup.SequenceGreenPass == false) {
+            tr.remove(mTempReaderFrag)
+            tr.commitAllowingStateLoss()
+            openTempReader()
             return
+        }
 
         var crf: Fragment = CodeReaderFragment()
         tr.replace(R.id.frag_anch_point, crf)
@@ -331,8 +335,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         binding.SetupButton.visibility = VISIBLE
         if(DebugActive == false)
         {
-            binding.uartButton.visibility = VISIBLE
-            binding.uartTest.visibility = VISIBLE
+            binding.uartButton.visibility = INVISIBLE
+            binding.uartTest.visibility = INVISIBLE
         }
     }
 
@@ -591,8 +595,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         binding.resumeDownload.visibility = INVISIBLE
         binding.initDownload.visibility = VISIBLE
         binding.qrButton.background.alpha = 128
-        if(DebugActive)
-            binding.SetupButton.background.alpha = 128
+        binding.SetupButton.background.alpha = 20
         hideDownloadProgressViews()
         binding.dateLastSyncText.text = when (viewModel.getTotalSizeInByte()) {
             0L -> {
@@ -807,8 +810,7 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
                     if (viewModel.getResumeAvailable() == 0L) {
                         binding.resumeDownload.visibility = VISIBLE
                         binding.qrButton.background.alpha = 128
-                        if(DebugActive)
-                            binding.SetupButton.background.alpha = 128
+                        binding.SetupButton.background.alpha = 20
                     }
                 }
                 PrefKeys.KEY_DRL_DATE_LAST_FETCH -> {
