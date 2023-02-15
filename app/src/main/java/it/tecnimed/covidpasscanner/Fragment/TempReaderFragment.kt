@@ -528,13 +528,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
         binding.TVTempWndMax.setText("MaxW\n" + getString(R.string.strf41, sensorTObjMax))
         binding.TVTempTargetMax.setText(getString(R.string.strf41, sensorTargetTObjMax))
-        binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
-        if(sensorTargetTObjMaxAdjusted <= AppSetup.RangeTempGreen)
-            binding.TVTempTarget.setTextColor(getColor(mActivity, R.color.covidpasscanner_green))
-        else if(sensorTargetTObjMaxAdjusted <= (AppSetup.RangeTempGreen + AppSetup.RangeTempOrange))
-            binding.TVTempTarget.setTextColor(getColor(mActivity, R.color.covidpasscanner_orange))
-        else
-            binding.TVTempTarget.setTextColor(getColor(mActivity, R.color.covidpasscanner_red))
         if (sensorTargetPosition == 0 || sensorTargetPosition == 3) {
             if (TargetState == false && sensorDistanceTargetPositionOK == 2) {
                 binding.TVPosition.setText("OK")
@@ -550,6 +543,13 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         sensorTargetTObjMaxAdjusted
                     )
                 )
+                binding.TVTempTarget.setText(getString(R.string.strf41, sensorTargetTObjMaxAdjusted))
+                if(sensorTargetTObjMaxAdjusted <= AppSetup.RangeTempGreen)
+                    binding.TVTempTarget.setTextColor(getColor(mActivity, R.color.covidpasscanner_green))
+                else if(sensorTargetTObjMaxAdjusted <= (AppSetup.RangeTempGreen + AppSetup.RangeTempOrange))
+                    binding.TVTempTarget.setTextColor(getColor(mActivity, R.color.covidpasscanner_orange))
+                else
+                    binding.TVTempTarget.setTextColor(getColor(mActivity, R.color.covidpasscanner_red))
                 if(sensorTargetTObjMaxAdjusted > (AppSetup.RangeTempGreen + AppSetup.RangeTempOrange))
                 {
                     binding.TVUserTempReaderTitle.setText(getString(R.string.label_position_temp))
