@@ -470,9 +470,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         bf[3] = ans[k + 0]
         sensorDistanceAmbientLight = ByteBuffer.wrap(bf).getFloat()
 
+        motionDetection()
+
         processTemperature()
 
-        motionDetection()
 
         return true;
     }
@@ -531,6 +532,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         if (sensorTargetPosition == 0 || sensorTargetPosition == 3) {
             if (TargetState == false && sensorDistanceTargetPositionOK == 2) {
                 binding.TVPosition.setText("OK")
+                binding.TVMotionSensor.text = ""
                 binding.TVTempTargetMaxFreeze.setText(
                     getString(
                         R.string.strf41,
