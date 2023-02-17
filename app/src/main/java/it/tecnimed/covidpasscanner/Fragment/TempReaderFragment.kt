@@ -153,7 +153,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
                 if(sensCom == true) {
-                    ThermalImageHwInterfaceHandler.postDelayed(this, 100)
+                    ThermalImageHwInterfaceHandler.postDelayed(this, 25)
                 }
                 else {
                     ThermalImageHwInterfaceHandler.postDelayed(this, 1000)
