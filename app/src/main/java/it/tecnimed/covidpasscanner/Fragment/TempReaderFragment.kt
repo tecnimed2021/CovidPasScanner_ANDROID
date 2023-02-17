@@ -183,7 +183,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         }
                         else
                         {
-                            ResumeMeasureHandler.postDelayed(ResumeMeasureHnd, 2000)
+                            ResumeMeasureHandler.postDelayed(ResumeMeasureHnd, 4000)
                         }
                     }
                 }
