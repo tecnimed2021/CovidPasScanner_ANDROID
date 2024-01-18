@@ -136,7 +136,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorDistanceNoTargetTimeout = 600
 
     private lateinit var beepManager: BeepManager
-    private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 500)
+    private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
 
     private lateinit var mSerialDrv: UARTDriver
     private val ThermalImageHwInterfaceHandler = object : Handler(Looper.getMainLooper()) {
@@ -594,7 +594,10 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 // Sound
                 if(sensorTargetTObjMaxAdjustedIsValid == true) {
                     try {
-                        beepManager.playBeepSoundAndVibrate()
+                        val handler = Handler(Looper.getMainLooper())
+                        handler.post({
+                            beepManager.playBeepSoundAndVibrate()
+                        })
                     } catch (e: Exception) {
                     }
                 }
