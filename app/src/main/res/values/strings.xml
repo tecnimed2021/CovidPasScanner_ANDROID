@@ -95,9 +95,9 @@ It is used to access shows, sporting events, indoor dining, parties and discos, 
     <string name="label_position_iddoc">PLEASE SHOW YOUR IDENTIFICATION DOCUMENT</string>
 
     <string name="label_temp_notvalid">ACCESSO DENIED. Try again in a few minutes</string>
-    <string name="label_temp_position_ok">OK</string>
-    <string name="label_temp_position_toofar">Come closer</string>
+    <string name="label_temp_position_ok">Stay Steady</string>
     <string name="label_temp_position_tooclose">Move away</string>
+    <string name="label_temp_position_toofar">Come closer</string>
 
     <string name="label_gp_valid">VALID</string>
     <string name="label_gp_notvalid">NOT VALID</string>

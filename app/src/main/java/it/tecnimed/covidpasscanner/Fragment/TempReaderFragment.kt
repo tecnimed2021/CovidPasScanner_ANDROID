@@ -48,6 +48,7 @@ import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.Tecnimed.AppSetup
 import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
 import it.tecnimed.covidpasscanner.uart.UARTDriver
+import it.tecnimed.covidpasscanner.util.Utility
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -136,7 +137,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private var sensorDistanceNoTargetTimeout = 600
 
     private lateinit var beepManager: BeepManager
-    private val toneG = ToneGenerator(AudioManager.STREAM_ALARM, 100)
 
     private lateinit var mSerialDrv: UARTDriver
     private val ThermalImageHwInterfaceHandler = object : Handler(Looper.getMainLooper()) {
@@ -176,7 +176,6 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                         binding.TVTempTargetMaxFreeze.setText("--")
                         binding.TVTempTargetFreeze.setText("--")
                         binding.TVTempTargetMax.setText("--")
-//                        binding.TVTempTarget.setText("--")
                         TargetState = false;
                         if(sensorTargetTObjMaxAdjustedIsValid == true) {
                             NavigateToNextPageHandler.postDelayed(NavigateToNextPageHnd, 2000)
@@ -506,7 +505,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
             binding.TVMotionSensor.visibility = View.VISIBLE
             if(sensorDistanceTargetPositionOK == 2)
                 // OK
-                binding.TVMotionSensor.text = ""
+                binding.TVMotionSensor.text = getString(R.string.label_temp_position_ok)
             else if(sensorDistanceTargetPositionOK == 3)
                 // Too Far
                 binding.TVMotionSensor.text = getString(R.string.label_temp_position_toofar)
@@ -532,7 +531,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
         if (sensorTargetPosition == 0 || sensorTargetPosition == 3) {
             if (TargetState == false && sensorDistanceTargetPositionOK == 2) {
                 binding.TVPosition.setText("OK")
-                binding.TVMotionSensor.text = ""
+                binding.TVMotionSensor.text = getString(R.string.label_temp_position_ok)
                 binding.TVTempTargetMaxFreeze.setText(
                     getString(
                         R.string.strf41,
@@ -603,11 +602,7 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
                 }
                 else
                 {
-                    toneG.startTone(ToneGenerator.TONE_SUP_PIP, 2000)
-                    val handler = Handler(Looper.getMainLooper())
-                    handler.postDelayed({
-                        toneG.stopTone()
-                    }, (2000 + 50).toLong())
+                    Utility.PlayAlarm(mActivity, 2000);
                 }
                 TargetTimeout = 20
                 if(sensorTargetTObjMaxAdjustedIsValid == false)
