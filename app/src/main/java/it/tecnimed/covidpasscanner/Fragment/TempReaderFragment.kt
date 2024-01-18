@@ -179,11 +179,11 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
 //                        binding.TVTempTarget.setText("--")
                         TargetState = false;
                         if(sensorTargetTObjMaxAdjustedIsValid == true) {
-                            NavigateToNextPageHandler.postDelayed(NavigateToNextPageHnd, 4000)
+                            NavigateToNextPageHandler.postDelayed(NavigateToNextPageHnd, 2000)
                         }
                         else
                         {
-                            ResumeMeasureHandler.postDelayed(ResumeMeasureHnd, 4000)
+                            ResumeMeasureHandler.postDelayed(ResumeMeasureHnd, 2000)
                         }
                     }
                 }
