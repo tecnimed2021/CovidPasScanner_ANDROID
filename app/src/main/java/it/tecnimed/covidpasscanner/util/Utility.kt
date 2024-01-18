@@ -22,10 +22,16 @@
 
 package it.tecnimed.covidpasscanner.util
 
+import android.app.Activity
 import android.content.Context
+import android.media.RingtoneManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.os.Build
+import android.os.Handler
+import android.os.Looper
+import kotlinx.coroutines.delay
+import okhttp3.internal.wait
 import java.security.MessageDigest
 import java.util.*
 
@@ -101,5 +107,29 @@ object Utility {
             return true
         }
         return false
+    }
+
+    fun PlayAlarm(app: Activity?, to: Long) {
+        Thread { // Init
+            var alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+            if (alert == null) {
+                // alert is null, using backup
+                alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+                // I can't see this ever being null (as always have a default notification)
+                // but just incase
+                if (alert == null) {
+                    // alert backup is null, using 2nd backup
+                    alert = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE)
+                }
+            }
+            val r = RingtoneManager.getRingtone(app, alert)
+            r.play()
+            // Time consuming task
+            // Pause on object fo amount of time
+            Thread.sleep(to);
+            // End
+            r.stop()
+        }.start()
     }
 }
