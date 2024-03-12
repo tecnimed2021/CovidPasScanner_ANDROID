@@ -88,6 +88,12 @@ class FirstViewModel @Inject constructor(
     fun getSetupRangeTemperatureOrange() = preferences.setupRangeTemperatureOrange
     fun setSetupRangeTemperatureOrange(value: Float) =
         run { preferences.setupRangeTemperatureOrange = value }
+    fun getSetupTemperatureCorrection() = preferences.setupTemperatureCorrection
+    fun setSetupTemperatureCorrection(value: Int) =
+        run { preferences.setupTemperatureCorrection = value }
+    fun getSetupTemperatureCorrectionAir() = preferences.setupTemperatureCorrectionAir
+    fun setSetupTemperatureCorrectionAir(value: Boolean) =
+        run { preferences.setupTemperatureCorrectionAir = value }
 
     init {
         preferences.shouldInitDownload = false
