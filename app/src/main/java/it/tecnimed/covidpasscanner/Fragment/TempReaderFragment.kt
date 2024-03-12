@@ -38,15 +38,18 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.Toast
 import androidx.activity.addCallback
+import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import com.google.zxing.client.android.BeepManager
 import dagger.hilt.android.AndroidEntryPoint
 import it.tecnimed.covidpasscanner.R
 import it.tecnimed.covidpasscanner.Tecnimed.AppSetup
 import it.tecnimed.covidpasscanner.databinding.FragmentTempReaderBinding
+import it.tecnimed.covidpasscanner.model.FirstViewModel
 import it.tecnimed.covidpasscanner.uart.UARTDriver
 import it.tecnimed.covidpasscanner.util.Utility
 import java.io.ByteArrayOutputStream
@@ -66,6 +69,8 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     private lateinit var mActivity: Activity;
     private var mListener: OnFragmentInteractionListener? = null
     private var fos: OutputStream? = null
+
+    private val viewModel by viewModels<FirstViewModel>()
 
     private val DebugActive: Boolean = false
 
@@ -523,6 +528,16 @@ class TempReaderFragment : Fragment(), View.OnClickListener {
     }
 
     private fun processTemperature() {
+        // Applicazione correttivi
+        if(viewModel.getSetupTemperatureCorrection() == AppSetup.RECTAL)
+            sensorTargetTObjMaxAdjusted += 0.6f
+        else if(viewModel.getSetupTemperatureCorrection() == AppSetup.CORE)
+            sensorTargetTObjMaxAdjusted += 0.6f
+        else if(viewModel.getSetupTemperatureCorrection() == AppSetup.AXILLA)
+            sensorTargetTObjMaxAdjusted -= 0.2f
+        if(viewModel.getSetupTemperatureCorrectionAir())
+            sensorTargetTObjMaxAdjusted += 0.6f
+
         // Visualizzazione
         binding.TVTempEnvThInt.setText("Int\n" + getString(R.string.strf41, sensorTHInt))
         binding.TVTempEnvSensor.setText("Sns\n" + getString(R.string.strf41, sensorEnv))
