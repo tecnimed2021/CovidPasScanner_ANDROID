@@ -64,4 +64,6 @@ object PrefKeys {
     const val KEY_SETUP_SEQUENCE_DOCUMENT = "sequence_document"
     const val KEY_SETUP_RANGE_TEMPERATURE_GREEN = "range_tamperature_green"
     const val KEY_SETUP_RANGE_TEMPERATURE_ORANGE = "range_tamperature_orange"
+    const val KEY_SETUP_TEMPERATURE_CORRECTION = "tamperature_correction_oral_rectal_axilla_core"
+    const val KEY_SETUP_TEMPERATURE_CORRECTION_AIR = "tamperature_correction_air"
 }

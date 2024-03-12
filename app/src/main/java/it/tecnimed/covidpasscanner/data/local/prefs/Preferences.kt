@@ -26,6 +26,7 @@ import android.content.Context
 import android.content.SharedPreferences
 import androidx.annotation.WorkerThread
 import androidx.core.content.edit
+import it.tecnimed.covidpasscanner.Tecnimed.AppSetup
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -92,6 +93,8 @@ interface Preferences {
     var setupSequenceDocument: Boolean
     var setupRangeTemperatureGreen: Float
     var setupRangeTemperatureOrange: Float
+    var setupTemperatureCorrection: Int
+    var setupTemperatureCorrectionAir: Boolean
 
     /**
      *
@@ -232,6 +235,16 @@ class PreferencesImpl(context: Context) : Preferences {
         preferences,
         PrefKeys.KEY_SETUP_RANGE_TEMPERATURE_ORANGE,
         0.5f
+    )
+    override var setupTemperatureCorrection by IntPreference(
+        preferences,
+        PrefKeys.KEY_SETUP_TEMPERATURE_CORRECTION,
+        AppSetup.ORAL
+    )
+    override var setupTemperatureCorrectionAir by BooleanPreference(
+        preferences,
+        PrefKeys.KEY_SETUP_TEMPERATURE_CORRECTION_AIR,
+        false
     )
 
     override fun clear() {
