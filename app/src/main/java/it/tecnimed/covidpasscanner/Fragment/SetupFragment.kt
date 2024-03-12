@@ -142,6 +142,34 @@ class SetupFragment : Fragment(), View.OnClickListener, OnTimeElapsedListener {
                 mSetup.rangeOrange = 0.0f
             binding.TVRangeOrange.text = getString(R.string.strf41, mSetup.getRangeOrange())
         }
+        if(mSetup.correction == AppSetup.ORAL)
+            binding.RBOral.isChecked = true;
+        binding.RBOral.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked)
+                mSetup.correction = AppSetup.ORAL
+        }
+        if(mSetup.correction == AppSetup.RECTAL)
+            binding.RBRectal.isChecked = true;
+        binding.RBRectal.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked)
+                mSetup.correction = AppSetup.RECTAL
+        }
+        if(mSetup.correction == AppSetup.AXILLA)
+            binding.RBAxilla.isChecked = true;
+        binding.RBAxilla.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked)
+                mSetup.correction = AppSetup.AXILLA
+        }
+        if(mSetup.correction == AppSetup.CORE)
+            binding.RBCore.isChecked = true;
+        binding.RBCore.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked)
+                mSetup.correction = AppSetup.CORE
+        }
+        binding.SWAir.setChecked(mSetup.correctionAir);
+        binding.SWAir.setOnClickListener{
+            mSetup.correctionAir = binding.SWAir.isChecked
+        }
         mTimeVar = VLTimer.create(this)
         mTimeVar.startSingle(30000)
     }

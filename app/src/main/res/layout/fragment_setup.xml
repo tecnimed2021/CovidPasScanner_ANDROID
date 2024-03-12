@@ -54,7 +54,7 @@
         android:id="@+id/TVSequenceTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="88dp"
+        android:layout_marginTop="75dp"
         android:text="@string/setup_sequence_title"
         android:textAlignment="center"
         android:textColor="@color/covidpasscanner_green"
@@ -69,7 +69,7 @@
         android:id="@+id/SWTemperatura"
         android:layout_width="517dp"
         android:layout_height="48sp"
-        android:layout_marginTop="56dp"
+        android:layout_marginTop="40dp"
         android:text="@string/setup_sequence_temp"
         android:textSize="32sp"
         app:layout_constraintHorizontal_bias="0.433"
@@ -105,7 +105,7 @@
         android:id="@+id/TVRangeTempTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="104dp"
+        android:layout_marginTop="50dp"
         android:text="@string/setup_rangetemp_title"
         android:textAlignment="center"
         android:textColor="@color/covidpasscanner_green"
@@ -120,29 +120,30 @@
         android:id="@+id/TVRangeGreenTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
+        android:layout_marginRight="30dp"
         android:text="@string/setup_rangetemp_green"
         android:textColor="@color/covidpasscanner_green"
         android:textSize="30sp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/BRangeGreenM"
         app:layout_constraintTop_toTopOf="@id/BRangeGreenP" />
 
     <Button
         android:id="@+id/BRangeGreenP"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dp"
-        android:layout_marginRight="28dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="40dp"
         android:text="+"
-        app:layout_constraintRight_toRightOf="@id/TVRangeTempTitle"
+        app:layout_constraintLeft_toRightOf="@id/TVRangeGreen"
         app:layout_constraintTop_toBottomOf="@id/TVRangeTempTitle" />
 
     <TextView
         android:id="@+id/TVRangeGreen"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="46dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
         android:text="37.5"
+        android:textAlignment="center"
         android:textSize="32sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -152,41 +153,40 @@
         android:id="@+id/BRangeGreenM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="48dp"
-        android:layout_marginTop="60dp"
+        android:layout_marginTop="40dp"
+        android:layout_marginRight="30dp"
         android:text="-"
-        app:layout_constraintLeft_toLeftOf="@id/TVRangeTempTitle"
+        app:layout_constraintRight_toLeftOf="@id/TVRangeGreen"
         app:layout_constraintTop_toBottomOf="@id/TVRangeTempTitle" />
 
     <TextView
         android:id="@+id/TVRangeOrangeTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
+        android:layout_marginRight="30dp"
         android:text="@string/setup_rangetemp_orange"
         android:textColor="@color/covidpasscanner_orange"
         android:textSize="30sp"
-        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/BRangeOrangeM"
         app:layout_constraintTop_toTopOf="@id/BRangeOrangeP" />
 
     <Button
         android:id="@+id/BRangeOrangeP"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="48dp"
-        android:layout_marginTop="144dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginTop="120dp"
         android:text="+"
-        app:layout_constraintHorizontal_bias="0.881"
-        app:layout_constraintLeft_toLeftOf="@id/TVRangeTempTitle"
-        app:layout_constraintRight_toRightOf="@id/TVRangeTempTitle"
+        app:layout_constraintLeft_toRightOf="@id/TVRangeOrange"
         app:layout_constraintTop_toBottomOf="@id/TVRangeTempTitle" />
 
     <TextView
         android:id="@+id/TVRangeOrange"
-        android:layout_width="wrap_content"
+        android:layout_width="80dp"
         android:layout_height="46dp"
-        android:layout_marginTop="144dp"
+        android:layout_marginTop="124dp"
         android:text="0.5"
+        android:textAlignment="center"
         android:textSize="32sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -196,10 +196,94 @@
         android:id="@+id/BRangeOrangeM"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="48dp"
-        android:layout_marginTop="140dp"
+        android:layout_marginTop="120dp"
+        android:layout_marginRight="30dp"
         android:text="-"
-        app:layout_constraintLeft_toLeftOf="@id/TVRangeTempTitle"
+        app:layout_constraintRight_toLeftOf="@id/TVRangeOrange"
         app:layout_constraintTop_toBottomOf="@id/TVRangeTempTitle" />
+
+    <RadioGroup
+        android:id="@+id/RG1"
+        android:layout_width="450dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:measureWithLargestChild="true"
+        android:orientation="horizontal"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/SWAir"
+        app:layout_constraintTop_toBottomOf="@id/TVRangeOrangeTitle">
+
+        <RadioButton
+            android:id="@+id/RBOral"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+            android:gravity="center"
+            android:text="ORAL"
+            android:textColor="@color/covidpasscanner_green"
+            android:textSize="28dp" />
+
+        <RadioButton
+            android:id="@+id/RBRectal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+            android:gravity="center"
+            android:text="RECTAL"
+            android:textColor="@color/covidpasscanner_green"
+            android:textSize="28dp" />
+
+        <RadioButton
+            android:id="@+id/RBAxilla"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+            android:gravity="center"
+            android:text="AXILLA"
+            android:textColor="@color/covidpasscanner_green"
+            android:textSize="28dp" />
+
+        <RadioButton
+            android:id="@+id/RBCore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:button="@null"
+            android:drawableBottom="?android:attr/listChoiceIndicatorSingle"
+            android:gravity="center"
+            android:text="CORE"
+            android:textColor="@color/covidpasscanner_green"
+            android:textSize="28dp" />
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/TVAir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="70dp"
+        android:text="AIR"
+        android:textColor="@color/covidpasscanner_green"
+        android:textSize="28dp"
+        app:layout_constraintLeft_toRightOf="@id/RG1"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVRangeOrangeTitle" />
+
+    <Switch
+        android:id="@+id/SWAir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="top"
+        android:textColor="@color/covidpasscanner_green"
+        android:textSize="28dp"
+        app:layout_constraintLeft_toRightOf="@id/RG1"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TVAir" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
