@@ -88,13 +88,13 @@
     <string name="label_return_home">Torna all\'inizio</string>
 
     <string name="label_start_verify">INIZIO VERIFICA</string>
-    <string name="label_position_temp">PREGO RILEVA LA TUA TEMPERATURA</string>
+    <string name="label_position_temp">PREGO RILEVA LA TUA TEMPERATURA\n- AVVICINATI LENTAMENTE -</string>
     <string name="label_position_greenpass">PREGO MOSTRA IL TUO GREEN PASS</string>
     <string name="label_position_iddoc">PREGO MOSTRA IL TUO DOCUMENTO DI IDENTITA\'</string>
 
     <string name="label_temp_notvalid">ACCESSO NEGATO. Riprova tra qualche minuto</string>
     <string name="label_temp_position_ok">Rimani Fermo</string>
-    <string name="label_temp_position_toofar">Avvicinati</string>
+    <string name="label_temp_position_toofar">Avvicinati\nlentamente</string>
     <string name="label_temp_position_tooclose">Allontanati</string>
 
     <string name="label_gp_valid">VALIDO</string>
@@ -113,6 +113,6 @@
     <string name="setup_sequence_doc">Documento</string>
     <string name="setup_rangetemp_title">Impostazione Range Temperature</string>
     <string name="setup_rangetemp_green">Verde</string>
-    <string name="setup_rangetemp_orange">Arancione</string>
+    <string name="setup_rangetemp_orange">Arancio</string>
 
 </resources>
