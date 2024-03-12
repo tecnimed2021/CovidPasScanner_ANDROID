@@ -215,6 +215,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         viewModel.setSetupSequenceDocument(setupParams.sequenceDocument)
         viewModel.setSetupRangeTemperatureGreen(setupParams.rangeGreen)
         viewModel.setSetupRangeTemperatureOrange(setupParams.rangeOrange)
+        viewModel.setSetupTemperatureCorrection(setupParams.correction)
+        viewModel.setSetupTemperatureCorrectionAir(setupParams.correctionAir)
     }
 
     @SuppressLint("InvalidWakeLockTag")
@@ -243,6 +245,8 @@ class FirstActivity : AppCompatActivity(), View.OnClickListener,
         mSetup.sequenceDocument = viewModel.getSetupSequenceDocument()
         mSetup.rangeGreen = viewModel.getSetupRangeTemperatureGreen()
         mSetup.rangeOrange = viewModel.getSetupRangeTemperatureOrange()
+        mSetup.correction = viewModel.getSetupTemperatureCorrection()
+        mSetup.correctionAir = viewModel.getSetupTemperatureCorrectionAir()
     }
 
     private fun observeLiveData() {
